@@ -1,4 +1,4 @@
-package org.seamframework.persistence;
+package org.jboss.seam.persistence;
 
 import org.jboss.weld.test.AbstractWeldTest;
 import org.testng.annotations.Test;
