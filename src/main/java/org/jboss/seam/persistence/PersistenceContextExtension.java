@@ -1,4 +1,4 @@
-package org.seamframework.persistence;
+package org.jboss.seam.persistence;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
