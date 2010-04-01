@@ -3,7 +3,9 @@ package org.jboss.seam.persistence;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,16 +28,27 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Support for managed persistence contexts in Java SE environment.
+ * Support for managed persistence contexts in a Java SE environment or Servlet container.
+ *
+ * <p>Unlike with standard Java EE, the unitName attribute on {@link PersistenceContext} must
+ * be provided if the persistence unit is assigned a name in persistence.xml. This
+ * class supports multiple persistence units, but it does not permit multiple
+ * producers for the same persistence unit (naturally).</p>
  * 
  * @author Gavin King
- * 
+ * @author Dan Allen
  */
 public class PersistenceContextExtension implements Extension
 {
-   private Bean<EntityManagerFactory> emfBean;
+   private static final Logger log = LoggerFactory.getLogger(PersistenceContextExtension.class);
+
+   private Map<String, Bean<EntityManagerFactory>> emfBeans = new HashMap<String, Bean<EntityManagerFactory>>();
+
+   private Boolean bootstrapRequired;
 
    /**
     * For @PersistenceContext producer fields, make a bean for the EMF, then
@@ -44,12 +57,31 @@ public class PersistenceContextExtension implements Extension
     */
    void processProducer(@Observes ProcessProducer<?, EntityManager> pp, final BeanManager bm)
    {
+      if (Boolean.FALSE.equals(bootstrapRequired))
+      {
+         return;
+      }
+      else if (bootstrapRequired == null)
+      {
+         if (isPersistenceContainerManaged())
+         {
+            bootstrapRequired = false;
+            return;
+         }
+         else
+         {
+            bootstrapRequired = true;
+            log.info("Java SE persistence bootstrap required");
+         }
+      }
+
       if (pp.getAnnotatedMember().isAnnotationPresent(PersistenceContext.class))
       {
-         if (emfBean == null)
+         AnnotatedField<?> field = (AnnotatedField<?>) pp.getAnnotatedMember();
+         final String unitName = field.getAnnotation(PersistenceContext.class).unitName();
+         if (!emfBeans.containsKey(unitName))
          {
-            AnnotatedField<?> field = (AnnotatedField<?>) pp.getAnnotatedMember();
-            final String unitName = field.getAnnotation(PersistenceContext.class).unitName();
+            log.info("Found persistence context producer for persistence unit: " + unitName);
             final Class<?> module = field.getJavaMember().getDeclaringClass();
             final Set<Annotation> qualifiers = new HashSet<Annotation>();
             for (Annotation ann : field.getAnnotations())
@@ -65,14 +97,12 @@ public class PersistenceContextExtension implements Extension
             {
                qualifiers.add(new AnnotationLiteral<Default>()
                {
-
                   /** default value. Added only to suppress compiler warnings. */
                   private static final long serialVersionUID = 1L;
                });
             }
             qualifiers.add(new AnnotationLiteral<Any>()
             {
-
                /** default value. Added only to suppress compiler warnings. */
                private static final long serialVersionUID = 1L;
             });
@@ -81,15 +111,14 @@ public class PersistenceContextExtension implements Extension
             {
                /** default value. Added only to suppress compiler warnings. */
                private static final long serialVersionUID = 1L;
-
                {
                   add(EntityManagerFactory.class);
                   add(Object.class);
                }
             };
 
-            // create a bean for the EMF
-            emfBean = new Bean<EntityManagerFactory>()
+            // create and register a bean for the EMF
+            emfBeans.put(unitName, new Bean<EntityManagerFactory>()
             {
                public Set<Type> getTypes()
                {
@@ -119,7 +148,6 @@ public class PersistenceContextExtension implements Extension
 
                public Set<InjectionPoint> getInjectionPoints()
                {
-                  // return Collections.EMPTY_SET;
                   return Collections.emptySet();
                }
 
@@ -135,7 +163,6 @@ public class PersistenceContextExtension implements Extension
 
                public Set<Class<? extends Annotation>> getStereotypes()
                {
-                  // return Collections.EMPTY_SET;
                   return Collections.emptySet();
 
                }
@@ -149,22 +176,19 @@ public class PersistenceContextExtension implements Extension
                {
                   return false;
                }
-            };
+            });
 
          }
          else
          {
-            throw new RuntimeException("Only one EMF per application is supported");
+            throw new RuntimeException("There can only be one producer per persistence unit");
          }
 
          Producer<EntityManager> producer = new Producer<EntityManager>()
          {
-
             public Set<InjectionPoint> getInjectionPoints()
             {
-               // return Collections.EMPTY_SET;
                return Collections.emptySet();
-
             }
 
             public EntityManager produce(CreationalContext<EntityManager> ctx)
@@ -174,13 +198,15 @@ public class PersistenceContextExtension implements Extension
 
             private EntityManagerFactory getFactory(CreationalContext<EntityManager> ctx)
             {
-               return (EntityManagerFactory) bm.getReference(emfBean, EntityManagerFactory.class, ctx);
+               return (EntityManagerFactory) bm.getReference(emfBeans.get(unitName), EntityManagerFactory.class, ctx);
             }
 
             public void dispose(EntityManager em)
             {
                if (em.isOpen()) // work around what I suspect is a bug in Weld
+               {
                   em.close();
+               }
             }
          };
          pp.setProducer(producer);
@@ -192,6 +218,39 @@ public class PersistenceContextExtension implements Extension
     */
    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd)
    {
-      abd.addBean(emfBean);
+      for (Bean<EntityManagerFactory> emfBean : emfBeans.values())
+      {
+         abd.addBean(emfBean);
+      }
+   }
+
+   /**
+    * Check whether persistence is container managed. For now, this simply
+    * checks for the presence of the EJB API. If it's present, we assume
+    * this is an EE environment and that persistence is container managed.
+    */
+   boolean isPersistenceContainerManaged() {
+      boolean eeEnv = true;
+      try
+      {
+         if (Thread.currentThread().getContextClassLoader() != null)
+         {
+            Thread.currentThread().getContextClassLoader().loadClass("javax.ejb.Stateless");
+         }
+         else
+         {
+            Class.forName("javax.ejb.Stateless");
+         }
+      }
+      catch (ClassNotFoundException e)
+      {
+         eeEnv = false;
+      }
+      catch (NoClassDefFoundError e)
+      {
+         eeEnv = false;
+      }
+
+      return eeEnv;
    }
 }
