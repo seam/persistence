@@ -56,11 +56,24 @@ public abstract class Work<T>
       }
       catch (Exception e)
       {
-         if (newTransactionRequired && userTransaction.getStatus() != Status.STATUS_NO_TRANSACTION && isRollbackRequired(e, true))
+         if (newTransactionRequired && userTransaction.getStatus() != Status.STATUS_NO_TRANSACTION )
          {
-            log.debug("rolling back transaction");
-            userTransaction.rollback();
+            if(isRollbackRequired(e, true))
+            {
+               log.debug("rolling back transaction");
+               userTransaction.rollback();
+            }
+            else
+            {
+               log.debug("committing transaction after ApplicationException(rollback=false):" + e.getMessage());
+               userTransaction.commit();
+            }
          }
+         else if (userTransaction.getStatus() != Status.STATUS_NO_TRANSACTION && isRollbackRequired(e, true))
+         {
+            userTransaction.setRollbackOnly();
+         }
+
          throw e;
       }
 

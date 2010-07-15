@@ -28,15 +28,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class SimpleTest
+public class UserTransactionTest
 {
    @Deployment
    public static Archive<?> createTestArchive()
    {
 
-      WebArchive war = ShrinkWrap.create(WebArchive.class);
+      WebArchive war = ShrinkWrap.create("test.war", WebArchive.class);
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
-      war.addPackage(Transaction.class.getPackage()).addClasses(SimpleTest.class, Hotel.class);
+      war.addPackage(Transaction.class.getPackage()).addClasses(UserTransactionTest.class, Hotel.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       
@@ -50,7 +50,7 @@ public class SimpleTest
    EntityManagerFactory emf;
 
    @Test
-   public void simpleTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void userTransactionTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
       transaction.begin();
       EntityManager em = emf.createEntityManager();
@@ -74,6 +74,6 @@ public class SimpleTest
       List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
       Assert.assertTrue(hotels.size() == 1);
       transaction.rollback();
-
    }
+
 }

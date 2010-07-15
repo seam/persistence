@@ -19,6 +19,7 @@ import org.jboss.seam.transaction.Transaction;
 import org.jboss.seam.transaction.TransactionInterceptor;
 import org.jboss.seam.transaction.UserTransaction;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
+import org.jboss.seam.transactions.test.util.DontRollBackException;
 import org.jboss.seam.transactions.test.util.EntityManagerProvider;
 import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
@@ -38,7 +39,7 @@ public class TransactionInterceptorTest
       WebArchive war = ShrinkWrap.create("test.war", WebArchive.class);
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addPackage(Transaction.class.getPackage());
-      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class);
+      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
       
@@ -59,21 +60,33 @@ public class TransactionInterceptorTest
    {
 
       bean.addHotel();
-
+      assertHotels(1);
       try
       {
          bean.failToAddHotel();
       }
       catch (Exception e)
       {
-
       }
+      assertHotels(1);
 
+      try
+      {
+         bean.addHotelWithApplicationException();
+      }
+      catch (DontRollBackException e)
+      {
+      }
+      assertHotels(2);
+
+   }
+
+   public void assertHotels(int count) throws NotSupportedException, SystemException
+   {
       transaction.begin();
       em.joinTransaction();
       List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
-      Assert.assertTrue("Wrong number of hotels: " + hotels.size(), hotels.size() == 1);
+      Assert.assertTrue("Wrong number of hotels: " + hotels.size(), hotels.size() == count);
       transaction.rollback();
-
    }
 }

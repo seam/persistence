@@ -5,6 +5,7 @@ import javax.persistence.EntityManager;
 
 import org.jboss.seam.transaction.TransactionPropagation;
 import org.jboss.seam.transaction.Transactional;
+import org.jboss.seam.transactions.test.util.DontRollBackException;
 
 @Transactional(TransactionPropagation.REQUIRED)
 public class TransactionManagedBean
@@ -28,5 +29,14 @@ public class TransactionManagedBean
       entityManager.persist(h);
       entityManager.flush();
       throw new RuntimeException("Roll back transaction");
+   }
+
+   public void addHotelWithApplicationException() throws DontRollBackException
+   {
+      entityManager.joinTransaction();
+      Hotel h = new Hotel("test3", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+      entityManager.persist(h);
+      entityManager.flush();
+      throw new DontRollBackException();
    }
 }
