@@ -14,12 +14,14 @@ import javax.interceptor.InterceptorBinding;
 @Inherited
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Transactional {
+@Target( { ElementType.METHOD, ElementType.TYPE })
+public @interface Transactional
+{
    /**
     * The transaction propagation type.
-    *
+    * 
     * @return REQUIRED by default
     */
-   @Nonbinding TransactionPropagation value() default TransactionPropagation.REQUIRED;
+   @Nonbinding
+   TransactionPropagation value() default TransactionPropagation.REQUIRED;
 }
