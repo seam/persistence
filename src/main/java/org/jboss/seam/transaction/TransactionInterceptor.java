@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
 /**
@@ -16,6 +17,7 @@ import javax.interceptor.InvocationContext;
  * @author Shane Bryzak
  */
 @Transactional
+@Interceptor
 public class TransactionInterceptor
 {
    private static final long serialVersionUID = -4364203056333738988L;
