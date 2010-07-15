@@ -14,6 +14,7 @@ public class TransactionManagedBean
    @Inject
    EntityManager entityManager;
 
+
    public void addHotel()
    {
       entityManager.joinTransaction();
@@ -39,4 +40,5 @@ public class TransactionManagedBean
       entityManager.flush();
       throw new DontRollBackException();
    }
+
 }

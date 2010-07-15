@@ -10,6 +10,8 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
 import org.slf4j.Logger;
@@ -31,6 +33,9 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
 {
    private static final Logger log = LoggerFactory.getLogger(EjbSynchronizations.class);
 
+   @Inject
+   private BeanManager beanManager;
+
    // maintain two lists to work around a bug in JBoss EJB3 where a new
    // SessionSynchronization
    // gets registered each time the bean is called
@@ -40,7 +45,7 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
    public void afterBegin()
    {
       log.debug("afterBegin");
-      synchronizations.addLast(new SynchronizationRegistry());
+      synchronizations.addLast(new SynchronizationRegistry(beanManager));
    }
 
    public void beforeCompletion() throws EJBException, RemoteException

@@ -3,6 +3,7 @@ package org.jboss.seam.transaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 
@@ -19,6 +20,14 @@ import org.slf4j.LoggerFactory;
  */
 class SynchronizationRegistry
 {
+
+   private final BeanManager beanManager;
+
+   public SynchronizationRegistry(BeanManager beanManager)
+   {
+      this.beanManager = beanManager;
+   }
+
    private static final Logger log = LoggerFactory.getLogger(SynchronizationRegistry.class);
 
    private List<Synchronization> synchronizations = new ArrayList<Synchronization>();
@@ -30,11 +39,7 @@ class SynchronizationRegistry
 
    void afterTransactionCompletion(boolean success)
    {
-      // if ( Events.exists() )
-      // {
-      // Events.instance().raiseEvent("org.jboss.seam.afterTransactionCompletion",
-      // success);
-      // }
+      beanManager.fireEvent(new AfterTransactionCompletion(success));
       for (Synchronization sync : synchronizations)
       {
          try
@@ -51,10 +56,7 @@ class SynchronizationRegistry
 
    void beforeTransactionCompletion()
    {
-      // if ( Events.exists() )
-      // {
-      // Events.instance().raiseEvent("org.jboss.seam.beforeTransactionCompletion");
-      // }
+      beanManager.fireEvent(new BeforeTransactionCompletion());
       for (Synchronization sync : synchronizations)
       {
          try

@@ -39,7 +39,7 @@ public class TransactionInterceptorTest
       WebArchive war = ShrinkWrap.create("test.war", WebArchive.class);
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addPackage(Transaction.class.getPackage());
-      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
+      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class, TransactionObserver.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
       
@@ -55,12 +55,20 @@ public class TransactionInterceptorTest
    @PersistenceContext
    EntityManager em;
 
+   @Inject
+   TransactionObserver observer;
+
    @Test
    public void testTransactionInterceptor() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
-
+      observer.setEnabled(true);
+      try
+      {
+      observer.reset(true);
       bean.addHotel();
       assertHotels(1);
+      observer.verify();
+      observer.reset(false);
       try
       {
          bean.failToAddHotel();
@@ -69,7 +77,8 @@ public class TransactionInterceptorTest
       {
       }
       assertHotels(1);
-
+      observer.verify();
+      observer.reset(true);
       try
       {
          bean.addHotelWithApplicationException();
@@ -78,6 +87,13 @@ public class TransactionInterceptorTest
       {
       }
       assertHotels(2);
+      observer.verify();
+      }
+      catch (Exception e)
+      {
+         observer.setEnabled(false);
+         throw new RuntimeException(e);
+      }
 
    }
 

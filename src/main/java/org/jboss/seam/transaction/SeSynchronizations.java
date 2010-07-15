@@ -4,6 +4,8 @@ import java.util.Stack;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
 /**
@@ -22,9 +24,12 @@ public class SeSynchronizations implements Synchronizations
 {
    protected Stack<SynchronizationRegistry> synchronizations = new Stack<SynchronizationRegistry>();
 
+   @Inject
+   private BeanManager beanManager;
+
    public void afterTransactionBegin()
    {
-      synchronizations.push(new SynchronizationRegistry());
+      synchronizations.push(new SynchronizationRegistry(beanManager));
    }
 
    public void afterTransactionCommit(boolean success)
