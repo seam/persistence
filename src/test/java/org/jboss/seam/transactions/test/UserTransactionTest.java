@@ -39,7 +39,7 @@ public class UserTransactionTest
       war.addPackage(Transaction.class.getPackage()).addClasses(UserTransactionTest.class, Hotel.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
-      
+      war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
       return war;
    }
 

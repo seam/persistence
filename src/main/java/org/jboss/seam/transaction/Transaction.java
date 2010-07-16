@@ -1,7 +1,6 @@
 package org.jboss.seam.transaction;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
@@ -22,7 +21,6 @@ public class Transaction
    @Inject
    Synchronizations synchronizations;
 
-   @Produces
    public UserTransaction getTransaction() throws NamingException
    {
       try
