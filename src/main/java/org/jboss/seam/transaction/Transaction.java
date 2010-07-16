@@ -6,12 +6,15 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.jboss.weld.extensions.managedproducer.ManagedProducer;
+
 /**
  * Supports injection of a Seam UserTransaction object that wraps the current
  * JTA transaction or EJB container managed transaction.
  * 
  * @author Mike Youngstrom
  * @author Gavin King
+ * @author Stuart Douglas
  * 
  */
 @ApplicationScoped
@@ -21,6 +24,8 @@ public class Transaction
    @Inject
    Synchronizations synchronizations;
 
+   @ManagedProducer
+   @TransactionQualifier
    public UserTransaction getTransaction() throws NamingException
    {
       try

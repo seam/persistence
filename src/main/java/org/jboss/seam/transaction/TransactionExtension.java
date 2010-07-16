@@ -14,7 +14,6 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ProcessBean;
-import javax.naming.NamingException;
 
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
@@ -75,17 +74,7 @@ public class TransactionExtension implements Extension
          BeanBuilder<UserTransaction> builder = new BeanBuilder<UserTransaction>(utbuilder.create(), manager);
          builder.defineBeanFromAnnotatedType();
 
-         Set<Bean<?>> beans = manager.getBeans(Transaction.class);
-         if (beans.isEmpty())
-         {
-            log.error("No bean with type " + Transaction.class.getName() + " registered, SEAM TRANSACTIONS ARE DISABLED");
-         }
-         else if (beans.size() > 1)
-         {
-            log.error("More than 1 bean with type " + Transaction.class.getName() + " registered, SEAM TRANSACTIONS ARE DISABLED");
-         }
-         Bean<?> bean = beans.iterator().next();
-         builder.setBeanLifecycle(new TransactionLifecycle(manager, (Bean) bean));
+         builder.setBeanLifecycle(new TransactionLifecycle(manager));
          builder.setInjectionTarget(new NoOpInjectionTarget());
          event.addBean(builder.create());
       }
@@ -96,31 +85,44 @@ public class TransactionExtension implements Extension
 
       private final BeanManager manager;
 
-      private final Bean<Transaction> transactionBean;
+      private Bean<?> transactionBean;
 
-      public TransactionLifecycle(BeanManager manager, Bean<Transaction> transactionBean)
+      public TransactionLifecycle(BeanManager manager)
       {
          this.manager = manager;
-         this.transactionBean = transactionBean;
-
       }
 
       public UserTransaction create(BeanImpl<UserTransaction> bean, CreationalContext<UserTransaction> ctx)
       {
-         Transaction t = (Transaction) manager.getReference(transactionBean, Transaction.class, ctx);
-         try
+         if (transactionBean == null)
          {
-            return t.getTransaction();
+            // this does not need to be thread safe, it does not matter if this
+            // is initialised twice
+            setupBeanDefinition();
          }
-         catch (NamingException e)
-         {
-            throw new RuntimeException(e);
-         }
+         return (UserTransaction) manager.getReference(transactionBean, UserTransaction.class, ctx);
       }
 
       public void destroy(BeanImpl<UserTransaction> bean, UserTransaction arg0, CreationalContext<UserTransaction> arg1)
       {
          arg1.release();
+      }
+
+      /**
+       * we need to init the bean definition lazily, as there
+       */
+      private void setupBeanDefinition()
+      {
+         Set<Bean<?>> beans = manager.getBeans(UserTransaction.class, new TransactionQualifier.TransactionQualifierLiteral());
+         if (beans.isEmpty())
+         {
+            log.error("No bean with type " + UserTransaction.class.getName() + " and qualifier " + TransactionQualifier.class.getName() + " registered, SEAM TRANSACTIONS ARE DISABLED");
+         }
+         else if (beans.size() > 1)
+         {
+            log.error("More than 1 bean with type " + UserTransaction.class.getName() + " and qualifier " + TransactionQualifier.class.getName() + " registered, SEAM TRANSACTIONS ARE DISABLED");
+         }
+         transactionBean = beans.iterator().next();
       }
 
    }
@@ -135,7 +137,7 @@ public class TransactionExtension implements Extension
 
       public Set<InjectionPoint> getInjectionPoints()
       {
-         return Collections.EMPTY_SET;
+         return Collections.emptySet();
       }
 
       public void dispose(UserTransaction instance)
