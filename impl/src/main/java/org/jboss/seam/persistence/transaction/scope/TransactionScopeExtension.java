@@ -19,40 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.transaction;
+package org.jboss.seam.persistence.transaction.scope;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Extension;
+
+import org.jboss.seam.persistence.transaction.TransactionScoped;
 
 /**
- * Extends the standard UserTransaction interface with a couple of helpful
- * methods.
+ * Extension that registers the context for {@link TransactionScoped} beans
  * 
- * 
- * @author Gavin King
+ * @author Stuart Douglas
  * 
  */
-public interface UserTransaction extends javax.transaction.UserTransaction
+public class TransactionScopeExtension implements Extension
 {
-
-   public boolean isActive() throws SystemException;
-
-   public boolean isActiveOrMarkedRollback() throws SystemException;
-
-   public boolean isRolledBackOrMarkedRollback() throws SystemException;
-
-   public boolean isMarkedRollback() throws SystemException;
-
-   public boolean isNoTransaction() throws SystemException;
-
-   public boolean isRolledBack() throws SystemException;
-
-   public boolean isCommitted() throws SystemException;
-
-   public boolean isConversationContextRequired();
-
-   public abstract void registerSynchronization(Synchronization sync);
-
-   public void enlist(EntityManager entityManager) throws SystemException;
+   public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager)
+   {
+      event.addContext(new TransactionScopeContext(manager));
+   }
 }

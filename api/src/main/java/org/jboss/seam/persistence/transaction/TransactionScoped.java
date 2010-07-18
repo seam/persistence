@@ -21,38 +21,31 @@
  */
 package org.jboss.seam.persistence.transaction;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.enterprise.context.NormalScope;
+import javax.enterprise.util.AnnotationLiteral;
 
 /**
- * Extends the standard UserTransaction interface with a couple of helpful
- * methods.
  * 
- * 
- * @author Gavin King
+ * @author Stuart Douglas
  * 
  */
-public interface UserTransaction extends javax.transaction.UserTransaction
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
+@NormalScope(passivating = false)
+public @interface TransactionScoped
 {
+   public static final TransactionScoped LITERAL = new TransactionScopedLiteral();
 
-   public boolean isActive() throws SystemException;
+   static class TransactionScopedLiteral extends AnnotationLiteral<TransactionScoped> implements TransactionScoped
+   {
 
-   public boolean isActiveOrMarkedRollback() throws SystemException;
+   }
 
-   public boolean isRolledBackOrMarkedRollback() throws SystemException;
-
-   public boolean isMarkedRollback() throws SystemException;
-
-   public boolean isNoTransaction() throws SystemException;
-
-   public boolean isRolledBack() throws SystemException;
-
-   public boolean isCommitted() throws SystemException;
-
-   public boolean isConversationContextRequired();
-
-   public abstract void registerSynchronization(Synchronization sync);
-
-   public void enlist(EntityManager entityManager) throws SystemException;
 }
