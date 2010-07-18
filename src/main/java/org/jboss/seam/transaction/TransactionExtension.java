@@ -1,24 +1,43 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2010, Red Hat, Inc., and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.jboss.seam.transaction;
 
-import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Default;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.ProcessBean;
 
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
+import org.jboss.weld.extensions.defaultbean.DefaultBeanExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,41 +62,15 @@ public class TransactionExtension implements Extension
 
    private static final Logger log = LoggerFactory.getLogger(TransactionExtension.class);
 
-   public void processBean(@Observes ProcessBean<?> event)
+   public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event,BeanManager manager)
    {
-      Bean<?> bean = event.getBean();
-      if (bean.getTypes().contains(UserTransaction.class))
-      {
-         if (bean.getQualifiers().isEmpty()) // not sure about this
-         {
-            transactionRegistered = true;
-         }
-         else
-         {
-            for (Annotation a : event.getBean().getQualifiers())
-            {
-               if (a.annotationType() == Default.class)
-               {
-                  transactionRegistered = true;
-                  break;
-               }
-            }
-         }
-      }
-   }
+      AnnotatedTypeBuilder<UserTransaction> utbuilder = AnnotatedTypeBuilder.newInstance(UserTransaction.class);
+      BeanBuilder<UserTransaction> builder = new BeanBuilder<UserTransaction>(utbuilder.create(), manager);
+      builder.defineBeanFromAnnotatedType();
 
-   public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager)
-   {
-      if (!transactionRegistered)
-      {
-         AnnotatedTypeBuilder<UserTransaction> utbuilder = AnnotatedTypeBuilder.newInstance(UserTransaction.class);
-         BeanBuilder<UserTransaction> builder = new BeanBuilder<UserTransaction>(utbuilder.create(), manager);
-         builder.defineBeanFromAnnotatedType();
-
-         builder.setBeanLifecycle(new TransactionLifecycle(manager));
-         builder.setInjectionTarget(new NoOpInjectionTarget());
-         event.addBean(builder.create());
-      }
+      builder.setBeanLifecycle(new TransactionLifecycle(manager));
+      builder.setInjectionTarget(new NoOpInjectionTarget());
+      DefaultBeanExtension.addDefaultBean(UserTransaction.class, builder.create());
    }
 
    private static class TransactionLifecycle implements BeanLifecycle<UserTransaction>
@@ -109,7 +102,7 @@ public class TransactionExtension implements Extension
       }
 
       /**
-       * we need to init the bean definition lazily, as there
+       * we need to init the bean definition lazily
        */
       private void setupBeanDefinition()
       {
