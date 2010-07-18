@@ -28,6 +28,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 
+import org.jboss.seam.persistence.transaction.event.AfterTransactionCompletion;
+import org.jboss.seam.persistence.transaction.event.BeforeTransactionCompletion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

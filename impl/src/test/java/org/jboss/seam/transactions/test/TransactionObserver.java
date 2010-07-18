@@ -3,8 +3,8 @@ package org.jboss.seam.transactions.test;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
-import org.jboss.seam.transaction.AfterTransactionCompletion;
-import org.jboss.seam.transaction.BeforeTransactionCompletion;
+import org.jboss.seam.persistence.transaction.event.AfterTransactionCompletion;
+import org.jboss.seam.persistence.transaction.event.BeforeTransactionCompletion;
 
 @ApplicationScoped
 public class TransactionObserver
