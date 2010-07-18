@@ -16,6 +16,22 @@
    <prerequisites>
       <maven>3.0</maven>
    </prerequisites>
+   
+   <dependencies>
+   
+      <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+      </dependency>
+
+	  <dependency>
+		  <groupId>org.jboss.spec</groupId>
+		  <artifactId>jboss-javaee-6.0</artifactId>
+		  <type>pom</type>
+		  <scope>provided</scope>
+	  </dependency>
+	  
+   </dependencies>
 
    <scm>
       <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/api</connection>

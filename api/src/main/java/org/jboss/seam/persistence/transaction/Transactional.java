@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.transaction;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
+
 
 /**
  * @author Dan Allen
@@ -44,6 +45,6 @@ public @interface Transactional
     * 
     * @return REQUIRED by default
     */
-   @Nonbinding
+   @Nonbinding 
    TransactionPropagation value() default TransactionPropagation.REQUIRED;
 }

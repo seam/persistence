@@ -3,8 +3,8 @@ package org.jboss.seam.transactions.test;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.jboss.seam.transaction.TransactionPropagation;
-import org.jboss.seam.transaction.Transactional;
+import org.jboss.seam.persistence.transaction.TransactionPropagation;
+import org.jboss.seam.persistence.transaction.Transactional;
 import org.jboss.seam.transactions.test.util.DontRollBackException;
 
 @Transactional(TransactionPropagation.REQUIRED)
