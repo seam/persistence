@@ -22,10 +22,10 @@
 package org.jboss.seam.persistence.transaction.scope;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
@@ -54,6 +54,14 @@ public class TransactionScopeContext implements Context, Synchronization
 
    private final ContextualIdentifierStore identifierStore = new ContextualIdentifierStore();
 
+   private final ThreadLocal<TransactionScopeData> contextData = new ThreadLocal<TransactionScopeData>()
+   {
+      protected TransactionScopeData initialValue()
+      {
+         return new TransactionScopeData();
+      };
+   };
+
    public TransactionScopeContext(BeanManager beanManager)
    {
       this.beanManager = beanManager;
@@ -72,47 +80,42 @@ public class TransactionScopeContext implements Context, Synchronization
                Bean<UserTransaction> userTransactionBean = (Bean<UserTransaction>) beans.iterator().next();
                CreationalContext<?> ctx = beanManager.createCreationalContext(userTransactionBean);
                userTransaction = (UserTransaction) beanManager.getReference(userTransactionBean, UserTransaction.class, ctx);
-               userTransaction.registerSynchronization(this);
             }
          }
       }
    }
 
-   private final ThreadLocal<Map<String, Object>> instanceStore = new ThreadLocal<Map<String, Object>>()
+   private void registerSyncronization()
    {
-      protected Map<String, Object> initialValue()
+      TransactionScopeData data = contextData.get();
+      if (!data.isSyncronisationRegistered())
       {
-         return new ConcurrentHashMap<String, Object>();
-      };
-   };
-
-   private final ThreadLocal<Map<String, CreationalContext<?>>> creationalContextStore = new ThreadLocal<Map<String, CreationalContext<?>>>()
-   {
-      protected Map<String, CreationalContext<?>> initialValue()
-      {
-         return new ConcurrentHashMap<String, CreationalContext<?>>();
-      };
-   };
+         userTransaction.registerSynchronization(this);
+         data.setSyncronisationRegistered(true);
+      }
+   }
 
    public <T> T get(Contextual<T> contextual)
    {
       lazyInitialization();
+      registerSyncronization();
       String id = identifierStore.getId(contextual);
-      Map<String, Object> map = instanceStore.get();
+      Map<String, Object> map = contextData.get().getInstanceStore();
       return (T) map.get(id);
    }
 
    public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext)
    {
       lazyInitialization();
+      registerSyncronization();
       String id = identifierStore.getId(contextual);
-      Map<String, Object> map = instanceStore.get();
-      T instance = (T) map.get(id);
+      TransactionScopeData data = contextData.get();
+      T instance = (T) data.getInstanceStore().get(id);
       if (instance == null)
       {
          instance = contextual.create(creationalContext);
-         creationalContextStore.get().put(id, creationalContext);
-         map.put(id, instance);
+         data.getCreationalContexts().put(id, creationalContext);
+         data.getInstanceStore().put(id, instance);
       }
       return instance;
    }
@@ -137,21 +140,47 @@ public class TransactionScopeContext implements Context, Synchronization
 
    public void afterCompletion(int status)
    {
-      Map<String, Object> map = instanceStore.get();
-      Map<String, CreationalContext<?>> creationalContexts = creationalContextStore.get();
-      for (Entry<String, Object> e : map.entrySet())
+      TransactionScopeData data = contextData.get();
+      for (Entry<String, Object> e : data.getInstanceStore().entrySet())
       {
          Contextual contextual = identifierStore.getContextual(e.getKey());
-         CreationalContext<?> ctx = creationalContexts.get(e.getKey());
+         CreationalContext<?> ctx = data.getCreationalContexts().get(e.getKey());
          contextual.destroy(e.getValue(), ctx);
          ctx.release();
       }
-      instanceStore.remove();
-      creationalContextStore.remove();
+      contextData.remove();
    }
 
    public void beforeCompletion()
    {
+
+   }
+
+   private class TransactionScopeData
+   {
+      private final Map<String, Object> instanceStore = new HashMap<String, Object>();
+      private final Map<String, CreationalContext<?>> creationalContexts = new HashMap<String, CreationalContext<?>>();
+      private boolean syncronisationRegistered;
+
+      public boolean isSyncronisationRegistered()
+      {
+         return syncronisationRegistered;
+      }
+
+      public void setSyncronisationRegistered(boolean syncronisationRegistered)
+      {
+         this.syncronisationRegistered = syncronisationRegistered;
+      }
+
+      public Map<String, Object> getInstanceStore()
+      {
+         return instanceStore;
+      }
+
+      public Map<String, CreationalContext<?>> getCreationalContexts()
+      {
+         return creationalContexts;
+      }
 
    }
 
