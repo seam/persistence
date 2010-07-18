@@ -38,6 +38,7 @@ public class TransactionInterceptorTest
 
       WebArchive war = ShrinkWrap.create("test.war", WebArchive.class);
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(Transaction.class.getPackage());
       war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class, TransactionObserver.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
@@ -64,35 +65,38 @@ public class TransactionInterceptorTest
       observer.setEnabled(true);
       try
       {
-      observer.reset(true);
-      bean.addHotel();
-      assertHotels(1);
-      observer.verify();
-      observer.reset(false);
-      try
-      {
-         bean.failToAddHotel();
+         observer.reset(true);
+         bean.addHotel();
+         assertHotels(1);
+         observer.verify();
+         observer.reset(false);
+         try
+         {
+            bean.failToAddHotel();
+         }
+         catch (Exception e)
+         {
+         }
+         assertHotels(1);
+         observer.verify();
+         observer.reset(true);
+         try
+         {
+            bean.addHotelWithApplicationException();
+         }
+         catch (DontRollBackException e)
+         {
+         }
+         assertHotels(2);
+         observer.verify();
       }
       catch (Exception e)
       {
+         throw new RuntimeException(e);
       }
-      assertHotels(1);
-      observer.verify();
-      observer.reset(true);
-      try
-      {
-         bean.addHotelWithApplicationException();
-      }
-      catch (DontRollBackException e)
-      {
-      }
-      assertHotels(2);
-      observer.verify();
-      }
-      catch (Exception e)
+      finally
       {
          observer.setEnabled(false);
-         throw new RuntimeException(e);
       }
 
    }

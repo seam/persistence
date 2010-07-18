@@ -48,7 +48,7 @@ import org.jboss.weld.extensions.literal.DefaultLiteral;
 public class TransactionScopeContext implements Context, Synchronization
 {
 
-   private final UserTransaction userTransaction;
+   private UserTransaction userTransaction;
 
    private final BeanManager beanManager;
 
@@ -57,19 +57,31 @@ public class TransactionScopeContext implements Context, Synchronization
    public TransactionScopeContext(BeanManager beanManager)
    {
       this.beanManager = beanManager;
-      Set<Bean<?>> beans = beanManager.getBeans(UserTransaction.class, new DefaultLiteral());
-      Bean<UserTransaction> userTransactionBean = (Bean<UserTransaction>) beans.iterator().next();
-      CreationalContext<?> ctx = beanManager.createCreationalContext(userTransactionBean);
-      userTransaction = (UserTransaction) beanManager.getReference(userTransactionBean, UserTransaction.class, ctx);
-      userTransaction.registerSynchronization(this);
 
+   }
+
+   private void lazyInitialization()
+   {
+      if (userTransaction == null)
+      {
+         synchronized (this)
+         {
+            if (userTransaction == null)
+            {
+               Set<Bean<?>> beans = beanManager.getBeans(UserTransaction.class, new DefaultLiteral());
+               Bean<UserTransaction> userTransactionBean = (Bean<UserTransaction>) beans.iterator().next();
+               CreationalContext<?> ctx = beanManager.createCreationalContext(userTransactionBean);
+               userTransaction = (UserTransaction) beanManager.getReference(userTransactionBean, UserTransaction.class, ctx);
+               userTransaction.registerSynchronization(this);
+            }
+         }
+      }
    }
 
    private final ThreadLocal<Map<String, Object>> instanceStore = new ThreadLocal<Map<String, Object>>()
    {
       protected Map<String, Object> initialValue()
       {
-
          return new ConcurrentHashMap<String, Object>();
       };
    };
@@ -78,13 +90,13 @@ public class TransactionScopeContext implements Context, Synchronization
    {
       protected Map<String, CreationalContext<?>> initialValue()
       {
-
          return new ConcurrentHashMap<String, CreationalContext<?>>();
       };
    };
 
    public <T> T get(Contextual<T> contextual)
    {
+      lazyInitialization();
       String id = identifierStore.getId(contextual);
       Map<String, Object> map = instanceStore.get();
       return (T) map.get(id);
@@ -92,12 +104,14 @@ public class TransactionScopeContext implements Context, Synchronization
 
    public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext)
    {
+      lazyInitialization();
       String id = identifierStore.getId(contextual);
       Map<String, Object> map = instanceStore.get();
       T instance = (T) map.get(id);
       if (instance == null)
       {
          instance = contextual.create(creationalContext);
+         creationalContextStore.get().put(id, creationalContext);
          map.put(id, instance);
       }
       return instance;
@@ -110,6 +124,7 @@ public class TransactionScopeContext implements Context, Synchronization
 
    public boolean isActive()
    {
+      lazyInitialization();
       try
       {
          return userTransaction.isActive();

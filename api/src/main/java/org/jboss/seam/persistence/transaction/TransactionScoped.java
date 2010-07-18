@@ -41,9 +41,7 @@ import javax.enterprise.util.AnnotationLiteral;
 @NormalScope(passivating = false)
 public @interface TransactionScoped
 {
-   public static final TransactionScoped LITERAL = new TransactionScopedLiteral();
-
-   static class TransactionScopedLiteral extends AnnotationLiteral<TransactionScoped> implements TransactionScoped
+   public static class TransactionScopedLiteral extends AnnotationLiteral<TransactionScoped> implements TransactionScoped
    {
 
    }

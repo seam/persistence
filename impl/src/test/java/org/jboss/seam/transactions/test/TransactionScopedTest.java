@@ -1,9 +1,6 @@
 package org.jboss.seam.transactions.test;
 
-import java.util.List;
-
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.transaction.HeuristicMixedException;
@@ -18,6 +15,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.transaction.Transaction;
 import org.jboss.seam.persistence.transaction.UserTransaction;
+import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
@@ -28,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class UserTransactionTest
+public class TransactionScopedTest
 {
    @Deployment
    public static Archive<?> createTestArchive()
@@ -38,7 +36,8 @@ public class UserTransactionTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(Transaction.class.getPackage());
-      war.addClasses(UserTransactionTest.class, Hotel.class);
+      war.addPackage(TransactionScopeExtension.class.getPackage());
+      war.addClasses(TransactionScopedTest.class, Hotel.class, TransactionScopedObject.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
@@ -51,30 +50,25 @@ public class UserTransactionTest
    @PersistenceUnit
    EntityManagerFactory emf;
 
+   @Inject
+   TransactionScopedObject transactionScopedObject;
+
    @Test
-   public void userTransactionTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void transactionScopeTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
       transaction.begin();
-      EntityManager em = emf.createEntityManager();
-      em.joinTransaction();
-      Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
+      transactionScopedObject.setValue(10);
+      Assert.assertTrue(transactionScopedObject.getValue() == 10);
       transaction.commit();
 
       transaction.begin();
-      em = emf.createEntityManager();
-      em.joinTransaction();
-      h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
+      Assert.assertTrue(transactionScopedObject.getValue() == 0);
+      transactionScopedObject.setValue(20);
+      Assert.assertTrue(transactionScopedObject.getValue() == 20);
       transaction.rollback();
 
       transaction.begin();
-      em = emf.createEntityManager();
-      em.joinTransaction();
-      List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
-      Assert.assertTrue(hotels.size() == 1);
+      Assert.assertTrue(transactionScopedObject.getValue() == 0);
       transaction.rollback();
    }
 
