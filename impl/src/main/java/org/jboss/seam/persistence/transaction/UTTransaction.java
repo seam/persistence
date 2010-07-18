@@ -19,61 +19,59 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.transaction;
 
-import javax.ejb.EJBContext;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
-import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 import org.jboss.weld.extensions.core.Veto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Wraps EJBContext transaction management in a UserTransaction interface. Note
- * that container managed transactions cannot be controlled by the application,
- * so begin(), commit() and rollback() are disallowed in a CMT.
+ * Wraps JTA transaction management in a Seam UserTransaction interface.
  * 
  * @author Mike Youngstrom
  * @author Gavin King
- * @author Stuart Douglas
  * 
  */
 @Veto
-public class CMTTransaction extends AbstractUserTransaction
+public class UTTransaction extends AbstractUserTransaction
 {
+   private static final Logger log = LoggerFactory.getLogger(UTTransaction.class);
 
-   private final EJBContext ejbContext;
+   private final javax.transaction.UserTransaction delegate;
 
-   public CMTTransaction(EJBContext ejbContext, Synchronizations sync)
+   UTTransaction(javax.transaction.UserTransaction delegate, Synchronizations sync)
    {
       super(sync);
-      this.ejbContext = ejbContext;
-      if (ejbContext == null)
+      this.delegate = delegate;
+      if (delegate == null)
       {
-         throw new IllegalArgumentException("null EJBContext");
+         throw new IllegalArgumentException("null UserTransaction");
       }
    }
 
    public void begin() throws NotSupportedException, SystemException
    {
-      ejbContext.getUserTransaction().begin();
+      log.debug("beginning JTA transaction");
+      delegate.begin();
       getSynchronizations().afterTransactionBegin();
    }
 
    public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
    {
-      UserTransaction userTransaction = ejbContext.getUserTransaction();
+      log.debug("committing JTA transaction");
       boolean success = false;
       Synchronizations synchronizations = getSynchronizations();
       synchronizations.beforeTransactionCommit();
       try
       {
-         userTransaction.commit();
+         delegate.commit();
          success = true;
       }
       finally
@@ -84,10 +82,10 @@ public class CMTTransaction extends AbstractUserTransaction
 
    public void rollback() throws IllegalStateException, SecurityException, SystemException
    {
-      UserTransaction userTransaction = ejbContext.getUserTransaction();
+      log.debug("rolling back JTA transaction");
       try
       {
-         userTransaction.rollback();
+         delegate.rollback();
       }
       finally
       {
@@ -97,53 +95,23 @@ public class CMTTransaction extends AbstractUserTransaction
 
    public int getStatus() throws SystemException
    {
-      try
-      {
-         // TODO: not correct for SUPPORTS or NEVER!
-         if (!ejbContext.getRollbackOnly())
-         {
-            return Status.STATUS_ACTIVE;
-         }
-         else
-         {
-            return Status.STATUS_MARKED_ROLLBACK;
-         }
-      }
-      catch (IllegalStateException ise)
-      {
-         try
-         {
-            return ejbContext.getUserTransaction().getStatus();
-         }
-         catch (IllegalStateException is)
-         {
-            return Status.STATUS_NO_TRANSACTION;
-         }
-      }
+      return delegate.getStatus();
    }
 
    public void setRollbackOnly() throws IllegalStateException, SystemException
    {
-      ejbContext.setRollbackOnly();
+      delegate.setRollbackOnly();
    }
 
    public void setTransactionTimeout(int timeout) throws SystemException
    {
-      ejbContext.getUserTransaction().setTransactionTimeout(timeout);
+      delegate.setTransactionTimeout(timeout);
    }
 
    @Override
    public void registerSynchronization(Synchronization sync)
    {
-      Synchronizations synchronizations = getSynchronizations();
-      if (synchronizations.isAwareOfContainerTransactions())
-      {
-         synchronizations.registerSynchronization(sync);
-      }
-      else
-      {
-         throw new UnsupportedOperationException("cannot register synchronization with container transaction, use <transaction:ejb-transaction/>");
-      }
+      getSynchronizations().registerSynchronization(sync);
    }
 
 }

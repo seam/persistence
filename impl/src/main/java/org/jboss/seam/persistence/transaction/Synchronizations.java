@@ -19,42 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.transaction;
 
-import javax.ejb.EJBContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
+import javax.transaction.Synchronization;
 
 /**
- * utility class to look up the EJBContext
+ * Interface for registering transaction synchronizations
  * 
+ * @author Gavin King
  * 
  */
-public class EJB
+public interface Synchronizations
 {
-   public static String ejbContextName = "java:comp.ejb3/EJBContext";
-   public static final String STANDARD_EJB_CONTEXT_NAME = "java:comp/EJBContext";
+   public void afterTransactionBegin();
 
-   public static EJBContext getEJBContext() throws NamingException
-   {
-      try
-      {
-         return (EJBContext) Naming.getInitialContext().lookup(ejbContextName);
-      }
-      catch (NameNotFoundException nnfe)
-      {
-         return (EJBContext) Naming.getInitialContext().lookup(STANDARD_EJB_CONTEXT_NAME);
-      }
-   }
+   public void afterTransactionCommit(boolean success);
 
-   protected static String getEjbContextName()
-   {
-      return ejbContextName;
-   }
+   public void afterTransactionRollback();
 
-   protected static void setEjbContextName(String ejbContextName)
-   {
-      EJB.ejbContextName = ejbContextName;
-   }
+   public void beforeTransactionCommit();
 
+   public void registerSynchronization(Synchronization sync);
+
+   public boolean isAwareOfContainerTransactions();
 }

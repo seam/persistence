@@ -19,27 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.transaction;
 
-import javax.transaction.Synchronization;
+import javax.ejb.Local;
 
 /**
- * Interface for registering transaction synchronizations
+ * Local interface for EjbTransaction
  * 
  * @author Gavin King
  * 
  */
-public interface Synchronizations
+@Local
+public interface LocalEjbSynchronizations extends Synchronizations
 {
-   public void afterTransactionBegin();
-
-   public void afterTransactionCommit(boolean success);
-
-   public void afterTransactionRollback();
-
-   public void beforeTransactionCommit();
-
-   public void registerSynchronization(Synchronization sync);
-
-   public boolean isAwareOfContainerTransactions();
+   public void destroy();
 }

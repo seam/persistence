@@ -19,18 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.transaction;
 
-import javax.ejb.Local;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Qualifier;
 
 /**
- * Local interface for EjbTransaction
+ * Internal qualifier that is used to stop some beans from being exposed to the
+ * user
  * 
- * @author Gavin King
+ * @author Stuart Douglas
  * 
  */
-@Local
-public interface LocalEjbSynchronizations extends Synchronizations
+@Retention(RetentionPolicy.RUNTIME)
+@Qualifier
+@interface TransactionQualifier
 {
-   public void destroy();
+   public static class TransactionQualifierLiteral extends AnnotationLiteral<TransactionQualifier> implements TransactionQualifier
+   {
+   }
 }

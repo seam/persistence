@@ -19,26 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.transaction;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Qualifier;
+import javax.ejb.EJBContext;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
 
 /**
- * Internal qualifier that is used to stop some beans from being exposed to the
- * user
+ * utility class to look up the EJBContext
  * 
- * @author Stuart Douglas
  * 
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-@interface TransactionQualifier
+public class EJB
 {
-   public static class TransactionQualifierLiteral extends AnnotationLiteral<TransactionQualifier> implements TransactionQualifier
+   public static String ejbContextName = "java:comp.ejb3/EJBContext";
+   public static final String STANDARD_EJB_CONTEXT_NAME = "java:comp/EJBContext";
+
+   public static EJBContext getEJBContext() throws NamingException
    {
+      try
+      {
+         return (EJBContext) Naming.getInitialContext().lookup(ejbContextName);
+      }
+      catch (NameNotFoundException nnfe)
+      {
+         return (EJBContext) Naming.getInitialContext().lookup(STANDARD_EJB_CONTEXT_NAME);
+      }
    }
+
+   protected static String getEjbContextName()
+   {
+      return ejbContextName;
+   }
+
+   protected static void setEjbContextName(String ejbContextName)
+   {
+      EJB.ejbContextName = ejbContextName;
+   }
+
 }
