@@ -33,6 +33,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 
+import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.bean.BeanImpl;

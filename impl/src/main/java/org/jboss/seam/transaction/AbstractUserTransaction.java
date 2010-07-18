@@ -31,6 +31,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.seam.persistence.transaction.UserTransaction;
+
 /**
  * Base implementation of UserTransaction
  * 

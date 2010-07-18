@@ -33,6 +33,7 @@ import javax.interceptor.InvocationContext;
 
 import org.jboss.seam.persistence.transaction.TransactionPropagation;
 import org.jboss.seam.persistence.transaction.Transactional;
+import org.jboss.seam.persistence.transaction.UserTransaction;
 
 /**
  * Implements transaction propagation rules for Seam JavaBean components.

@@ -15,9 +15,9 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.seam.transaction.Transaction;
 import org.jboss.seam.transaction.TransactionInterceptor;
-import org.jboss.seam.transaction.UserTransaction;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.DontRollBackException;
 import org.jboss.seam.transactions.test.util.EntityManagerProvider;

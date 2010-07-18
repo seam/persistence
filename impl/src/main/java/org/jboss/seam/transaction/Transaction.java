@@ -27,6 +27,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.weld.extensions.managedproducer.ManagedProducer;
 
 /**
