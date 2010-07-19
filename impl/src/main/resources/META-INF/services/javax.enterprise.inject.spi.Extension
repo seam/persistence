@@ -1,3 +1,4 @@
 org.jboss.seam.persistence.PersistenceContextExtension
 org.jboss.seam.persistence.transaction.TransactionExtension
 org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension
+org.jboss.seam.persistence.ManagedPersistenceContextExtension

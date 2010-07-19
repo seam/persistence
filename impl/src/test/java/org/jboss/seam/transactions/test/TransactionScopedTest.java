@@ -17,6 +17,7 @@ import org.jboss.seam.persistence.transaction.Transaction;
 import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
+import org.jboss.seam.transactions.test.util.Hotel;
 import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,8 +32,7 @@ public class TransactionScopedTest
    @Deployment
    public static Archive<?> createTestArchive()
    {
-
-      WebArchive war = ShrinkWrap.create("test.war", WebArchive.class);
+      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(Transaction.class.getPackage());

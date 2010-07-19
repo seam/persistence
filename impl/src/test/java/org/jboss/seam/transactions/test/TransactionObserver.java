@@ -47,9 +47,12 @@ public class TransactionObserver
    public void observeBeforeTransactionCommit(@Observes AfterTransactionCompletion event)
    {
       afterTransaction = true;
-      if (expectSuccess != event.success())
+      if (enabled)
       {
-         throw new RuntimeException("Expected success to be " + expectSuccess);
+         if (expectSuccess != event.success())
+         {
+            throw new RuntimeException("Expected success to be " + expectSuccess);
+         }
       }
    }
 
