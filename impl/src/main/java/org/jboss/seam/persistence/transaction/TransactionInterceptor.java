@@ -21,11 +21,13 @@
  */
 package org.jboss.seam.persistence.transaction;
 
+import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -43,14 +45,13 @@ import org.jboss.seam.persistence.transaction.UserTransaction;
  */
 @Transactional
 @Interceptor
-public class TransactionInterceptor
+public class TransactionInterceptor implements Serializable
 {
    private static final long serialVersionUID = -4364203056333738988L;
 
    transient private Map<AnnotatedElement, TransactionMetadata> transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
 
-   @Inject
-   UserTransaction transaction;
+   @Inject Instance<UserTransaction> transaction;
 
    private class TransactionMetadata
    {
@@ -139,7 +140,7 @@ public class TransactionInterceptor
             }
          }
 
-      }.workInTransaction(transaction);
+      }.workInTransaction(transaction.get());
    }
 
 }
