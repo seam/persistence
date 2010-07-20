@@ -87,8 +87,9 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       }
    }
 
-   public void destroy(BeanImpl<EntityManager> bean, EntityManager arg0, CreationalContext<EntityManager> arg1)
+   public void destroy(BeanImpl<EntityManager> bean, EntityManager em, CreationalContext<EntityManager> arg1)
    {
+      em.close();
       arg1.release();
    }
 
