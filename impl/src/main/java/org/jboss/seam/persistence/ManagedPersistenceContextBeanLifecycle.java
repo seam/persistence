@@ -79,6 +79,9 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       this.manager = manager;
    }
 
+   /**
+    * creates the proxy
+    */
    public EntityManager create(BeanImpl<EntityManager> bean, CreationalContext<EntityManager> arg0)
    {
       try
@@ -101,13 +104,16 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       arg1.release();
    }
 
+   /**
+    * lazily resolve the relevant EMF
+    */
    private EntityManagerFactory getEntityManagerFactory()
    {
       if (emf == null)
       {
          try
          {
-            emf = BeanResolver.getReference(EntityManagerFactory.class, qualifiers, manager);
+            emf = BeanResolver.getReference(EntityManagerFactory.class, manager, qualifiers);
          }
          catch (BeanResolutionException e)
          {

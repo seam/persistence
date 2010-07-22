@@ -24,20 +24,20 @@ package org.jboss.seam.persistence.transaction.scope;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionScoped;
-import org.jboss.seam.persistence.transaction.UserTransaction;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
+import org.jboss.weld.extensions.util.BeanResolutionException;
+import org.jboss.weld.extensions.util.BeanResolver;
 
 /**
  * Context for the {@link TransactionScoped} scope
@@ -48,7 +48,7 @@ import org.jboss.weld.extensions.literal.DefaultLiteral;
 public class TransactionScopeContext implements Context, Synchronization
 {
 
-   private UserTransaction userTransaction;
+   private SeamTransaction userTransaction;
 
    private final BeanManager beanManager;
 
@@ -76,10 +76,14 @@ public class TransactionScopeContext implements Context, Synchronization
          {
             if (userTransaction == null)
             {
-               Set<Bean<?>> beans = beanManager.getBeans(UserTransaction.class, new DefaultLiteral());
-               Bean<UserTransaction> userTransactionBean = (Bean<UserTransaction>) beans.iterator().next();
-               CreationalContext<?> ctx = beanManager.createCreationalContext(userTransactionBean);
-               userTransaction = (UserTransaction) beanManager.getReference(userTransactionBean, UserTransaction.class, ctx);
+               try
+               {
+                  userTransaction = BeanResolver.getReference(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
+               }
+               catch (BeanResolutionException e)
+               {
+                  throw new RuntimeException(e);
+               }
             }
          }
       }

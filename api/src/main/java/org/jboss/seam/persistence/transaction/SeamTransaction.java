@@ -33,7 +33,7 @@ import javax.transaction.SystemException;
  * @author Gavin King
  * 
  */
-public interface UserTransaction extends javax.transaction.UserTransaction
+public interface SeamTransaction extends javax.transaction.UserTransaction
 {
 
    public boolean isActive() throws SystemException;

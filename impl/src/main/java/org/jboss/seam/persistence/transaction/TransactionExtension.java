@@ -21,29 +21,26 @@
  */
 package org.jboss.seam.persistence.transaction;
 
-import java.util.Collections;
-import java.util.Set;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
 
-import org.jboss.seam.persistence.transaction.UserTransaction;
+import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
 import org.jboss.weld.extensions.defaultbean.DefaultBeanExtension;
+import org.jboss.weld.extensions.util.BeanResolutionException;
+import org.jboss.weld.extensions.util.BeanResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extension than provides a {@link UserTransaction} if no other UserTransaction
+ * Extension than provides a {@link SeamTransaction} if no other UserTransaction
  * has been registered.
  * 
  * This allows the user to register a transaction via seam XML and have it
@@ -59,22 +56,21 @@ import org.slf4j.LoggerFactory;
  */
 public class TransactionExtension implements Extension
 {
-   private boolean transactionRegistered = false;
 
    private static final Logger log = LoggerFactory.getLogger(TransactionExtension.class);
 
-   public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event,BeanManager manager)
+   public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager manager)
    {
-      AnnotatedTypeBuilder<UserTransaction> utbuilder = AnnotatedTypeBuilder.newInstance(UserTransaction.class);
-      BeanBuilder<UserTransaction> builder = new BeanBuilder<UserTransaction>(utbuilder.create(), manager);
+      AnnotatedTypeBuilder<SeamTransaction> utbuilder = AnnotatedTypeBuilder.newInstance(SeamTransaction.class);
+      BeanBuilder<SeamTransaction> builder = new BeanBuilder<SeamTransaction>(utbuilder.create(), manager);
       builder.defineBeanFromAnnotatedType();
-
       builder.setBeanLifecycle(new TransactionLifecycle(manager));
-      builder.setInjectionTarget(new NoOpInjectionTarget());
-      DefaultBeanExtension.addDefaultBean(UserTransaction.class, builder.create());
+      builder.getQualifiers().clear();
+      builder.getQualifiers().add(DefaultTransactionLiteral.INSTANCE);
+      DefaultBeanExtension.addDefaultBean(SeamTransaction.class, builder.create());
    }
 
-   private static class TransactionLifecycle implements BeanLifecycle<UserTransaction>
+   private static class TransactionLifecycle implements BeanLifecycle<SeamTransaction>
    {
 
       private final BeanManager manager;
@@ -86,7 +82,7 @@ public class TransactionExtension implements Extension
          this.manager = manager;
       }
 
-      public UserTransaction create(BeanImpl<UserTransaction> bean, CreationalContext<UserTransaction> ctx)
+      public SeamTransaction create(BeanImpl<SeamTransaction> bean, CreationalContext<SeamTransaction> ctx)
       {
          if (transactionBean == null)
          {
@@ -94,10 +90,10 @@ public class TransactionExtension implements Extension
             // is initialised twice
             setupBeanDefinition();
          }
-         return (UserTransaction) manager.getReference(transactionBean, UserTransaction.class, ctx);
+         return (SeamTransaction) manager.getReference(transactionBean, SeamTransaction.class, ctx);
       }
 
-      public void destroy(BeanImpl<UserTransaction> bean, UserTransaction arg0, CreationalContext<UserTransaction> arg1)
+      public void destroy(BeanImpl<SeamTransaction> bean, SeamTransaction arg0, CreationalContext<SeamTransaction> arg1)
       {
          arg1.release();
       }
@@ -107,52 +103,16 @@ public class TransactionExtension implements Extension
        */
       private void setupBeanDefinition()
       {
-         Set<Bean<?>> beans = manager.getBeans(UserTransaction.class, new TransactionQualifier.TransactionQualifierLiteral());
-         if (beans.isEmpty())
+         try
          {
-            log.error("No bean with type " + UserTransaction.class.getName() + " and qualifier " + TransactionQualifier.class.getName() + " registered, SEAM TRANSACTIONS ARE DISABLED");
+            transactionBean = BeanResolver.resolveBean(SeamTransaction.class, manager, new TransactionQualifier.TransactionQualifierLiteral());
          }
-         else if (beans.size() > 1)
+         catch (BeanResolutionException e)
          {
-            log.error("More than 1 bean with type " + UserTransaction.class.getName() + " and qualifier " + TransactionQualifier.class.getName() + " registered, SEAM TRANSACTIONS ARE DISABLED");
+            throw new RuntimeException(e);
          }
-         transactionBean = beans.iterator().next();
       }
 
    }
 
-   private static class NoOpInjectionTarget implements InjectionTarget<UserTransaction>
-   {
-
-      public UserTransaction produce(CreationalContext<UserTransaction> ctx)
-      {
-         return null;
-      }
-
-      public Set<InjectionPoint> getInjectionPoints()
-      {
-         return Collections.emptySet();
-      }
-
-      public void dispose(UserTransaction instance)
-      {
-
-      }
-
-      public void preDestroy(UserTransaction instance)
-      {
-
-      }
-
-      public void postConstruct(UserTransaction instance)
-      {
-
-      }
-
-      public void inject(UserTransaction instance, CreationalContext<UserTransaction> ctx)
-      {
-
-      }
-
-   }
 }

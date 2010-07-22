@@ -13,8 +13,9 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.transaction.DefaultTransaction;
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.Transaction;
-import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.Hotel;
@@ -45,7 +46,8 @@ public class TransactionScopedTest
    }
 
    @Inject
-   UserTransaction transaction;
+   @DefaultTransaction
+   SeamTransaction transaction;
 
    @PersistenceUnit
    EntityManagerFactory emf;

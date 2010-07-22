@@ -15,8 +15,9 @@ import junit.framework.Assert;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.PersistenceContextExtension;
+import org.jboss.seam.persistence.transaction.DefaultTransaction;
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.Transaction;
-import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.Hotel;
 import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
@@ -47,7 +48,8 @@ public class ManagedPersistenceContextTest
    }
 
    @Inject
-   UserTransaction transaction;
+   @DefaultTransaction
+   SeamTransaction transaction;
 
    @Inject
    EntityManager em;

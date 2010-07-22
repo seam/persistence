@@ -30,8 +30,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.transaction.UserTransaction;
-import org.jboss.weld.extensions.util.BeanResolutionException;
+import org.jboss.seam.persistence.transaction.SeamTransaction;
+import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.weld.extensions.util.BeanResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
 
    private transient BeanManager beanManager;
 
-   private transient UserTransaction userTransaction;
+   private transient SeamTransaction userTransaction;
 
    private transient boolean synchronizationRegistered;
 
@@ -76,7 +76,7 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
 
    private void joinTransaction() throws SystemException
    {
-      UserTransaction transaction = getUserTransaction();
+      SeamTransaction transaction = getUserTransaction();
       if (transaction.isActive())
       {
          transaction.enlist(delegate);
@@ -95,13 +95,13 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
       }
    }
 
-   private UserTransaction getUserTransaction()
+   private SeamTransaction getUserTransaction()
    {
       if (userTransaction == null)
       {
          try
          {
-            userTransaction = BeanResolver.getDefaultReference(UserTransaction.class, beanManager);
+            userTransaction = BeanResolver.getReference(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
          }
          catch (Exception e)
          {

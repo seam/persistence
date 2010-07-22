@@ -31,7 +31,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.transaction.UserTransaction;
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 
 /**
  * Base implementation of UserTransaction
@@ -39,7 +39,7 @@ import org.jboss.seam.persistence.transaction.UserTransaction;
  * @author Gavin King
  * 
  */
-public abstract class AbstractUserTransaction implements UserTransaction
+public abstract class AbstractUserTransaction implements SeamTransaction
 {
 
    private final Synchronizations synchronizations;

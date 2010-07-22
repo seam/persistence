@@ -27,7 +27,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.jboss.seam.persistence.transaction.UserTransaction;
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.weld.extensions.managedproducer.ManagedProducer;
 
 /**
@@ -48,7 +48,7 @@ public class Transaction
 
    @ManagedProducer
    @TransactionQualifier
-   public UserTransaction getTransaction() throws NamingException
+   public SeamTransaction getTransaction() throws NamingException
    {
       try
       {
@@ -67,17 +67,17 @@ public class Transaction
       }
    }
 
-   protected UserTransaction createNoTransaction()
+   protected SeamTransaction createNoTransaction()
    {
       return new NoTransaction();
    }
 
-   protected UserTransaction createCMTTransaction() throws NamingException
+   protected SeamTransaction createCMTTransaction() throws NamingException
    {
       return new CMTTransaction(EJB.getEJBContext(), synchronizations);
    }
 
-   protected UserTransaction createUTTransaction() throws NamingException
+   protected SeamTransaction createUTTransaction() throws NamingException
    {
       return new UTTransaction(getUserTransaction(), synchronizations);
    }

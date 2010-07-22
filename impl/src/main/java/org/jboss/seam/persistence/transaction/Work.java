@@ -44,7 +44,7 @@ public abstract class Work<T>
       return !transactionActive;
    }
 
-   public final T workInTransaction(org.jboss.seam.persistence.transaction.UserTransaction transaction) throws Exception
+   public final T workInTransaction(org.jboss.seam.persistence.transaction.SeamTransaction transaction) throws Exception
    {
       boolean transactionActive = transaction.isActiveOrMarkedRollback() || transaction.isRolledBack();
       // TODO: temp workaround, what should we really do in this case??

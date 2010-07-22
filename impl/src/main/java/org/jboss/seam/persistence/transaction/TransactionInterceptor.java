@@ -33,10 +33,6 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
-import org.jboss.seam.persistence.transaction.TransactionPropagation;
-import org.jboss.seam.persistence.transaction.Transactional;
-import org.jboss.seam.persistence.transaction.UserTransaction;
-
 /**
  * Implements transaction propagation rules for Seam JavaBean components.
  * 
@@ -51,7 +47,9 @@ public class TransactionInterceptor implements Serializable
 
    transient private Map<AnnotatedElement, TransactionMetadata> transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
 
-   @Inject Instance<UserTransaction> transaction;
+   @Inject
+   @DefaultTransaction
+   Instance<SeamTransaction> transaction;
 
    private class TransactionMetadata
    {

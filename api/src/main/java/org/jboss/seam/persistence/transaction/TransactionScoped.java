@@ -28,7 +28,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.enterprise.context.NormalScope;
-import javax.enterprise.util.AnnotationLiteral;
 
 /**
  * 
@@ -41,9 +40,5 @@ import javax.enterprise.util.AnnotationLiteral;
 @NormalScope(passivating = false)
 public @interface TransactionScoped
 {
-   public static class TransactionScopedLiteral extends AnnotationLiteral<TransactionScoped> implements TransactionScoped
-   {
-
-   }
 
 }

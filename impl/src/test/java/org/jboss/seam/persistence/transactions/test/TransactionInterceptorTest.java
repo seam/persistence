@@ -36,9 +36,10 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.transaction.DefaultTransaction;
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.Transaction;
 import org.jboss.seam.persistence.transaction.TransactionInterceptor;
-import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.DontRollBackException;
 import org.jboss.seam.transactions.test.util.EntityManagerProvider;
@@ -79,7 +80,8 @@ public class TransactionInterceptorTest
    TransactionManagedBean bean;
 
    @Inject
-   UserTransaction transaction;
+   @DefaultTransaction
+   SeamTransaction transaction;
 
    @PersistenceContext
    EntityManager em;
