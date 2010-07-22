@@ -21,13 +21,18 @@
  */
 package org.jboss.seam.transactions.test.util;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
-public class EntityManagerProvider
+import org.jboss.seam.persistence.SeamManaged;
+
+public class ManagedPersistenceContextProvider
 {
-   @PersistenceContext
+   @PersistenceUnit
+   @RequestScoped
    @Produces
-   EntityManager em;
+   @SeamManaged
+   EntityManagerFactory emf;
 }

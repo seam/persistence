@@ -18,8 +18,8 @@ import org.jboss.seam.persistence.PersistenceContextExtension;
 import org.jboss.seam.persistence.transaction.Transaction;
 import org.jboss.seam.persistence.transaction.UserTransaction;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
-import org.jboss.seam.transactions.test.util.EntityManagerProvider;
 import org.jboss.seam.transactions.test.util.Hotel;
+import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
 import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,7 +39,7 @@ public class ManagedPersistenceContextTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(Transaction.class.getPackage());
       war.addPackage(PersistenceContextExtension.class.getPackage());
-      war.addClasses(ManagedPersistenceContextTest.class, Hotel.class, EntityManagerProvider.class);
+      war.addClasses(ManagedPersistenceContextTest.class, Hotel.class, ManagedPersistenceContextProvider.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");

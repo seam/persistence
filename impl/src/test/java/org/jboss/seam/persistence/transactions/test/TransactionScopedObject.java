@@ -1,4 +1,4 @@
-package org.jboss.seam.transactions.test;
+package org.jboss.seam.persistence.transactions.test;
 
 import org.jboss.seam.persistence.transaction.TransactionScoped;
 

@@ -22,22 +22,20 @@
 package org.jboss.seam.persistence;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.ProcessProducer;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
@@ -58,37 +56,64 @@ public class ManagedPersistenceContextExtension implements Extension
 
    Set<Bean<?>> beans = new HashSet<Bean<?>>();
 
-   public <T> void processProducer(@Observes ProcessProducer<T, EntityManagerFactory> event, BeanManager manager)
+   /**
+    * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
+    * producer field that is annotated {@link SeamManaged}. Then found a
+    * corresponding smpc bean is created and registered. Any scope declaration
+    * on the producer are removed as this is not supported by the spec
+    * 
+    */
+   public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> event, BeanManager manager)
    {
-      if (!event.getAnnotatedMember().isAnnotationPresent(SeamManaged.class))
+      AnnotatedTypeBuilder<T> modifiedType = null;
+      for (AnnotatedField<? super T> f : event.getAnnotatedType().getFields())
       {
-         return;
-      }
-      Set<Annotation> qualifiers = new HashSet<Annotation>();
-      Class scope = Dependent.class;
-      for (Annotation a : event.getAnnotatedMember().getAnnotations())
-      {
-         if (manager.isQualifier(a.annotationType()))
+         // look for a seam managed persistence unit declaration
+         if (f.isAnnotationPresent(SeamManaged.class) && f.isAnnotationPresent(PersistenceUnit.class) && f.isAnnotationPresent(Produces.class))
          {
-            qualifiers.add(a);
+            if (modifiedType == null)
+            {
+               modifiedType = AnnotatedTypeBuilder.newInstance(event.getAnnotatedType()).mergeAnnotations(event.getAnnotatedType(), true);
+            }
+            Set<Annotation> qualifiers = new HashSet<Annotation>();
+            Class<? extends Annotation> scope = Dependent.class;
+            // get the qualifier and scope for the new bean
+            for (Annotation a : f.getAnnotations())
+            {
+               if (manager.isQualifier(a.annotationType()))
+               {
+                  qualifiers.add(a);
+               }
+               else if (manager.isScope(a.annotationType()))
+               {
+                  scope = a.annotationType();
+               }
+            }
+            if (qualifiers.isEmpty())
+            {
+               qualifiers.add(new DefaultLiteral());
+            }
+            // we need to remove the scope, they are not nessesarily supported
+            // on producer fields
+            if (scope != Dependent.class)
+            {
+               modifiedType.removeFromField(f.getJavaMember(), scope);
+            }
+            // create the new bean to be registerd later
+            AnnotatedTypeBuilder<EntityManager> typeBuilder = AnnotatedTypeBuilder.newInstance(EntityManager.class);
+            BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(typeBuilder.create(), manager);
+            builder.defineBeanFromAnnotatedType();
+            builder.setQualifiers(qualifiers);
+            builder.setScope(scope);
+            builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, manager));
+            beans.add(builder.create());
          }
-         else if (manager.isScope(a.annotationType()))
-         {
-            scope = a.annotationType();
-         }
+
       }
-      if (qualifiers.isEmpty())
+      if (modifiedType != null)
       {
-         qualifiers.add(new DefaultLiteral());
+         event.setAnnotatedType(modifiedType.create());
       }
-      AnnotatedTypeBuilder<EntityManager> typeBuilder = AnnotatedTypeBuilder.newInstance(EntityManager.class);
-      BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(typeBuilder.create(), manager);
-      builder.defineBeanFromAnnotatedType();
-      builder.setQualifiers(qualifiers);
-      builder.setScope(scope);
-      builder.setInjectionTarget(new NoOpInjectionTarget());
-      builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, manager));
-      beans.add(builder.create());
    }
 
    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event)
@@ -99,38 +124,4 @@ public class ManagedPersistenceContextExtension implements Extension
       }
    }
 
-   private static class NoOpInjectionTarget implements InjectionTarget<EntityManager>
-   {
-
-      public EntityManager produce(CreationalContext<EntityManager> ctx)
-      {
-         return null;
-      }
-
-      public Set<InjectionPoint> getInjectionPoints()
-      {
-         return Collections.emptySet();
-      }
-
-      public void dispose(EntityManager instance)
-      {
-
-      }
-
-      public void preDestroy(EntityManager instance)
-      {
-
-      }
-
-      public void postConstruct(EntityManager instance)
-      {
-
-      }
-
-      public void inject(EntityManager instance, CreationalContext<EntityManager> ctx)
-      {
-
-      }
-
-   }
 }

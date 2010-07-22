@@ -37,6 +37,13 @@ import javax.persistence.EntityManagerFactory;
 import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
 
+/**
+ * Class that is responsible for creating and destroying the seam managed
+ * persistence context
+ * 
+ * @author Stuart Douglas
+ * 
+ */
 public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<EntityManager>
 {
 
@@ -45,17 +52,6 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
    private final BeanManager manager;
 
    static final Class<?> proxyClass = Proxy.getProxyClass(EntityManager.class.getClassLoader(), EntityManager.class, Serializable.class);
-
-   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, BeanManager manager)
-   {
-      this.qualifiers = new Annotation[qualifiers.size()];
-      int i = 0;
-      for (Annotation a : qualifiers)
-      {
-         this.qualifiers[i++] = a;
-      }
-      this.manager = manager;
-   }
 
    static final Constructor<?> proxyConstructor;
 
@@ -69,6 +65,17 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       {
          throw new RuntimeException(e);
       }
+   }
+
+   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, BeanManager manager)
+   {
+      this.qualifiers = new Annotation[qualifiers.size()];
+      int i = 0;
+      for (Annotation a : qualifiers)
+      {
+         this.qualifiers[i++] = a;
+      }
+      this.manager = manager;
    }
 
    public EntityManager create(BeanImpl<EntityManager> bean, CreationalContext<EntityManager> arg0)
