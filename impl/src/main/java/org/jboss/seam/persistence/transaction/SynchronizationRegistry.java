@@ -28,8 +28,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 
-import org.jboss.seam.persistence.transaction.event.AfterTransactionCompletion;
-import org.jboss.seam.persistence.transaction.event.BeforeTransactionCompletion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +60,6 @@ class SynchronizationRegistry
 
    void afterTransactionCompletion(boolean success)
    {
-      beanManager.fireEvent(new AfterTransactionCompletion(success));
       for (Synchronization sync : synchronizations)
       {
          try
@@ -79,7 +76,6 @@ class SynchronizationRegistry
 
    void beforeTransactionCompletion()
    {
-      beanManager.fireEvent(new BeforeTransactionCompletion());
       for (Synchronization sync : synchronizations)
       {
          try

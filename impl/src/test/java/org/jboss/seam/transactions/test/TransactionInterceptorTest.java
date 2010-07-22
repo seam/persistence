@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2010, Red Hat, Inc., and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.jboss.seam.transactions.test;
 
 import java.util.List;
@@ -30,6 +51,12 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * Tests the @Transactional interceptor
+ * 
+ * @author stuart
+ * 
+ */
 @RunWith(Arquillian.class)
 public class TransactionInterceptorTest
 {
@@ -41,7 +68,7 @@ public class TransactionInterceptorTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(Transaction.class.getPackage());
-      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class, TransactionObserver.class);
+      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
@@ -57,50 +84,28 @@ public class TransactionInterceptorTest
    @PersistenceContext
    EntityManager em;
 
-   @Inject
-   TransactionObserver observer;
-
    @Test
    public void testTransactionInterceptor() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
-      observer.setEnabled(true);
+
+      bean.addHotel();
+      assertHotels(1);
       try
       {
-         observer.reset(true);
-         bean.addHotel();
-         assertHotels(1);
-         observer.verify();
-         observer.reset(false);
-         try
-         {
-            bean.failToAddHotel();
-         }
-         catch (Exception e)
-         {
-         }
-         assertHotels(1);
-         observer.verify();
-         observer.reset(true);
-         try
-         {
-            bean.addHotelWithApplicationException();
-         }
-         catch (DontRollBackException e)
-         {
-         }
-         observer.setEnabled(false);
-         assertHotels(2);
-         observer.verify();
+         bean.failToAddHotel();
       }
       catch (Exception e)
       {
-         throw new RuntimeException(e);
       }
-      finally
+      assertHotels(1);
+      try
       {
-         observer.setEnabled(false);
+         bean.addHotelWithApplicationException();
       }
-
+      catch (DontRollBackException e)
+      {
+      }
+      assertHotels(2);
    }
 
    public void assertHotels(int count) throws NotSupportedException, SystemException
