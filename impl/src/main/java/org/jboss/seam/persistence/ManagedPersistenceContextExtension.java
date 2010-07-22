@@ -45,10 +45,9 @@ import org.jboss.weld.extensions.literal.DefaultLiteral;
  * Extension the wraps producer methods/fields that produce an entity manager to
  * turn them into Seam Managed Persistence Contexts.
  * 
- * At present this happens automatically, in future we will need some way to
- * configure it
  * 
- * @author stuart
+ * 
+ * @author Stuart Douglas
  * 
  */
 public class ManagedPersistenceContextExtension implements Extension

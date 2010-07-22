@@ -21,13 +21,43 @@
  */
 package org.jboss.seam.persistence;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.enterprise.context.Dependent;
+import javax.persistence.EntityManagerFactory;
+
+/**
+ * Signifies that a resource producer field or producer method that produces an
+ * {@link EntityManagerFactory} should also produce a Seam managed persistence
+ * context. For example:
+ * 
+ * <pre>
+ * &#064;SeamManaged
+ * &#064;Produces
+ * &#064;PersistenceUnit
+ * &#064;ConversationScoped
+ * &#064;SomeQualifier
+ * EntityManagerFactory emf;
+ * </pre>
+ * 
+ * will create a conversation scoped seam managed persistence context that is
+ * conversation scoped with the qualifier @SomeQualifier.
+ * 
+ * This field still produces the EntityManagerFactory with qualifier
+ * @SomeQualifier, however the scope for the producer field is changed to
+ * {@link Dependent}, as the specification does not allow resource producer
+ * fields to have a scope other than Depedent
+ * 
+ * @author Stuart Douglas
+ * 
+ */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.FIELD })
+@Target( { ElementType.FIELD, ElementType.METHOD })
+@Documented
 public @interface SeamManaged
 {
 

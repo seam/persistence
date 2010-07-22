@@ -29,13 +29,14 @@ import java.lang.reflect.Proxy;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
+import org.jboss.weld.extensions.util.BeanResolutionException;
+import org.jboss.weld.extensions.util.BeanResolver;
 
 /**
  * Class that is responsible for creating and destroying the seam managed
@@ -104,20 +105,15 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
    {
       if (emf == null)
       {
-         Set<Bean<?>> beans = manager.getBeans(EntityManagerFactory.class, qualifiers);
-         if (beans.size() == 0)
+         try
          {
-            throw new RuntimeException("No bean found with type EntityManagerFactory and qualifiers " + qualifiers);
+            emf = BeanResolver.getReference(EntityManagerFactory.class, qualifiers, manager);
          }
-         if (beans.size() != 1)
+         catch (BeanResolutionException e)
          {
-            throw new RuntimeException("More than 1 bean found with type EntityManagerFactory and qualifiers " + qualifiers);
+            throw new RuntimeException(e);
          }
-         Bean<?> emfBean = beans.iterator().next();
-         CreationalContext<?> emfCreationalContext = manager.createCreationalContext(emfBean);
-         emf = (EntityManagerFactory) manager.getReference(emfBean, EntityManagerFactory.class, emfCreationalContext);
       }
       return emf;
    }
-
 }
