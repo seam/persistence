@@ -1,70 +1,57 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
 package org.jboss.seam.persistence.transaction;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.weld.extensions.managedproducer.ManagedProducer;
+import org.jboss.weld.extensions.literal.DefaultLiteral;
 
 /**
+ * Invocation handler for the default SeamTransaction proxy
+ * 
  * Supports injection of a Seam UserTransaction object that wraps the current
  * JTA transaction or EJB container managed transaction.
  * 
- * @author Mike Youngstrom
- * @author Gavin King
  * @author Stuart Douglas
  * 
  */
-@ApplicationScoped
-public class Transaction
+public class TransactionInvocationHandler implements InvocationHandler
 {
 
-   @Inject
-   Synchronizations synchronizations;
+   private final Synchronizations synchronizations;
 
-   @ManagedProducer
-   @TransactionQualifier
-   public SeamTransaction getTransaction() throws NamingException
+   public TransactionInvocationHandler(BeanManager manager)
    {
+      Bean<Synchronizations> bean = (Bean) manager.resolve(manager.getBeans(Synchronizations.class, DefaultLiteral.INSTANCE));
+      CreationalContext<Synchronizations> ctx = manager.createCreationalContext(bean);
+      synchronizations = (Synchronizations) manager.getReference(bean, Synchronizations.class, ctx);
+   }
+
+   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+   {
+      SeamTransaction instance;
       try
       {
-         return createUTTransaction();
+         instance = createUTTransaction();
       }
       catch (NameNotFoundException nnfe)
       {
          try
          {
-            return createCMTTransaction();
+            instance = createCMTTransaction();
          }
          catch (NameNotFoundException nnfe2)
          {
-            return createNoTransaction();
+            instance = createNoTransaction();
          }
       }
+      return method.invoke(instance, args);
    }
 
    protected SeamTransaction createNoTransaction()
@@ -104,7 +91,4 @@ public class Transaction
          }
       }
    }
-
 }
-
-

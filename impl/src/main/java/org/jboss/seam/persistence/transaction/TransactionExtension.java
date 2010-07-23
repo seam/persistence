@@ -21,9 +21,7 @@
  */
 package org.jboss.seam.persistence.transaction;
 
-import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
@@ -31,8 +29,6 @@ import javax.enterprise.inject.spi.Extension;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
-import org.jboss.weld.extensions.bean.BeanImpl;
-import org.jboss.weld.extensions.bean.BeanLifecycle;
 import org.jboss.weld.extensions.defaultbean.DefaultBeanExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,52 +58,10 @@ public class TransactionExtension implements Extension
       AnnotatedTypeBuilder<SeamTransaction> utbuilder = AnnotatedTypeBuilder.newInstance(SeamTransaction.class);
       BeanBuilder<SeamTransaction> builder = new BeanBuilder<SeamTransaction>(utbuilder.create(), manager);
       builder.defineBeanFromAnnotatedType();
-      builder.setBeanLifecycle(new TransactionLifecycle(manager));
+      builder.setBeanLifecycle(new TransactionBeanLifecycle(manager));
       builder.getQualifiers().clear();
       builder.getQualifiers().add(DefaultTransactionLiteral.INSTANCE);
       DefaultBeanExtension.addDefaultBean(SeamTransaction.class, builder.create());
-   }
-
-   private static class TransactionLifecycle implements BeanLifecycle<SeamTransaction>
-   {
-
-      private final BeanManager manager;
-
-      private Bean<?> transactionBean;
-
-      public TransactionLifecycle(BeanManager manager)
-      {
-         this.manager = manager;
-      }
-
-      public SeamTransaction create(BeanImpl<SeamTransaction> bean, CreationalContext<SeamTransaction> ctx)
-      {
-         if (transactionBean == null)
-         {
-            // this does not need to be thread safe, it does not matter if this
-            // is initialised twice
-            setupBeanDefinition();
-         }
-         return (SeamTransaction) manager.getReference(transactionBean, SeamTransaction.class, ctx);
-      }
-
-      public void destroy(BeanImpl<SeamTransaction> bean, SeamTransaction arg0, CreationalContext<SeamTransaction> arg1)
-      {
-         arg1.release();
-      }
-
-      /**
-       * we need to init the bean definition lazily
-       */
-      private void setupBeanDefinition()
-      {
-         transactionBean = (Bean) manager.resolve(manager.getBeans(SeamTransaction.class, new TransactionQualifier.TransactionQualifierLiteral()));
-         if (transactionBean == null)
-         {
-            throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
-         }
-      }
-
    }
 
 }
