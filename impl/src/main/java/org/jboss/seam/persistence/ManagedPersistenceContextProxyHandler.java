@@ -25,14 +25,16 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
-import org.jboss.weld.extensions.util.BeanResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,14 +101,13 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
    {
       if (userTransaction == null)
       {
-         try
+         Bean<SeamTransaction> bean = (Bean) beanManager.resolve(beanManager.getBeans(SeamTransaction.class, DefaultTransactionLiteral.INSTANCE));
+         if (bean == null)
          {
-            userTransaction = BeanResolver.getReference(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
+            throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
          }
-         catch (Exception e)
-         {
-            throw new RuntimeException(e);
-         }
+         CreationalContext<SeamTransaction> ctx = beanManager.createCreationalContext(bean);
+         userTransaction = (SeamTransaction) beanManager.getReference(bean, SeamTransaction.class, ctx);
       }
       return userTransaction;
    }

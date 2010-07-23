@@ -29,14 +29,13 @@ import java.lang.reflect.Proxy;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
-import org.jboss.weld.extensions.util.BeanResolutionException;
-import org.jboss.weld.extensions.util.BeanResolver;
 
 /**
  * Class that is responsible for creating and destroying the seam managed
@@ -111,14 +110,13 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
    {
       if (emf == null)
       {
-         try
+         Bean<EntityManagerFactory> bean = (Bean) manager.resolve(manager.getBeans(EntityManagerFactory.class, qualifiers));
+         if (bean == null)
          {
-            emf = BeanResolver.getReference(EntityManagerFactory.class, manager, qualifiers);
+            throw new RuntimeException("Could not find EntityManagerFactory bean with qualifiers" + qualifiers);
          }
-         catch (BeanResolutionException e)
-         {
-            throw new RuntimeException(e);
-         }
+         CreationalContext<EntityManagerFactory> ctx = manager.createCreationalContext(bean);
+         emf = (EntityManagerFactory) manager.getReference(bean, EntityManagerFactory.class, ctx);
       }
       return emf;
    }

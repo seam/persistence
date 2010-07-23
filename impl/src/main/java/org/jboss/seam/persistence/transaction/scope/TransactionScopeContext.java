@@ -29,15 +29,15 @@ import java.util.Map.Entry;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionScoped;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
-import org.jboss.weld.extensions.util.BeanResolutionException;
-import org.jboss.weld.extensions.util.BeanResolver;
 
 /**
  * Context for the {@link TransactionScoped} scope
@@ -76,14 +76,13 @@ public class TransactionScopeContext implements Context, Synchronization
          {
             if (userTransaction == null)
             {
-               try
+               Bean<SeamTransaction> bean = (Bean) beanManager.resolve(beanManager.getBeans(SeamTransaction.class, DefaultTransactionLiteral.INSTANCE));
+               if (bean == null)
                {
-                  userTransaction = BeanResolver.getReference(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
+                  throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
                }
-               catch (BeanResolutionException e)
-               {
-                  throw new RuntimeException(e);
-               }
+               CreationalContext<SeamTransaction> ctx = beanManager.createCreationalContext(bean);
+               userTransaction = (SeamTransaction) beanManager.getReference(bean, SeamTransaction.class, ctx);
             }
          }
       }

@@ -27,17 +27,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
 
-
 /**
+ * Demarcates transaction boundaries
+ * 
+ * Note that is you are using seam managed transactions seam will automatically
+ * manage your transactions for you, rendering this unnessesary
+ * 
+ * 
  * @author Dan Allen
  */
 @Inherited
-@InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.METHOD, ElementType.TYPE })
+@InterceptorBinding
 public @interface Transactional
 {
    /**
@@ -45,6 +49,5 @@ public @interface Transactional
     * 
     * @return REQUIRED by default
     */
-   @Nonbinding 
    TransactionPropagation value() default TransactionPropagation.REQUIRED;
 }

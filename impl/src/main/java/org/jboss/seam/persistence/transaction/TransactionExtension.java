@@ -34,8 +34,6 @@ import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
 import org.jboss.weld.extensions.defaultbean.DefaultBeanExtension;
-import org.jboss.weld.extensions.util.BeanResolutionException;
-import org.jboss.weld.extensions.util.BeanResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,13 +101,10 @@ public class TransactionExtension implements Extension
        */
       private void setupBeanDefinition()
       {
-         try
+         transactionBean = (Bean) manager.resolve(manager.getBeans(SeamTransaction.class, new TransactionQualifier.TransactionQualifierLiteral()));
+         if (transactionBean == null)
          {
-            transactionBean = BeanResolver.resolveBean(SeamTransaction.class, manager, new TransactionQualifier.TransactionQualifierLiteral());
-         }
-         catch (BeanResolutionException e)
-         {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
          }
       }
 
