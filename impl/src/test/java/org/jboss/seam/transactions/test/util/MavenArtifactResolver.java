@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
  */
 public class MavenArtifactResolver
 {
-   private static final String LOCAL_MAVEN_REPO = System.getProperty("user.home") + File.separatorChar + ".m2" + File.separatorChar + "repository";
-
    public static File resolve(String groupId, String artifactId)
    {
       String classPath = System.getProperty("java.class.path");

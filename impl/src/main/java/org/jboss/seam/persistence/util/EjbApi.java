@@ -22,6 +22,7 @@
 package org.jboss.seam.persistence.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 import org.jboss.weld.extensions.util.Reflections;
 
@@ -91,17 +92,29 @@ public class EjbApi
 
    public static String name(Annotation annotation)
    {
-      return (String) Reflections.invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "name"), annotation);
+      return (String) invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "name"), annotation);
    }
 
    public static Class[] value(Annotation annotation)
    {
-      return (Class[]) Reflections.invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "value"), annotation);
+      return (Class[]) invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "value"), annotation);
    }
 
    public static boolean rollback(Annotation annotation)
    {
-      return (Boolean) Reflections.invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "rollback"), annotation);
+      return (Boolean) invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "rollback"), annotation);
+   }
+
+   private static Object invokeAndWrap(Method method, Object instance, Object... parameters)
+   {
+      try
+      {
+         return method.invoke(instance, parameters);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
 }

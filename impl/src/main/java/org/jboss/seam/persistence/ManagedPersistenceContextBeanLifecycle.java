@@ -34,7 +34,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
 
 /**
@@ -81,7 +80,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
    /**
     * creates the proxy
     */
-   public EntityManager create(BeanImpl<EntityManager> bean, CreationalContext<EntityManager> arg0)
+   public EntityManager create(Bean<EntityManager> bean, CreationalContext<EntityManager> arg0)
    {
       try
       {
@@ -97,7 +96,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       }
    }
 
-   public void destroy(BeanImpl<EntityManager> bean, EntityManager em, CreationalContext<EntityManager> arg1)
+   public void destroy(Bean<EntityManager> bean, EntityManager em, CreationalContext<EntityManager> arg1)
    {
       em.close();
       arg1.release();

@@ -46,7 +46,6 @@ import org.jboss.weld.extensions.literal.DefaultLiteral;
  * turn them into Seam Managed Persistence Contexts.
  * 
  * 
- * 
  * @author Stuart Douglas
  * 
  */
@@ -72,7 +71,7 @@ public class ManagedPersistenceContextExtension implements Extension
          {
             if (modifiedType == null)
             {
-               modifiedType = AnnotatedTypeBuilder.newInstance(event.getAnnotatedType()).mergeAnnotations(event.getAnnotatedType(), true);
+               modifiedType = new AnnotatedTypeBuilder().readFromType(event.getAnnotatedType());
             }
             Set<Annotation> qualifiers = new HashSet<Annotation>();
             Class<? extends Annotation> scope = Dependent.class;
@@ -99,15 +98,13 @@ public class ManagedPersistenceContextExtension implements Extension
                modifiedType.removeFromField(f.getJavaMember(), scope);
             }
             // create the new bean to be registerd later
-            AnnotatedTypeBuilder<EntityManager> typeBuilder = AnnotatedTypeBuilder.newInstance(EntityManager.class);
-            BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(typeBuilder.create(), manager);
-            builder.defineBeanFromAnnotatedType();
+            AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
+            BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
             builder.setQualifiers(qualifiers);
             builder.setScope(scope);
             builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, manager));
             beans.add(builder.create());
          }
-
       }
       if (modifiedType != null)
       {

@@ -25,6 +25,8 @@ import javax.ejb.EJBContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.jboss.seam.persistence.util.Naming;
+
 /**
  * utility class to look up the EJBContext
  * 

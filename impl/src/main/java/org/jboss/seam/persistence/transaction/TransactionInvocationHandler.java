@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.jboss.seam.persistence.util.Naming;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 
 /**
