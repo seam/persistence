@@ -8,9 +8,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.jboss.weld.extensions.bean.BeanImpl;
 import org.jboss.weld.extensions.bean.BeanLifecycle;
 
 /**
@@ -47,7 +47,7 @@ class TransactionBeanLifecycle implements BeanLifecycle<SeamTransaction>
       this.manager = manager;
    }
 
-   public SeamTransaction create(BeanImpl<SeamTransaction> bean, CreationalContext<SeamTransaction> ctx)
+   public SeamTransaction create(Bean<SeamTransaction> bean, CreationalContext<SeamTransaction> ctx)
    {
       try
       {
@@ -59,7 +59,7 @@ class TransactionBeanLifecycle implements BeanLifecycle<SeamTransaction>
       }
    }
 
-   public void destroy(BeanImpl<SeamTransaction> bean, SeamTransaction arg0, CreationalContext<SeamTransaction> arg1)
+   public void destroy(Bean<SeamTransaction> bean, SeamTransaction arg0, CreationalContext<SeamTransaction> arg1)
    {
       arg1.release();
    }

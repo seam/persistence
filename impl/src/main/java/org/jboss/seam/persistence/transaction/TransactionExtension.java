@@ -55,13 +55,12 @@ public class TransactionExtension implements Extension
 
    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager manager)
    {
-      AnnotatedTypeBuilder<SeamTransaction> utbuilder = AnnotatedTypeBuilder.newInstance(SeamTransaction.class);
-      BeanBuilder<SeamTransaction> builder = new BeanBuilder<SeamTransaction>(utbuilder.create(), manager);
-      builder.defineBeanFromAnnotatedType();
+      AnnotatedTypeBuilder<SeamTransaction> utbuilder = new AnnotatedTypeBuilder().setJavaClass(SeamTransaction.class);
+      BeanBuilder<SeamTransaction> builder = new BeanBuilder<SeamTransaction>(manager);
+      builder.defineBeanFromAnnotatedType(utbuilder.create());
       builder.setBeanLifecycle(new TransactionBeanLifecycle(manager));
       builder.getQualifiers().clear();
       builder.getQualifiers().add(DefaultTransactionLiteral.INSTANCE);
       DefaultBeanExtension.addDefaultBean(SeamTransaction.class, builder.create());
    }
-
 }
