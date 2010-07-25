@@ -66,7 +66,8 @@ public class ManagedPersistenceContextExtension implements Extension
       AnnotatedTypeBuilder<T> modifiedType = null;
       for (AnnotatedField<? super T> f : event.getAnnotatedType().getFields())
       {
-         // look for a seam managed persistence unit declaration
+         // look for a seam managed persistence unit declaration on EE resource
+         // producer fields
          if (f.isAnnotationPresent(SeamManaged.class) && f.isAnnotationPresent(PersistenceUnit.class) && f.isAnnotationPresent(Produces.class))
          {
             if (modifiedType == null)
@@ -97,19 +98,34 @@ public class ManagedPersistenceContextExtension implements Extension
             {
                modifiedType.removeFromField(f.getJavaMember(), scope);
             }
-            // create the new bean to be registerd later
-            AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
-            BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
-            builder.setQualifiers(qualifiers);
-            builder.setScope(scope);
-            builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, manager));
-            beans.add(builder.create());
+            registerManagedPersistenceContext(qualifiers, scope, manager);
          }
+         // now look for producer methods that produce an EntityManagerFactory.
+         // This allows the user to manually configure an EntityManagerFactory
+         // and return it from a producer method
       }
       if (modifiedType != null)
       {
          event.setAnnotatedType(modifiedType.create());
       }
+   }
+
+   /**
+    */
+   public void processProducer()
+   {
+
+   }
+
+   public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager)
+   {
+      // create the new bean to be registerd later
+      AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
+      BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
+      builder.setQualifiers(qualifiers);
+      builder.setScope(scope);
+      builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, manager));
+      beans.add(builder.create());
    }
 
    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event)

@@ -24,13 +24,6 @@
         <artifactId>cdi-api</artifactId>
       </dependency>
 
-	  <dependency>
-		  <groupId>org.jboss.spec</groupId>
-		  <artifactId>jboss-javaee-6.0</artifactId>
-		  <type>pom</type>
-		  <scope>provided</scope>
-	  </dependency>
-	  
    </dependencies>
 
    <scm>

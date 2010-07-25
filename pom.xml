@@ -31,7 +31,6 @@
 
    <properties>
       <seam.version>3.0.0.b01</seam.version>
-      <jboss-javaee6-spec.version>1.0.0.Beta4</jboss-javaee6-spec.version>
    </properties>
 
    <dependencyManagement>
@@ -52,14 +51,6 @@
             <version>${project.version}</version>
          </dependency>
          
-        <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <version>${jboss-javaee6-spec.version}</version>
-          <type>pom</type>
-          <scope>provided</scope>
-        </dependency>
-       
          <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
             <artifactId>seam-persistence</artifactId>

@@ -39,22 +39,22 @@ public class EjbApi
    {
    }
 
-   public static final Class<Annotation> STATELESS;
-   public static final Class<Annotation> STATEFUL;
-   public static final Class<Annotation> MESSAGE_DRIVEN;
-   public static final Class<Annotation> PRE_PASSIVATE;
-   public static final Class<Annotation> POST_ACTIVATE;
-   public static final Class<Annotation> PRE_DESTROY;
-   public static final Class<Annotation> POST_CONSTRUCT;
-   public static final Class<Annotation> REMOTE;
-   public static final Class<Annotation> REMOVE;
-   public static final Class<Annotation> LOCAL;
-   public static final Class<Annotation> APPLICATION_EXCEPTION;
-   public static final Class<Annotation> PERSISTENCE_CONTEXT;
-   public static final Class<Annotation> PERSISTENCE_UNIT;
-   public static final Class<Annotation> INTERCEPTORS;
-   public static final Class<Annotation> AROUND_INVOKE;
-   public static final Class<Annotation> EJB_EXCEPTION;
+   public static final Class<? extends Annotation> TRANSACTION_ATTRIBUTE;
+   public static final Class<? extends Enum> TRANSACTION_ATTRIBUTE_TYPE;
+   public static final Class<? extends Annotation> APPLICATION_EXCEPTION;
+
+   private static final Object MANDATORY;
+
+   private static final Object REQUIRED;
+
+   private static final Object REQUIRES_NEW;
+
+   private static final Object SUPPORTS;
+
+   private static final Object NOT_SUPPORTED;
+
+   private static final Object NEVER;
+
    public static final boolean INVOCATION_CONTEXT_AVAILABLE;
 
    private static Class classForName(String name)
@@ -71,22 +71,27 @@ public class EjbApi
 
    static
    {
-      STATELESS = classForName("javax.ejb.Stateless");
-      STATEFUL = classForName("javax.ejb.Stateful");
-      MESSAGE_DRIVEN = classForName("javax.ejb.MessageDriven");
       APPLICATION_EXCEPTION = classForName("javax.ejb.ApplicationException");
-      PERSISTENCE_CONTEXT = classForName("javax.persistence.PersistenceContext");
-      PERSISTENCE_UNIT = classForName("javax.persistence.PersistenceUnit");
-      REMOVE = classForName("javax.ejb.Remove");
-      REMOTE = classForName("javax.ejb.Remote");
-      LOCAL = classForName("javax.ejb.Local");
-      PRE_PASSIVATE = classForName("javax.ejb.PrePassivate");
-      POST_ACTIVATE = classForName("javax.ejb.PostActivate");
-      PRE_DESTROY = classForName("javax.annotation.PreDestroy");
-      POST_CONSTRUCT = classForName("javax.annotation.PostConstruct");
-      INTERCEPTORS = classForName("javax.interceptor.Interceptors");
-      AROUND_INVOKE = classForName("javax.interceptor.AroundInvoke");
-      EJB_EXCEPTION = classForName("javax.ejb.EJBException");
+      TRANSACTION_ATTRIBUTE = classForName("javax.ejb.TransactionAttribute");
+      TRANSACTION_ATTRIBUTE_TYPE = classForName("javax.ejb.TransactionAttributeType");
+      if (TRANSACTION_ATTRIBUTE_TYPE.getName().equals("javax.ejb.TransactionAttributeType"))
+      {
+         MANDATORY = Enum.valueOf(TRANSACTION_ATTRIBUTE_TYPE, "MANDATORY");
+         REQUIRED = Enum.valueOf(TRANSACTION_ATTRIBUTE_TYPE, "REQUIRED");
+         NOT_SUPPORTED = Enum.valueOf(TRANSACTION_ATTRIBUTE_TYPE, "NOT_SUPPORTED");
+         REQUIRES_NEW = Enum.valueOf(TRANSACTION_ATTRIBUTE_TYPE, "REQUIRES_NEW");
+         NEVER = Enum.valueOf(TRANSACTION_ATTRIBUTE_TYPE, "NEVER");
+         SUPPORTS = Enum.valueOf(TRANSACTION_ATTRIBUTE_TYPE, "SUPPORTS");
+      }
+      else
+      {
+         MANDATORY = Dummy.class;
+         REQUIRED = Dummy.class;
+         NOT_SUPPORTED = Dummy.class;
+         REQUIRES_NEW = Dummy.class;
+         NEVER = Dummy.class;
+         SUPPORTS = Dummy.class;
+      }
       INVOCATION_CONTEXT_AVAILABLE = !classForName("javax.interceptor.InvocationContext").equals(Dummy.class);
    }
 

@@ -5,10 +5,27 @@
 -->
 <beans xmlns="http://java.sun.com/xml/ns/javaee"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:persistence="urn:java:org.jboss.seam.persistence"
+   xmlns:s="urn:java:ee"
    xsi:schemaLocation="
       http://java.sun.com/xml/ns/javaee 
       http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
       <interceptors>
          <class>org.jboss.seam.persistence.transaction.TransactionInterceptor</class>
       </interceptors>
+     <genericBean class="org.jboss.seam.persistence.ManagedPersistenceContext" >
+      <persistence:EntityManagerFactoryProvider>
+         <s:ApplyQualifiers/>
+         
+         <persistence:managedPersistenceContext>
+            <s:Inject/>
+            <s:ApplyQualifiers/>
+         </persistence:managedPersistenceContext>
+         
+         <persistence:produceEntityManagerFactory>
+            <ApplyQualifiers/>
+            <s:Produces/>
+         </persistence:produceEntityManagerFactory>
+      </persistence:EntityManagerFactoryProvider>
+   </genericBean>
 </beans>

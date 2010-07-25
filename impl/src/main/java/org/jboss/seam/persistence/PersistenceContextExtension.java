@@ -33,8 +33,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.Bean;
@@ -43,23 +41,28 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 import javax.enterprise.inject.spi.Producer;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
+import org.jboss.weld.extensions.literal.AnyLiteral;
+import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Support for managed persistence contexts in a Java SE environment or Servlet container.
- *
- * <p>Unlike with standard Java EE, the unitName attribute on {@link PersistenceContext} must
- * be provided if the persistence unit is assigned a name in persistence.xml. This
- * class supports multiple persistence units, but it does not permit multiple
- * producers for the same persistence unit (naturally).</p>
+ * Support for managed persistence contexts in a Java SE environment or Servlet
+ * container.
+ * 
+ * <p>
+ * Unlike with standard Java EE, the unitName attribute on
+ * {@link PersistenceContext} must be provided if the persistence unit is
+ * assigned a name in persistence.xml. This class supports multiple persistence
+ * units, but it does not permit multiple producers for the same persistence
+ * unit (naturally).
+ * </p>
  * 
  * @author Gavin King
  * @author Dan Allen
@@ -117,17 +120,9 @@ public class PersistenceContextExtension implements Extension
             }
             if (qualifiers.isEmpty())
             {
-               qualifiers.add(new AnnotationLiteral<Default>()
-               {
-                  /** default value. Added only to suppress compiler warnings. */
-                  private static final long serialVersionUID = 1L;
-               });
+               qualifiers.add(DefaultLiteral.INSTANCE);
             }
-            qualifiers.add(new AnnotationLiteral<Any>()
-            {
-               /** default value. Added only to suppress compiler warnings. */
-               private static final long serialVersionUID = 1L;
-            });
+            qualifiers.add(AnyLiteral.INSTANCE);
             final boolean alternative = field.isAnnotationPresent(Alternative.class);
             final Set<Type> types = new HashSet<Type>()
             {
@@ -248,10 +243,11 @@ public class PersistenceContextExtension implements Extension
 
    /**
     * Check whether persistence is container managed. For now, this simply
-    * checks for the presence of the EJB API. If it's present, we assume
-    * this is an EE environment and that persistence is container managed.
+    * checks for the presence of the EJB API. If it's present, we assume this is
+    * an EE environment and that persistence is container managed.
     */
-   boolean isPersistenceContainerManaged() {
+   boolean isPersistenceContainerManaged()
+   {
       boolean eeEnv = true;
       try
       {
