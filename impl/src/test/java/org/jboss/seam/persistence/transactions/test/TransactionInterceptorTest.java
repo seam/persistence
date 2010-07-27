@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TransactionRequiredException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -110,6 +111,12 @@ public class TransactionInterceptorTest
       {
       }
       assertHotels(2);
+   }
+
+   @Test(expected = TransactionRequiredException.class)
+   public void testTransactionInterceptorMethodOverrides()
+   {
+      bean.tryAndAddHotelWithNoTransaction();
    }
 
    public void assertHotels(int count) throws NotSupportedException, SystemException

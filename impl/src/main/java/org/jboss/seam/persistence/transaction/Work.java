@@ -23,7 +23,6 @@ package org.jboss.seam.persistence.transaction;
 
 import javax.ejb.ApplicationException;
 import javax.transaction.Status;
-import javax.transaction.UserTransaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +48,13 @@ public abstract class Work<T>
       boolean transactionActive = transaction.isActiveOrMarkedRollback() || transaction.isRolledBack();
       // TODO: temp workaround, what should we really do in this case??
       boolean newTransactionRequired = isNewTransactionRequired(transactionActive);
-      UserTransaction userTransaction = newTransactionRequired ? transaction : null;
 
       try
       {
          if (newTransactionRequired)
          {
             log.debug("beginning transaction");
-            userTransaction.begin();
+            transaction.begin();
          }
 
          T result = work();
@@ -65,34 +63,34 @@ public abstract class Work<T>
             if (transaction.isMarkedRollback())
             {
                log.debug("rolling back transaction");
-               userTransaction.rollback();
+               transaction.rollback();
             }
             else
             {
                log.debug("committing transaction");
-               userTransaction.commit();
+               transaction.commit();
             }
          }
          return result;
       }
       catch (Exception e)
       {
-         if (newTransactionRequired && userTransaction.getStatus() != Status.STATUS_NO_TRANSACTION )
+         if (newTransactionRequired && transaction.getStatus() != Status.STATUS_NO_TRANSACTION)
          {
-            if(isRollbackRequired(e, true))
+            if (isRollbackRequired(e, true))
             {
                log.debug("rolling back transaction");
-               userTransaction.rollback();
+               transaction.rollback();
             }
             else
             {
                log.debug("committing transaction after ApplicationException(rollback=false):" + e.getMessage());
-               userTransaction.commit();
+               transaction.commit();
             }
          }
-         else if (userTransaction.getStatus() != Status.STATUS_NO_TRANSACTION && isRollbackRequired(e, true))
+         else if (transaction.getStatus() != Status.STATUS_NO_TRANSACTION && isRollbackRequired(e, true))
          {
-            userTransaction.setRollbackOnly();
+            transaction.setRollbackOnly();
          }
 
          throw e;

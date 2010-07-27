@@ -62,4 +62,13 @@ public class TransactionManagedBean
       throw new DontRollBackException();
    }
 
+   @Transactional(TransactionPropagation.NEVER)
+   public void tryAndAddHotelWithNoTransaction()
+   {
+      entityManager.joinTransaction();
+      Hotel h = new Hotel("test3", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+      entityManager.persist(h);
+      entityManager.flush();
+   }
+
 }

@@ -29,7 +29,9 @@ import java.lang.annotation.Target;
 import javax.interceptor.InterceptorBinding;
 
 /**
- * Interceptor binding for {@link Transactional} beans
+ * Interceptor binding for the seam transaction interceceptor. This binding is
+ * applied automatically by a portable extension, the user should not need to
+ * apply it themselves
  * 
  * @author Stuart Douglas
  * 
@@ -37,7 +39,7 @@ import javax.interceptor.InterceptorBinding;
 @Retention(RetentionPolicy.RUNTIME)
 @InterceptorBinding
 @Target( { ElementType.TYPE, ElementType.METHOD })
-public @interface TransactionalInterceptorBinding
+@interface TransactionalInterceptorBinding
 {
 
 }
