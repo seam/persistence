@@ -38,8 +38,9 @@ import javax.interceptor.InvocationContext;
  * 
  * @author Gavin King
  * @author Shane Bryzak
+ * @author Stuart Douglas
  */
-@Transactional
+@TransactionalInterceptorBinding
 @Interceptor
 public class TransactionInterceptor implements Serializable
 {

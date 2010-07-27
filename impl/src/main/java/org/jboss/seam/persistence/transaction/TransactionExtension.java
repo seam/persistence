@@ -22,11 +22,16 @@
 package org.jboss.seam.persistence.transaction;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.util.AnnotationLiteral;
 
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
+import org.jboss.seam.persistence.util.EjbApi;
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.defaultbean.DefaultBeanExtension;
@@ -62,5 +67,46 @@ public class TransactionExtension implements Extension
       builder.getQualifiers().clear();
       builder.getQualifiers().add(DefaultTransactionLiteral.INSTANCE);
       DefaultBeanExtension.addDefaultBean(SeamTransaction.class, builder.create());
+   }
+
+   /**
+    * Looks for @Transaction or @TransactionAttribute annotations and if they
+    * are found adds the transaction intercepter binding
+    * 
+    */
+   public <X> void processAnnotatedType(@Observes ProcessAnnotatedType<X> event)
+   {
+      if (event.getAnnotatedType().isAnnotationPresent(Transactional.class))
+      {
+         event.setAnnotatedType(addInterceptorBinding(event.getAnnotatedType()));
+         return;
+      }
+      if (event.getAnnotatedType().isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
+      {
+         event.setAnnotatedType(addInterceptorBinding(event.getAnnotatedType()));
+         return;
+      }
+      for (AnnotatedMethod<? super X> m : event.getAnnotatedType().getMethods())
+      {
+         if (m.isAnnotationPresent(Transactional.class))
+         {
+            event.setAnnotatedType(addInterceptorBinding(event.getAnnotatedType()));
+            return;
+         }
+         else if (m.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
+         {
+            event.setAnnotatedType(addInterceptorBinding(event.getAnnotatedType()));
+            return;
+         }
+      }
+   }
+
+   public <X> AnnotatedType addInterceptorBinding(AnnotatedType<X> type)
+   {
+      AnnotatedTypeBuilder<X> builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+      builder.addToClass(new AnnotationLiteral<TransactionalInterceptorBinding>()
+      {
+      });
+      return builder.create();
    }
 }

@@ -25,7 +25,7 @@ import javax.ejb.EJBContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.jboss.seam.persistence.util.Naming;
+import org.jboss.seam.persistence.util.NamingUtils;
 
 /**
  * utility class to look up the EJBContext
@@ -41,11 +41,11 @@ public class EJB
    {
       try
       {
-         return (EJBContext) Naming.getInitialContext().lookup(ejbContextName);
+         return (EJBContext) NamingUtils.getInitialContext().lookup(ejbContextName);
       }
       catch (NameNotFoundException nnfe)
       {
-         return (EJBContext) Naming.getInitialContext().lookup(STANDARD_EJB_CONTEXT_NAME);
+         return (EJBContext) NamingUtils.getInitialContext().lookup(STANDARD_EJB_CONTEXT_NAME);
       }
    }
 

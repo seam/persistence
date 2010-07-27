@@ -24,6 +24,8 @@ package org.jboss.seam.persistence.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import javax.enterprise.inject.spi.AnnotatedType;
+
 import org.jboss.weld.extensions.util.Reflections;
 
 /**
@@ -42,6 +44,11 @@ public class EjbApi
    public static final Class<? extends Annotation> TRANSACTION_ATTRIBUTE;
    public static final Class<? extends Enum> TRANSACTION_ATTRIBUTE_TYPE;
    public static final Class<? extends Annotation> APPLICATION_EXCEPTION;
+
+   public static final Class<? extends Annotation> STATEFUL;
+   public static final Class<? extends Annotation> STATELESS;
+   public static final Class<? extends Annotation> MESSAGE_DRIVEN;
+   public static final Class<? extends Annotation> SINGLETON;
 
    private static final Object MANDATORY;
 
@@ -73,6 +80,7 @@ public class EjbApi
    {
       APPLICATION_EXCEPTION = classForName("javax.ejb.ApplicationException");
       TRANSACTION_ATTRIBUTE = classForName("javax.ejb.TransactionAttribute");
+
       TRANSACTION_ATTRIBUTE_TYPE = classForName("javax.ejb.TransactionAttributeType");
       if (TRANSACTION_ATTRIBUTE_TYPE.getName().equals("javax.ejb.TransactionAttributeType"))
       {
@@ -93,6 +101,12 @@ public class EjbApi
          SUPPORTS = Dummy.class;
       }
       INVOCATION_CONTEXT_AVAILABLE = !classForName("javax.interceptor.InvocationContext").equals(Dummy.class);
+
+      STATEFUL = classForName("javax.ejb.Stateful");
+      STATELESS = classForName("javax.ejb.Stateless");
+      MESSAGE_DRIVEN = classForName("javax.ejb.MessageDriven");
+      SINGLETON = classForName("javax.ejb.Singleton");
+
    }
 
    public static String name(Annotation annotation)
@@ -122,4 +136,8 @@ public class EjbApi
       }
    }
 
+   public static <X> boolean isEjb(AnnotatedType<X> type)
+   {
+      return type.isAnnotationPresent(STATEFUL) || type.isAnnotationPresent(STATELESS) || type.isAnnotationPresent(MESSAGE_DRIVEN) || type.isAnnotationPresent(SINGLETON);
+   }
 }

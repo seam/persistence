@@ -18,6 +18,7 @@ import org.jboss.seam.persistence.PersistenceContextExtension;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
+import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.Hotel;
 import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
@@ -40,6 +41,7 @@ public class ManagedPersistenceContextTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(PersistenceContextExtension.class.getPackage());
+      war.addPackage(NamingUtils.class.getPackage());
       war.addClasses(ManagedPersistenceContextTest.class, Hotel.class, ManagedPersistenceContextProvider.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");

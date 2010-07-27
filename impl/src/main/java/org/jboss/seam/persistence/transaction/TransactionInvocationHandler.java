@@ -10,7 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.jboss.seam.persistence.util.Naming;
+import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 
 /**
@@ -72,7 +72,7 @@ public class TransactionInvocationHandler implements InvocationHandler
 
    protected javax.transaction.UserTransaction getUserTransaction() throws NamingException
    {
-      InitialContext context = Naming.getInitialContext();
+      InitialContext context = NamingUtils.getInitialContext();
       try
       {
          return (javax.transaction.UserTransaction) context.lookup("java:comp/UserTransaction");

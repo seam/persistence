@@ -27,13 +27,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.interceptor.InterceptorBinding;
-
 /**
  * Demarcates transaction boundaries
  * 
  * Note that is you are using seam managed transactions seam will automatically
  * manage your transactions for you, rendering this unnessesary
+ * 
+ * Note that this annotation is not actually an interceptor binding. It is
+ * replaced by an interceptor binding at runtime by a portable extension in the
+ * ProcessAnnotatedType phase
  * 
  * 
  * @author Dan Allen
@@ -41,7 +43,6 @@ import javax.interceptor.InterceptorBinding;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.METHOD, ElementType.TYPE })
-@InterceptorBinding
 public @interface Transactional
 {
    /**

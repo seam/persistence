@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
  * @author stuart
  * 
  */
-public final class Naming
+public final class NamingUtils
 {
-   private static final Logger log = LoggerFactory.getLogger(Naming.class);
+   private static final Logger log = LoggerFactory.getLogger(NamingUtils.class);
    private static Hashtable initialContextProperties;
 
    private static InitialContext initialContext;
@@ -87,13 +87,13 @@ public final class Naming
       }
    }
 
-   private Naming()
+   private NamingUtils()
    {
    }
 
    public static void setInitialContextProperties(Hashtable initialContextProperties)
    {
-      Naming.initialContextProperties = initialContextProperties;
+      NamingUtils.initialContextProperties = initialContextProperties;
       initialContext = null;
    }
 
