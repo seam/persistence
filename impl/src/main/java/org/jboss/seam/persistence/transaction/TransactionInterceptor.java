@@ -33,6 +33,8 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
+import org.jboss.seam.persistence.util.EjbApi;
+
 /**
  * Implements transaction propagation rules for Seam JavaBean components.
  * 
@@ -60,10 +62,51 @@ public class TransactionInterceptor implements Serializable
       public TransactionMetadata(AnnotatedElement element)
       {
          annotationPresent = element.isAnnotationPresent(Transactional.class);
-
          if (annotationPresent)
          {
             propType = element.getAnnotation(Transactional.class).value();
+         }
+         else if (element.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE))
+         {
+            annotationPresent = true;
+            Object annotation = element.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE);
+            try
+            {
+               Object value = annotation.getClass().getMethod("value").invoke(annotation);
+
+               if (value == EjbApi.REQUIRED)
+               {
+                  propType = TransactionPropagation.REQUIRED;
+               }
+               else if (value == EjbApi.MANDATORY)
+               {
+                  propType = TransactionPropagation.MANDATORY;
+               }
+               else if (value == EjbApi.NEVER)
+               {
+                  propType = TransactionPropagation.NEVER;
+               }
+               else if (value == EjbApi.SUPPORTS)
+               {
+                  propType = TransactionPropagation.SUPPORTS;
+               }
+               else if (value == EjbApi.NOT_SUPPORTED)
+               {
+                  throw new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not allowed on managed beans that are not EJB's. Element: " + element);
+               }
+               else if (value == EjbApi.REQUIRES_NEW)
+               {
+                  throw new RuntimeException("TransactionAttributeType.REQUIRES_NEW is not allowed on managed beans that are not EJB's Element: " + element);
+               }
+               else
+               {
+                  throw new RuntimeException("Unkown TransactionAttributeType: " + value);
+               }
+            }
+            catch (Exception e)
+            {
+               throw new RuntimeException(e);
+            }
          }
       }
 

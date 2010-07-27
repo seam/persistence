@@ -50,17 +50,17 @@ public class EjbApi
    public static final Class<? extends Annotation> MESSAGE_DRIVEN;
    public static final Class<? extends Annotation> SINGLETON;
 
-   private static final Object MANDATORY;
+   public static final Object MANDATORY;
 
-   private static final Object REQUIRED;
+   public static final Object REQUIRED;
 
-   private static final Object REQUIRES_NEW;
+   public static final Object REQUIRES_NEW;
 
-   private static final Object SUPPORTS;
+   public static final Object SUPPORTS;
 
-   private static final Object NOT_SUPPORTED;
+   public static final Object NOT_SUPPORTED;
 
-   private static final Object NEVER;
+   public static final Object NEVER;
 
    public static final boolean INVOCATION_CONTEXT_AVAILABLE;
 

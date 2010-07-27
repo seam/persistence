@@ -92,10 +92,8 @@ public abstract class Work<T>
          {
             transaction.setRollbackOnly();
          }
-
          throw e;
       }
-
    }
 
    public static boolean isRollbackRequired(Exception e, boolean isJavaBean)

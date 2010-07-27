@@ -55,7 +55,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests the @Transactional interceptor
+ * Tests the @TransactionAttribute interceptor for non ee beans.
  * 
  * TODO: refactor the tests to share a common superclass
  * 
@@ -63,7 +63,7 @@ import org.junit.runner.RunWith;
  * 
  */
 @RunWith(Arquillian.class)
-public class TransactionInterceptorTest
+public class TransactionAttributeInterceptorTest
 {
    @Deployment
    public static Archive<?> createTestArchive()
@@ -74,7 +74,7 @@ public class TransactionInterceptorTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
-      war.addClasses(TransactionInterceptorTest.class, TransactionManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
+      war.addClasses(TransactionAttributeInterceptorTest.class, TransactionAttributeManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
@@ -82,7 +82,7 @@ public class TransactionInterceptorTest
    }
 
    @Inject
-   TransactionManagedBean bean;
+   TransactionAttributeManagedBean bean;
 
    @Inject
    @DefaultTransaction
