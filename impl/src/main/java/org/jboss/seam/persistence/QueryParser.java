@@ -27,6 +27,11 @@ import java.util.StringTokenizer;
 
 import org.jboss.weld.extensions.el.Expressions;
 
+/**
+ * 
+ * Parses hql queries and replaces el with named parameters
+ * 
+ */
 public class QueryParser
 {
    private final List<Object> parameterValues = new ArrayList<Object>();

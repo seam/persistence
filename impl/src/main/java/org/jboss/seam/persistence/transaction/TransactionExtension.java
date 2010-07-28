@@ -59,7 +59,7 @@ public class TransactionExtension implements Extension
 
    private static final Logger log = LoggerFactory.getLogger(TransactionExtension.class);
 
-   public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager manager)
+   public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager manager, DefaultBeanExtension defaultBeanExtension)
    {
       AnnotatedTypeBuilder<SeamTransaction> utbuilder = new AnnotatedTypeBuilder().setJavaClass(SeamTransaction.class);
       BeanBuilder<SeamTransaction> builder = new BeanBuilder<SeamTransaction>(manager);
@@ -67,7 +67,7 @@ public class TransactionExtension implements Extension
       builder.setBeanLifecycle(new TransactionBeanLifecycle(manager));
       builder.getQualifiers().clear();
       builder.getQualifiers().add(DefaultTransactionLiteral.INSTANCE);
-      DefaultBeanExtension.addDefaultBean(SeamTransaction.class, builder.create());
+      defaultBeanExtension.addDefaultBean(SeamTransaction.class, builder.create());
    }
 
    /**
