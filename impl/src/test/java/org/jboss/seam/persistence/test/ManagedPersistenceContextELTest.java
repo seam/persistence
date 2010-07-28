@@ -21,8 +21,6 @@
  */
 package org.jboss.seam.persistence.test;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
@@ -30,8 +28,6 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
-
-import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -48,11 +44,12 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedPersistenceContextTest
+public class ManagedPersistenceContextELTest
 {
    @Deployment
    public static Archive<?> createTestArchive()
@@ -63,7 +60,7 @@ public class ManagedPersistenceContextTest
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(PersistenceContextExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
-      war.addClasses(ManagedPersistenceContextTest.class, Hotel.class, ManagedPersistenceContextProvider.class);
+      war.addClasses(ManagedPersistenceContextELTest.class, Hotel.class, ManagedPersistenceContextProvider.class, HotelNameProducer.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
@@ -78,24 +75,26 @@ public class ManagedPersistenceContextTest
    EntityManager em;
 
    @Test
-   public void testManagedPsersistenceContext() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void testELInInquery() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
       transaction.begin();
-      Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+      Hotel h = new Hotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
       em.persist(h);
       em.flush();
       transaction.commit();
 
       transaction.begin();
-      h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+      h = new Hotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
       em.persist(h);
       em.flush();
-      transaction.rollback();
+      transaction.commit();
 
       transaction.begin();
-      List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
-      Assert.assertTrue(hotels.size() == 1);
-      transaction.rollback();
+      Hotel hilton = (Hotel) em.createQuery("select h from Hotel h where h.name=#{hotelName}").getSingleResult();
+      Assert.assertTrue(hilton.getName().equals("Hilton"));
+      Assert.assertTrue(hilton.getAddress().equals("Fake St"));
+      transaction.commit();
+
    }
 
 }

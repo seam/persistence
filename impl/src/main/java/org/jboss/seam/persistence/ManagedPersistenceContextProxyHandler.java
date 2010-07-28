@@ -29,12 +29,15 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
+import org.jboss.weld.extensions.el.Expressions;
+import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,10 +64,13 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
+   private final Bean<Expressions> expressionsBean;
+
    public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
    {
       this.delegate = delegate;
       this.beanManager = beanManager;
+      this.expressionsBean = (Bean) beanManager.resolve(beanManager.getBeans(Expressions.class, DefaultLiteral.INSTANCE));
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -72,6 +78,10 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
       if (!synchronizationRegistered)
       {
          joinTransaction();
+      }
+      if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class))
+      {
+         return handleCreateQueryWithString(method, args);
       }
       return method.invoke(delegate, args);
    }
@@ -122,4 +132,30 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
 
    }
 
+   protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable
+   {
+      if (args[0] == null)
+      {
+         return method.invoke(delegate, args);
+      }
+      String ejbql = (String) args[0];
+      if (ejbql.indexOf('#') > 0)
+      {
+         CreationalContext<Expressions> ctx = beanManager.createCreationalContext(expressionsBean);
+         Expressions expressions = (Expressions) beanManager.getReference(expressionsBean, Expressions.class, ctx);
+         QueryParser qp = new QueryParser(expressions, ejbql);
+         Object[] newArgs = args.clone();
+         newArgs[0] = qp.getEjbql();
+         Query query = (Query) method.invoke(delegate, newArgs);
+         for (int i = 0; i < qp.getParameterValues().size(); i++)
+         {
+            query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
+         }
+         return query;
+      }
+      else
+      {
+         return method.invoke(delegate, args);
+      }
+   }
 }

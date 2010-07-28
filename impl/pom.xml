@@ -54,6 +54,11 @@
          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
          <scope>provided</scope>
       </dependency>
+      
+      <dependency>
+         <groupId>javax.el</groupId>
+         <artifactId>el-api</artifactId>
+      </dependency>
 
       <dependency>
          <groupId>javax.transaction</groupId>

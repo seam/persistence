@@ -110,13 +110,6 @@ public class ManagedPersistenceContextExtension implements Extension
       }
    }
 
-   /**
-    */
-   public void processProducer()
-   {
-
-   }
-
    public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager)
    {
       // create the new bean to be registerd later
