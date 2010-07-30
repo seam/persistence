@@ -45,6 +45,7 @@ import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.DontRollBackException;
 import org.jboss.seam.transactions.test.util.EntityManagerProvider;
+import org.jboss.seam.transactions.test.util.HelloService;
 import org.jboss.seam.transactions.test.util.Hotel;
 import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
@@ -74,7 +75,7 @@ public class TransactionAttributeInterceptorTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
-      war.addClasses(TransactionAttributeInterceptorTest.class, TransactionAttributeManagedBean.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
+      war.addClasses(TransactionAttributeInterceptorTest.class, TransactionAttributeManagedBean.class, HelloService.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");

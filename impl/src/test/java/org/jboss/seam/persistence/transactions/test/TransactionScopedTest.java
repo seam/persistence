@@ -19,6 +19,7 @@ import org.jboss.seam.persistence.transaction.TransactionExtension;
 import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
 import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
+import org.jboss.seam.transactions.test.util.HelloService;
 import org.jboss.seam.transactions.test.util.Hotel;
 import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
@@ -40,7 +41,7 @@ public class TransactionScopedTest
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(TransactionScopeExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
-      war.addClasses(TransactionScopedTest.class, Hotel.class, TransactionScopedObject.class);
+      war.addClasses(TransactionScopedTest.class, Hotel.class, HelloService.class, TransactionScopedObject.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");

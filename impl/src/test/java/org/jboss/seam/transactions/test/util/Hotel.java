@@ -24,6 +24,7 @@ package org.jboss.seam.transactions.test.util;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,6 +35,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import org.jboss.weld.extensions.core.Veto;
 
 /**
@@ -59,8 +61,24 @@ public class Hotel implements Serializable
    private Integer stars;
    private BigDecimal price;
 
+   @Inject
+   private HelloService helloService;
+
+   private boolean initalizerCalled = false;
+
    public Hotel()
    {
+   }
+
+   @Inject
+   public void create()
+   {
+      initalizerCalled = true;
+   }
+
+   public String sayHello()
+   {
+      return helloService.sayHello();
    }
 
    public Hotel(final String name, final String address, final String city, final String state, final String zip, final String country)
@@ -202,4 +220,11 @@ public class Hotel implements Serializable
    {
       return "Hotel(" + name + "," + address + "," + city + "," + zip + ")";
    }
+
+   @Transient
+   public boolean isInitalizerCalled()
+   {
+      return initalizerCalled;
+   }
+
 }

@@ -48,9 +48,10 @@ import javax.persistence.EntityManagerFactory;
  * conversation scoped with the qualifier @SomeQualifier.
  * 
  * This field still produces the EntityManagerFactory with qualifier
+ * 
  * @SomeQualifier, however the scope for the producer field is changed to
- * {@link Dependent}, as the specification does not allow resource producer
- * fields to have a scope other than Depedent
+ *                 {@link Dependent}, as the specification does not allow
+ *                 resource producer fields to have a scope other than Depedent
  * 
  * @author Stuart Douglas
  * 
