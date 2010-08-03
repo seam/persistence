@@ -21,9 +21,9 @@
  */
 package org.jboss.seam.persistence.transaction;
 
-import javax.ejb.ApplicationException;
 import javax.transaction.Status;
 
+import org.jboss.seam.persistence.util.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +77,7 @@ public abstract class Work<T>
       {
          if (newTransactionRequired && transaction.getStatus() != Status.STATUS_NO_TRANSACTION)
          {
-            if (isRollbackRequired(e, true))
+            if (ExceptionUtil.exceptionCausesRollback(e))
             {
                log.debug("rolling back transaction");
                transaction.rollback();
@@ -88,7 +88,7 @@ public abstract class Work<T>
                transaction.commit();
             }
          }
-         else if (transaction.getStatus() != Status.STATUS_NO_TRANSACTION && isRollbackRequired(e, true))
+         else if (transaction.getStatus() != Status.STATUS_NO_TRANSACTION && ExceptionUtil.exceptionCausesRollback(e))
          {
             transaction.setRollbackOnly();
          }
@@ -96,19 +96,4 @@ public abstract class Work<T>
       }
    }
 
-   public static boolean isRollbackRequired(Exception e, boolean isJavaBean)
-   {
-      Class<? extends Exception> clazz = e.getClass();
-      return (isSystemException(e, isJavaBean, clazz)) || (clazz.isAnnotationPresent(ApplicationException.class) && clazz.getAnnotation(ApplicationException.class).rollback());
-   }
-
-   private static boolean isSystemException(Exception e, boolean isJavaBean, Class<? extends Exception> clazz)
-   {
-      return isJavaBean && (e instanceof RuntimeException) && !clazz.isAnnotationPresent(ApplicationException.class);
-      // &&
-      // TODO: this is hackish, maybe just turn off RollackInterceptor for
-      // @Converter/@Validator components
-      // !JSF.VALIDATOR_EXCEPTION.isInstance(e) &&
-      // !JSF.CONVERTER_EXCEPTION.isInstance(e);
-   }
 }

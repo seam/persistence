@@ -16,12 +16,12 @@
 
    <properties>
       <seam.version>3.0.0.b01</seam.version>
-      <arquillian.version>1.0.0-SNAPSHOT</arquillian.version>
+      <arquillian.version>1.0.0.Alpha3</arquillian.version>
       <junit.version>4.8.1</junit.version>
       <jboss.home>${env.JBOSS_HOME}</jboss.home>
       <jboss.domain>default</jboss.domain>
       <glassfish.version>3.0.1-b19</glassfish.version>
-      <jboss-as-client.version>6.0.0-SNAPSHOT</jboss-as-client.version>
+      <jboss-as-client.version>6.0.0.20100721-M4</jboss-as-client.version>
       <jboss-server-manager.version>1.0.3.GA</jboss-server-manager.version>
    </properties>
 
@@ -136,20 +136,13 @@
       </profile>
    
       <profile>
-         <id>jbossas-remote-60</id>
+         <id>jbossas-remote-6</id>
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-remote-6</artifactId>
                <version>${arquillian.version}</version>
                <scope>test</scope>
-            </dependency>
-            <dependency>
-               <groupId>org.jboss.spec</groupId>
-               <artifactId>jboss-javaee-6.0</artifactId>
-               <version>${jboss-javaee6-spec.version}</version>
-               <type>pom</type>
-               <scope>provided</scope>
             </dependency>
             <!-- need for org.jnp.interfaces.NamingContextFactory -->
             <dependency>
