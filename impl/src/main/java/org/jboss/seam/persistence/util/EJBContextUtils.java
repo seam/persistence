@@ -19,20 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.transaction;
+package org.jboss.seam.persistence.util;
 
 import javax.ejb.EJBContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.jboss.seam.persistence.util.NamingUtils;
 
 /**
  * utility class to look up the EJBContext
  * 
  * 
  */
-public class EJB
+public class EJBContextUtils
 {
    public static String ejbContextName = "java:comp.ejb3/EJBContext";
    public static final String STANDARD_EJB_CONTEXT_NAME = "java:comp/EJBContext";
@@ -56,7 +55,7 @@ public class EJB
 
    protected static void setEjbContextName(String ejbContextName)
    {
-      EJB.ejbContextName = ejbContextName;
+      EJBContextUtils.ejbContextName = ejbContextName;
    }
 
 }

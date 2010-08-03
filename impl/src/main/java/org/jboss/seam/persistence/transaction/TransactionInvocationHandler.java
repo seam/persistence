@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.jboss.seam.persistence.util.EJBContextUtils;
 import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 
@@ -62,7 +63,7 @@ public class TransactionInvocationHandler implements InvocationHandler
 
    protected SeamTransaction createCMTTransaction() throws NamingException
    {
-      return new CMTTransaction(EJB.getEJBContext(), synchronizations);
+      return new CMTTransaction(EJBContextUtils.getEJBContext(), synchronizations);
    }
 
    protected SeamTransaction createUTTransaction() throws NamingException
