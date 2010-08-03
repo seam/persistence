@@ -25,19 +25,15 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
-import org.jboss.weld.extensions.el.Expressions;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.persistence.util.InstanceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,28 +45,24 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class ManagedPersistenceContextProxyHandler implements InvocationHandler, Serializable, Synchronization
+public class ManagedPersistenceContextProxyHandler extends PersistenceContextProxyHandler implements InvocationHandler, Serializable, Synchronization
 {
 
    private static final long serialVersionUID = -6539267789786229774L;
 
    private final EntityManager delegate;
 
-   private transient BeanManager beanManager;
-
-   private transient SeamTransaction userTransaction;
+   private final Instance<SeamTransaction> userTransactionInstance;
 
    private transient boolean synchronizationRegistered;
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   private final Bean<Expressions> expressionsBean;
-
    public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
    {
+      super(delegate, beanManager);
       this.delegate = delegate;
-      this.beanManager = beanManager;
-      this.expressionsBean = (Bean) beanManager.resolve(beanManager.getBeans(Expressions.class, DefaultLiteral.INSTANCE));
+      this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -79,16 +71,12 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
       {
          joinTransaction();
       }
-      if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class))
-      {
-         return handleCreateQueryWithString(method, args);
-      }
-      return method.invoke(delegate, args);
+      return super.invoke(proxy, method, args);
    }
 
    private void joinTransaction() throws SystemException
    {
-      SeamTransaction transaction = getUserTransaction();
+      SeamTransaction transaction = userTransactionInstance.get();
       if (transaction.isActive())
       {
          transaction.enlist(delegate);
@@ -107,21 +95,6 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
       }
    }
 
-   private SeamTransaction getUserTransaction()
-   {
-      if (userTransaction == null)
-      {
-         Bean<SeamTransaction> bean = (Bean) beanManager.resolve(beanManager.getBeans(SeamTransaction.class, DefaultTransactionLiteral.INSTANCE));
-         if (bean == null)
-         {
-            throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
-         }
-         CreationalContext<SeamTransaction> ctx = beanManager.createCreationalContext(bean);
-         userTransaction = (SeamTransaction) beanManager.getReference(bean, SeamTransaction.class, ctx);
-      }
-      return userTransaction;
-   }
-
    public void afterCompletion(int status)
    {
       synchronizationRegistered = false;
@@ -132,30 +105,4 @@ public class ManagedPersistenceContextProxyHandler implements InvocationHandler,
 
    }
 
-   protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable
-   {
-      if (args[0] == null)
-      {
-         return method.invoke(delegate, args);
-      }
-      String ejbql = (String) args[0];
-      if (ejbql.indexOf('#') > 0)
-      {
-         CreationalContext<Expressions> ctx = beanManager.createCreationalContext(expressionsBean);
-         Expressions expressions = (Expressions) beanManager.getReference(expressionsBean, Expressions.class, ctx);
-         QueryParser qp = new QueryParser(expressions, ejbql);
-         Object[] newArgs = args.clone();
-         newArgs[0] = qp.getEjbql();
-         Query query = (Query) method.invoke(delegate, newArgs);
-         for (int i = 0; i < qp.getParameterValues().size(); i++)
-         {
-            query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
-         }
-         return query;
-      }
-      else
-      {
-         return method.invoke(delegate, args);
-      }
-   }
 }

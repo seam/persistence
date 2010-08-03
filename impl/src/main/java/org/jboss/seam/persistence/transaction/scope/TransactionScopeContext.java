@@ -68,6 +68,10 @@ public class TransactionScopeContext implements Context, Synchronization
 
    }
 
+   /**
+    * we need to resolve the transaction bean lazily, after startup has
+    * completed
+    */
    private void lazyInitialization()
    {
       if (userTransaction == null)
@@ -88,6 +92,10 @@ public class TransactionScopeContext implements Context, Synchronization
       }
    }
 
+   /**
+    * registers a syncronization so that the beans can be destroyed when the
+    * transaction ends
+    */
    private void registerSyncronization()
    {
       TransactionScopeData data = contextData.get();
@@ -141,6 +149,9 @@ public class TransactionScopeContext implements Context, Synchronization
       }
    }
 
+   /**
+    * the transaction is done, destory the beans
+    */
    public void afterCompletion(int status)
    {
       TransactionScopeData data = contextData.get();

@@ -21,6 +21,8 @@
  */
 package org.jboss.seam.persistence;
 
+import java.io.Serializable;
+
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 
@@ -28,25 +30,28 @@ import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.weld.extensions.core.Veto;
 
 /**
- * Class that enabled the seam managed persitence context to be configured via
+ * Class that enabled the seam managed persistence context to be configured via
  * xml.
  * 
  * There are two ways to do this. Either the persistenceUnintJndi name can be
  * set, in which case the entityManagerFactory is looked up from JNDI.
  * 
- * Alternativly the @Inject annotation can be applied to the
- * entityManagerFactory propery along with any qualifiers needed and the
- * entityManagerFactory will be injected
+ * Alternatively the entityManagerFactory property can be set via el in seam-xml
  * 
- * Any qualifiers that are applied to this class are also applied to the managed
- * persistence context in question
+ * Any qualifier or scope annotations that are applied to this class are also
+ * applied to the managed persistence context in question
+ * 
  * 
  * @author Stuart Douglas
  * 
  */
 @Veto
-public class ManagedPersistenceContext
+public class ManagedPersistenceContext implements Serializable
 {
+
+   private String persistenceUnitJndiName;
+
+   private EntityManagerFactory entityManagerFactory;
 
    public String getPersistenceUnitJndiName()
    {
@@ -78,9 +83,5 @@ public class ManagedPersistenceContext
    {
       this.entityManagerFactory = entityManagerFactory;
    }
-
-   String persistenceUnitJndiName;
-
-   EntityManagerFactory entityManagerFactory;
 
 }

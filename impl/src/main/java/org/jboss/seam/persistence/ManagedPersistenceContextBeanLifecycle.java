@@ -21,53 +21,31 @@
  */
 package org.jboss.seam.persistence;
 
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.weld.extensions.bean.BeanLifecycle;
-
 /**
- * Class that is responsible for creating and destroying the seam managed
- * persistence context
+ * SMPC lifecycle for SMPC's configured via @SeamManaged
  * 
  * @author Stuart Douglas
  * 
  */
-public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<EntityManager>
+public class ManagedPersistenceContextBeanLifecycle extends AbstractManagedPersistenceContextBeanLifecycle
 {
 
+   protected final Annotation[] qualifiers;
+   protected final BeanManager manager;
+
    private EntityManagerFactory emf;
-   private final Annotation[] qualifiers;
-   private final BeanManager manager;
-
-   static final Class<?> proxyClass = Proxy.getProxyClass(EntityManager.class.getClassLoader(), EntityManager.class, Serializable.class);
-
-   static final Constructor<?> proxyConstructor;
-
-   static
-   {
-      try
-      {
-         proxyConstructor = proxyClass.getConstructor(InvocationHandler.class);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
 
    public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, BeanManager manager)
    {
+      super(manager);
       this.qualifiers = new Annotation[qualifiers.size()];
       int i = 0;
       for (Annotation a : qualifiers)
@@ -78,34 +56,9 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
    }
 
    /**
-    * creates the proxy
-    */
-   public EntityManager create(Bean<EntityManager> bean, CreationalContext<EntityManager> arg0)
-   {
-      try
-      {
-         EntityManagerFactory emf = getEntityManagerFactory();
-         EntityManager entityManager = emf.createEntityManager();
-         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager);
-         EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
-         return proxy;
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   public void destroy(Bean<EntityManager> bean, EntityManager em, CreationalContext<EntityManager> arg1)
-   {
-      em.close();
-      arg1.release();
-   }
-
-   /**
     * lazily resolve the relevant EMF
     */
-   private EntityManagerFactory getEntityManagerFactory()
+   protected EntityManagerFactory getEntityManagerFactory()
    {
       if (emf == null)
       {
