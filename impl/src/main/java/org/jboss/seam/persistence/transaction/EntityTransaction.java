@@ -22,6 +22,7 @@
 package org.jboss.seam.persistence.transaction;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
@@ -32,6 +33,7 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.seam.persistence.PersistenceProvider;
 import org.jboss.weld.extensions.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Support for the JPA EntityTransaction API.
  * 
- * Adapts JPA transaction management to a Seam UserTransaction 
- * interface.For use in non-JTA-capable environments.
+ * Adapts JPA transaction management to a Seam UserTransaction interface.For use
+ * in non-JTA-capable environments.
  * 
  * @author Gavin King
  * 
@@ -50,11 +52,13 @@ import org.slf4j.LoggerFactory;
 public class EntityTransaction extends AbstractUserTransaction
 {
    private static final Logger log = LoggerFactory.getLogger(EntityTransaction.class);
-   
+
    @Inject
    private EntityManager entityManager;
-   
-   
+
+   @Inject
+   private Instance<PersistenceProvider> persistenceProvider;
+
    @Inject
    public EntityTransaction(Synchronizations sync)
    {
@@ -69,7 +73,7 @@ public class EntityTransaction extends AbstractUserTransaction
    public void begin() throws NotSupportedException, SystemException
    {
       log.debug("beginning JPA resource-local transaction");
-      //TODO: translate exceptions that occur into the correct JTA exception
+      // TODO: translate exceptions that occur into the correct JTA exception
       try
       {
          getDelegate().begin();
@@ -81,15 +85,14 @@ public class EntityTransaction extends AbstractUserTransaction
       }
    }
 
-   public void commit() throws RollbackException, HeuristicMixedException,
-            HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
+   public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
    {
       log.debug("committing JPA resource-local transaction");
       javax.persistence.EntityTransaction delegate = getDelegate();
       boolean success = false;
       try
       {
-         if ( delegate.getRollbackOnly() )
+         if (delegate.getRollbackOnly())
          {
             delegate.rollback();
             throw new RollbackException();
@@ -110,7 +113,7 @@ public class EntityTransaction extends AbstractUserTransaction
    public void rollback() throws IllegalStateException, SecurityException, SystemException
    {
       log.debug("rolling back JPA resource-local transaction");
-      //TODO: translate exceptions that occur into the correct JTA exception
+      // TODO: translate exceptions that occur into the correct JTA exception
       javax.persistence.EntityTransaction delegate = getDelegate();
       try
       {
@@ -152,18 +155,17 @@ public class EntityTransaction extends AbstractUserTransaction
    @Override
    public void registerSynchronization(Synchronization sync)
    {
-      if ( log.isDebugEnabled() )
+      if (log.isDebugEnabled())
       {
          log.debug("registering synchronization: " + sync);
       }
-      //try to register the synchronization directly with the
-      //persistence provider, but if this fails, just hold
-      //on to it myself
-      // if ( !PersistenceProvider.instance().registerSynchronization(sync,
-      // currentEntityManager) )
-      // {
-      // getSynchronizations().registerSynchronization(sync);
-      // }
+      // try to register the synchronization directly with the
+      // persistence provider, but if this fails, just hold
+      // on to it myself
+      if (!persistenceProvider.get().registerSynchronization(sync, entityManager))
+      {
+         getSynchronizations().registerSynchronization(sync);
+      }
    }
 
    @Override
@@ -175,7 +177,7 @@ public class EntityTransaction extends AbstractUserTransaction
    @Override
    public void enlist(EntityManager entityManager)
    {
-      //no-op
+      // no-op
    }
 
 }

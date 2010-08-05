@@ -22,8 +22,12 @@
 package org.jboss.seam.persistence;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
@@ -54,15 +58,18 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private final Instance<SeamTransaction> userTransactionInstance;
 
+   private final Set<Annotation> qualifiers;
+
    private transient boolean synchronizationRegistered;
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
+   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers)
    {
       super(delegate, beanManager);
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
+      this.qualifiers = new HashSet<Annotation>(qualifiers);
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -103,6 +110,11 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    public void beforeCompletion()
    {
 
+   }
+
+   public Set<Annotation> getQualifiers()
+   {
+      return Collections.unmodifiableSet(qualifiers);
    }
 
 }

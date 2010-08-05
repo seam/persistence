@@ -13,6 +13,7 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.PersistenceProvider;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
@@ -40,6 +41,7 @@ public class TransactionScopedTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(TransactionScopeExtension.class.getPackage());
+      war.addPackage(PersistenceProvider.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
       war.addClasses(TransactionScopedTest.class, Hotel.class, HelloService.class, TransactionScopedObject.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");

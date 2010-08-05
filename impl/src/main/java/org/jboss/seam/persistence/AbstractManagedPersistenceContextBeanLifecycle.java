@@ -44,7 +44,7 @@ import org.jboss.weld.extensions.bean.BeanLifecycle;
 public abstract class AbstractManagedPersistenceContextBeanLifecycle implements BeanLifecycle<EntityManager>
 {
 
-   static final Class<?> proxyClass = Proxy.getProxyClass(EntityManager.class.getClassLoader(), EntityManager.class, Serializable.class);
+   static final Class<?> proxyClass = Proxy.getProxyClass(PersistenceContext.class.getClassLoader(), EntityManager.class, Serializable.class, PersistenceContext.class);
 
    static final Constructor<?> proxyConstructor;
 
@@ -76,7 +76,7 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
       {
          EntityManagerFactory emf = getEntityManagerFactory();
          EntityManager entityManager = emf.createEntityManager();
-         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager);
+         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers());
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
          return proxy;
       }

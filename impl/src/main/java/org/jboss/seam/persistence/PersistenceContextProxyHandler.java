@@ -50,12 +50,15 @@ public class PersistenceContextProxyHandler implements Serializable
 
    private final Instance<Expressions> expressionsInstance;
 
+   private final Instance<PersistenceProvider> persistenceProvider;
+
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
    public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
    {
       this.delegate = delegate;
       expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
+      persistenceProvider = InstanceResolver.getInstance(PersistenceProvider.class, beanManager);
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -64,7 +67,21 @@ public class PersistenceContextProxyHandler implements Serializable
       {
          return handleCreateQueryWithString(method, args);
       }
+      if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
+      {
+         changeFushMode((FlushModeType) args[0]);
+         return null;
+      }
+      if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return EntityManager.class;
+      }
       return method.invoke(delegate, args);
+   }
+
+   private void changeFushMode(FlushModeType flushModeType)
+   {
+      persistenceProvider.get().setFlushMode(delegate, flushModeType);
    }
 
    protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable
