@@ -16,6 +16,7 @@ import org.hibernate.TransientObjectException;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.VersionType;
+import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class HibernatePersistenceProvider extends PersistenceProvider
 {
 
    @Inject
-   Instance<PersistenceContexts> persistenceContexts;
+   Instance<PersistenceContextsImpl> persistenceContexts;
 
    private static Logger log = LoggerFactory.getLogger(HibernatePersistenceProvider.class);
    private static Class FULL_TEXT_SESSION_PROXY_CLASS;

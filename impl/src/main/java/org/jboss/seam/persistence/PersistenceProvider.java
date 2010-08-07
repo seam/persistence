@@ -31,6 +31,8 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContexts;
 import javax.transaction.Synchronization;
 
+import org.jboss.seam.persistence.transaction.FlushModeType;
+
 /**
  * Abstraction layer for persistence providers (JPA implementations). This class
  * provides a working base implementation that can be optimized for performance

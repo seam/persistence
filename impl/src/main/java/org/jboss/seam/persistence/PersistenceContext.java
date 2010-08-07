@@ -24,6 +24,8 @@ package org.jboss.seam.persistence;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
+import org.jboss.seam.persistence.transaction.FlushModeType;
+
 /**
  * Support for changing flushmodes for an existing persistence context.
  * 

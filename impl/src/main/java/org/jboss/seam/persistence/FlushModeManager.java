@@ -25,6 +25,8 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.jboss.seam.persistence.transaction.FlushModeType;
+
 /**
  * Provides for programmatic configuration of the default flush mode.
  * 

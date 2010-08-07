@@ -29,6 +29,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.weld.extensions.el.Expressions;
 import org.slf4j.Logger;

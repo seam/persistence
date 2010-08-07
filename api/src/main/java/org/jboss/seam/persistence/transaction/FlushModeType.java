@@ -1,4 +1,4 @@
-package org.jboss.seam.persistence;
+package org.jboss.seam.persistence.transaction;
 
 /**
  * A full set of flush modes, including MANUAL,
