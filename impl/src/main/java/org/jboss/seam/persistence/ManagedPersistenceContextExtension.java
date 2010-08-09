@@ -56,9 +56,9 @@ public class ManagedPersistenceContextExtension implements Extension
 
    /**
     * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
-    * producer field that is annotated {@link SeamManaged}. Then found a
-    * corresponding smpc bean is created and registered. Any scope declaration
-    * on the producer are removed as this is not supported by the spec
+    * producer field that is annotated {@link SeamManaged}. Then a corresponding
+    * smpc bean is created and registered. Any scope declaration on the producer
+    * are removed as this is not supported by the spec
     * 
     */
    public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> event, BeanManager manager)

@@ -2,15 +2,11 @@ package org.jboss.seam.persistence;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.jboss.seam.persistence.PersistenceContextsImpl.PersistenceContextDefintition;
 import org.jboss.seam.persistence.transaction.FlushModeType;
 
 public interface PersistenceContexts
 {
-
-   @Inject
    public abstract void create(FlushModeManager manager);
 
    public abstract FlushModeType getFlushMode();

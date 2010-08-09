@@ -21,15 +21,35 @@
  */
 package org.jboss.seam.persistence;
 
+import java.io.Serializable;
+
+import javax.enterprise.context.ApplicationScoped;
+
 import org.jboss.seam.persistence.transaction.FlushModeType;
+import org.jboss.weld.extensions.defaultbean.DefaultBean;
 
 /**
- * provides a means of configuring the default flush mode
+ * Provides for programmatic configuration of the default flush mode.
+ * 
+ * TODO: implement this
  * 
  * @author Stuart Douglas
  * 
  */
-public interface FlushModeManager
+@ApplicationScoped
+@DefaultBean(type = FlushModeManager.class)
+public class FlushModeManagerImpl implements Serializable, FlushModeManager
 {
-   public FlushModeType getFlushModeType();
+   FlushModeType flushModeType = FlushModeType.AUTO;
+
+   public FlushModeType getFlushModeType()
+   {
+      return flushModeType;
+   }
+
+   public void setFlushModeType(FlushModeType flushModeType)
+   {
+      this.flushModeType = flushModeType;
+   }
+
 }

@@ -22,7 +22,11 @@
 package org.jboss.seam.persistence;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
@@ -53,13 +57,16 @@ public class PersistenceContextProxyHandler implements Serializable
 
    private final Instance<PersistenceProvider> persistenceProvider;
 
+   private final Set<Annotation> qualifiers;
+
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
+   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers)
    {
       this.delegate = delegate;
       expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
       persistenceProvider = InstanceResolver.getInstance(PersistenceProvider.class, beanManager);
+      this.qualifiers = new HashSet<Annotation>(qualifiers);
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -76,6 +83,10 @@ public class PersistenceContextProxyHandler implements Serializable
       if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0)
       {
          return EntityManager.class;
+      }
+      if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return Collections.unmodifiableSet(qualifiers);
       }
       return method.invoke(delegate, args);
    }

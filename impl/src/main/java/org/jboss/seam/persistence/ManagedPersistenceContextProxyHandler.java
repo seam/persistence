@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +65,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers)
    {
-      super(delegate, beanManager);
+      super(delegate, beanManager, qualifiers);
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
       this.qualifiers = new HashSet<Annotation>(qualifiers);
@@ -111,10 +110,4 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    {
 
    }
-
-   public Set<Annotation> getQualifiers()
-   {
-      return Collections.unmodifiableSet(qualifiers);
-   }
-
 }
