@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
@@ -61,14 +62,19 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private transient boolean synchronizationRegistered;
 
+   private final PersistenceContexts persistenceContexts;
+
+   private boolean persistenceContextsTouched = false;
+
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers)
+   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts)
    {
       super(delegate, beanManager, qualifiers);
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
       this.qualifiers = new HashSet<Annotation>(qualifiers);
+      this.persistenceContexts = persistenceContexts;
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -77,6 +83,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       {
          joinTransaction();
       }
+      touch((PersistenceContext) proxy);
       return super.invoke(proxy, method, args);
    }
 
@@ -101,6 +108,22 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       }
    }
 
+   void touch(PersistenceContext delegate)
+   {
+      if (!persistenceContextsTouched)
+      {
+         try
+         {
+            persistenceContexts.touch(delegate);
+            persistenceContextsTouched = true;
+         }
+         catch (ContextNotActiveException e)
+         {
+            log.debug("Not touching pc " + this + "as conversation scope not active");
+         }
+      }
+   }
+
    public void afterCompletion(int status)
    {
       synchronizationRegistered = false;
@@ -110,4 +133,5 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    {
 
    }
+
 }

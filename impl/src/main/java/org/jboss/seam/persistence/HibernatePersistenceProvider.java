@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class HibernatePersistenceProvider extends PersistenceProvider
+public class HibernatePersistenceProvider extends SeamPersistenceProvider
 {
 
    @Inject

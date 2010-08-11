@@ -16,6 +16,7 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.SeamPersistenceProvider;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
@@ -43,6 +44,7 @@ public class UserTransactionTest
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(PersistenceException.class.getPackage());
       war.addClasses(UserTransactionTest.class, Hotel.class, HelloService.class);
+      war.addClass(SeamPersistenceProvider.class);
       war.addPackage(NamingUtils.class.getPackage());
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");

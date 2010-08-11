@@ -46,7 +46,7 @@ import org.jboss.seam.persistence.transaction.FlushModeType;
  * @author Stuart Douglas
  * 
  */
-public class PersistenceProvider
+public class SeamPersistenceProvider
 {
    public enum Feature
    {

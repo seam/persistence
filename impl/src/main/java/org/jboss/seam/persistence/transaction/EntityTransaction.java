@@ -33,7 +33,7 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.PersistenceProvider;
+import org.jboss.seam.persistence.SeamPersistenceProvider;
 import org.jboss.weld.extensions.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class EntityTransaction extends AbstractUserTransaction
    private EntityManager entityManager;
 
    @Inject
-   private Instance<PersistenceProvider> persistenceProvider;
+   private Instance<SeamPersistenceProvider> persistenceProvider;
 
    @Inject
    public EntityTransaction(Synchronizations sync)

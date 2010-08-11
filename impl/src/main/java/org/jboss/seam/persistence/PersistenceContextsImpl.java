@@ -47,7 +47,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
    Instance<PersistenceContext> persistenceContexts;
 
    @Inject
-   Instance<PersistenceProvider> persistenceProvider;
+   Instance<SeamPersistenceProvider> persistenceProvider;
 
    @Inject
    public void create(FlushModeManager manager)

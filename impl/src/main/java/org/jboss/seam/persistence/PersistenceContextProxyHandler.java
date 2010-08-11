@@ -55,7 +55,7 @@ public class PersistenceContextProxyHandler implements Serializable
 
    private final Instance<Expressions> expressionsInstance;
 
-   private final Instance<PersistenceProvider> persistenceProvider;
+   private final Instance<SeamPersistenceProvider> persistenceProvider;
 
    private final Set<Annotation> qualifiers;
 
@@ -65,7 +65,7 @@ public class PersistenceContextProxyHandler implements Serializable
    {
       this.delegate = delegate;
       expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
-      persistenceProvider = InstanceResolver.getInstance(PersistenceProvider.class, beanManager);
+      persistenceProvider = InstanceResolver.getInstance(SeamPersistenceProvider.class, beanManager);
       this.qualifiers = new HashSet<Annotation>(qualifiers);
    }
 

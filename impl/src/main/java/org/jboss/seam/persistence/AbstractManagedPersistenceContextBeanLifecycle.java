@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -33,6 +34,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.jboss.weld.extensions.bean.BeanLifecycle;
+import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that is responsible for creating and destroying the seam managed
@@ -49,6 +53,10 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
    static final Constructor<?> proxyConstructor;
 
    private final BeanManager manager;
+
+   private static final Logger log = LoggerFactory.getLogger(AbstractManagedPersistenceContextBeanLifecycle.class);
+
+   private PersistenceContexts persistenceContexts;
 
    protected AbstractManagedPersistenceContextBeanLifecycle(BeanManager manager)
    {
@@ -76,7 +84,7 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
       {
          EntityManagerFactory emf = getEntityManagerFactory();
          EntityManager entityManager = emf.createEntityManager();
-         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers());
+         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts());
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
          return proxy;
       }
@@ -90,8 +98,27 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
    {
       em.close();
       arg1.release();
+      try
+      {
+         getPersistenceContexts().untouch((PersistenceContext) em);
+      }
+      catch (ContextNotActiveException e)
+      {
+         log.debug("Could not untouch PersistenceContext as conversation scope not active");
+      }
    }
 
    protected abstract EntityManagerFactory getEntityManagerFactory();
+
+   private PersistenceContexts getPersistenceContexts()
+   {
+      if (persistenceContexts == null)
+      {
+         Bean<PersistenceContexts> bean = (Bean) manager.resolve(manager.getBeans(PersistenceContexts.class, DefaultLiteral.INSTANCE));
+         CreationalContext<PersistenceContexts> ctx = manager.createCreationalContext(bean);
+         persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
+      }
+      return persistenceContexts;
+   }
 
 }
