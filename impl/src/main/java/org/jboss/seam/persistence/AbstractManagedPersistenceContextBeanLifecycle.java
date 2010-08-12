@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractManagedPersistenceContextBeanLifecycle implements BeanLifecycle<EntityManager>
 {
 
-   static final Class<?> proxyClass = Proxy.getProxyClass(PersistenceContext.class.getClassLoader(), EntityManager.class, Serializable.class, PersistenceContext.class);
+   private final Class<?> proxyClass;
 
-   static final Constructor<?> proxyConstructor;
+   private final Constructor<?> proxyConstructor;
 
    private final BeanManager manager;
 
@@ -58,13 +58,11 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
 
    private PersistenceContexts persistenceContexts;
 
-   protected AbstractManagedPersistenceContextBeanLifecycle(BeanManager manager)
+   protected AbstractManagedPersistenceContextBeanLifecycle(BeanManager manager, ClassLoader loader)
    {
       this.manager = manager;
-   }
+      proxyClass = Proxy.getProxyClass(PersistenceContext.class.getClassLoader(), EntityManager.class, Serializable.class, PersistenceContext.class);
 
-   static
-   {
       try
       {
          proxyConstructor = proxyClass.getConstructor(InvocationHandler.class);

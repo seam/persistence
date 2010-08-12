@@ -43,9 +43,9 @@ public class ManagedPersistenceContextBeanLifecycle extends AbstractManagedPersi
 
    private EntityManagerFactory emf;
 
-   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, BeanManager manager)
+   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager)
    {
-      super(manager);
+      super(manager, loader);
       this.qualifiers = new Annotation[qualifiers.size()];
       int i = 0;
       for (Annotation a : qualifiers)

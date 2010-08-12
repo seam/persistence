@@ -98,7 +98,7 @@ public class ManagedPersistenceContextExtension implements Extension
             {
                modifiedType.removeFromField(f.getJavaMember(), scope);
             }
-            registerManagedPersistenceContext(qualifiers, scope, manager);
+            registerManagedPersistenceContext(qualifiers, scope, manager, event.getAnnotatedType().getJavaClass().getClassLoader());
          }
          // now look for producer methods that produce an EntityManagerFactory.
          // This allows the user to manually configure an EntityManagerFactory
@@ -110,7 +110,7 @@ public class ManagedPersistenceContextExtension implements Extension
       }
    }
 
-   public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager)
+   public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader)
    {
       // create the new bean to be registerd later
       AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
@@ -118,7 +118,7 @@ public class ManagedPersistenceContextExtension implements Extension
       builder.setQualifiers(qualifiers);
       builder.setScope(scope);
       builder.getTypes().add(PersistenceContext.class);
-      builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, manager));
+      builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager));
       beans.add(builder.create());
    }
 
