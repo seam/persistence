@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -42,7 +41,6 @@ public class UserTransactionTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
-      war.addPackage(PersistenceException.class.getPackage());
       war.addClasses(UserTransactionTest.class, Hotel.class, HelloService.class);
       war.addClass(SeamPersistenceProvider.class);
       war.addPackage(NamingUtils.class.getPackage());

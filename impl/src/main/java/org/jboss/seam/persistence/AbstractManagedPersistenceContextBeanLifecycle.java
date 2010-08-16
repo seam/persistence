@@ -61,7 +61,7 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
    protected AbstractManagedPersistenceContextBeanLifecycle(BeanManager manager, ClassLoader loader)
    {
       this.manager = manager;
-      proxyClass = Proxy.getProxyClass(PersistenceContext.class.getClassLoader(), EntityManager.class, Serializable.class, PersistenceContext.class);
+      proxyClass = Proxy.getProxyClass(loader, EntityManager.class, Serializable.class, PersistenceContext.class);
 
       try
       {
@@ -118,5 +118,4 @@ public abstract class AbstractManagedPersistenceContextBeanLifecycle implements 
       }
       return persistenceContexts;
    }
-
 }

@@ -118,7 +118,9 @@ public class ManagedPersistenceContextExtension implements Extension
       builder.setQualifiers(qualifiers);
       builder.setScope(scope);
       builder.getTypes().add(PersistenceContext.class);
-      builder.setBeanLifecycle(new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager));
+      builder.getTypes().add(Object.class);
+      ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager);
+      builder.setBeanLifecycle(lifecycle);
       beans.add(builder.create());
    }
 
