@@ -114,11 +114,13 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       {
          try
          {
-            persistenceContexts.touch(delegate);
+            // we need to do this first to prevent an infinite loop
             persistenceContextsTouched = true;
+            persistenceContexts.touch(delegate);
          }
          catch (ContextNotActiveException e)
          {
+            persistenceContextsTouched = false;
             log.debug("Not touching pc " + this + "as conversation scope not active");
          }
       }
