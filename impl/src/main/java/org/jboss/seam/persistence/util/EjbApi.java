@@ -111,17 +111,17 @@ public class EjbApi
 
    public static String name(Annotation annotation)
    {
-      return (String) invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "name"), annotation);
+      return (String) invokeAndWrap(Reflections.findDeclaredMethod(annotation.annotationType(), "name"), annotation);
    }
 
    public static Class[] value(Annotation annotation)
    {
-      return (Class[]) invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "value"), annotation);
+      return (Class[]) invokeAndWrap(Reflections.findDeclaredMethod(annotation.annotationType(), "value"), annotation);
    }
 
    public static boolean rollback(Annotation annotation)
    {
-      return (Boolean) invokeAndWrap(Reflections.getMethod(annotation.annotationType(), "rollback"), annotation);
+      return (Boolean) invokeAndWrap(Reflections.findDeclaredMethod(annotation.annotationType(), "rollback"), annotation);
    }
 
    private static Object invokeAndWrap(Method method, Object instance, Object... parameters)

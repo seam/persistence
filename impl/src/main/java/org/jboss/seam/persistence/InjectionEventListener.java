@@ -100,7 +100,7 @@ public class InjectionEventListener
     */
    private boolean injectionRequired(Class<?> entityClass)
    {
-      for (Field f : Reflections.getAllFields(entityClass))
+      for (Field f : Reflections.getAllDeclaredFields(entityClass))
       {
          if (f.isAnnotationPresent(Inject.class))
          {
@@ -108,7 +108,7 @@ public class InjectionEventListener
          }
       }
 
-      for (Method m : Reflections.getAllMethods(entityClass))
+      for (Method m : Reflections.getAllDeclaredMethods(entityClass))
       {
          if (m.isAnnotationPresent(Inject.class))
          {
@@ -116,7 +116,7 @@ public class InjectionEventListener
          }
       }
 
-      for (Constructor<?> c : Reflections.getAllConstructors(entityClass))
+      for (Constructor<?> c : Reflections.getAllDeclaredConstructors(entityClass))
       {
          if (c.isAnnotationPresent(Inject.class))
          {
