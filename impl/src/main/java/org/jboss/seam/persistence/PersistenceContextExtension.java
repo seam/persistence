@@ -47,6 +47,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
+import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.weld.extensions.literal.AnyLiteral;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class PersistenceContextExtension implements Extension
       }
       else if (bootstrapRequired == null)
       {
-         if (isPersistenceContainerManaged())
+         if (EnvironmentUtils.isEEEnvironment())
          {
             bootstrapRequired = false;
             return;
@@ -241,34 +242,4 @@ public class PersistenceContextExtension implements Extension
       }
    }
 
-   /**
-    * Check whether persistence is container managed. For now, this simply
-    * checks for the presence of the EJB API. If it's present, we assume this is
-    * an EE environment and that persistence is container managed.
-    */
-   boolean isPersistenceContainerManaged()
-   {
-      boolean eeEnv = true;
-      try
-      {
-         if (Thread.currentThread().getContextClassLoader() != null)
-         {
-            Thread.currentThread().getContextClassLoader().loadClass("javax.ejb.Stateless");
-         }
-         else
-         {
-            Class.forName("javax.ejb.Stateless");
-         }
-      }
-      catch (ClassNotFoundException e)
-      {
-         eeEnv = false;
-      }
-      catch (NoClassDefFoundError e)
-      {
-         eeEnv = false;
-      }
-
-      return eeEnv;
-   }
 }
