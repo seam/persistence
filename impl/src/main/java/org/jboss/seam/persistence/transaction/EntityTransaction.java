@@ -34,6 +34,7 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
 import org.jboss.seam.persistence.SeamPersistenceProvider;
+import org.jboss.weld.extensions.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 @RequestScoped
 @DefaultTransaction
+@Veto
 public class EntityTransaction extends AbstractUserTransaction
 {
    private static final Logger log = LoggerFactory.getLogger(EntityTransaction.class);
