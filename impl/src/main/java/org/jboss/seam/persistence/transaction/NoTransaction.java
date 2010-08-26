@@ -45,7 +45,6 @@ public class NoTransaction extends AbstractUserTransaction
 
    public NoTransaction()
    {
-      super(null);
    }
 
    public void begin() throws NotSupportedException, SystemException

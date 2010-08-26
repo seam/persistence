@@ -51,7 +51,7 @@ public class CMTTransaction extends AbstractUserTransaction
 
    public CMTTransaction(EJBContext ejbContext, Synchronizations sync)
    {
-      super(sync);
+      setSynchronizations(sync);
       this.ejbContext = ejbContext;
       if (ejbContext == null)
       {

@@ -31,8 +31,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.transaction.SeamTransaction;
-
 /**
  * Base implementation of UserTransaction
  * 
@@ -42,12 +40,7 @@ import org.jboss.seam.persistence.transaction.SeamTransaction;
 public abstract class AbstractUserTransaction implements SeamTransaction
 {
 
-   private final Synchronizations synchronizations;
-
-   public AbstractUserTransaction(Synchronizations synchronizations)
-   {
-      this.synchronizations = synchronizations;
-   }
+   private Synchronizations synchronizations;
 
    public boolean isActive() throws SystemException
    {
@@ -104,6 +97,11 @@ public abstract class AbstractUserTransaction implements SeamTransaction
    public Synchronizations getSynchronizations()
    {
       return synchronizations;
+   }
+
+   protected void setSynchronizations(Synchronizations synchronizations)
+   {
+      this.synchronizations = synchronizations;
    }
 
 }

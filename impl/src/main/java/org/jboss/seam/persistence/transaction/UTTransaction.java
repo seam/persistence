@@ -48,7 +48,7 @@ public class UTTransaction extends AbstractUserTransaction
 
    UTTransaction(javax.transaction.UserTransaction delegate, Synchronizations sync)
    {
-      super(sync);
+      this.setSynchronizations(sync);
       this.delegate = delegate;
       if (delegate == null)
       {
