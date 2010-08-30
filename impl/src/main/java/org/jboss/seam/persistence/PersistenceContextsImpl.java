@@ -47,7 +47,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
    Instance<ManagedPersistenceContext> persistenceContexts;
 
    @Inject
-   Instance<SeamPersistenceProvider> persistenceProvider;
+   Instance<DefaultPersistenceProvider> persistenceProvider;
 
    @Inject
    public void create(FlushModeManager manager)
@@ -110,10 +110,10 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
 
    private void changeFlushModes()
    {
-
       for (ManagedPersistenceContext context : persistenceContexts)
       {
          if (set.contains(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType())))
+         {
             try
             {
                context.changeFlushMode(flushMode);
@@ -124,14 +124,28 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
                // warning to the developer
                log.warn(uoe.getMessage());
             }
+         }
       }
    }
 
    public void beforeRender()
    {
-      // some JPA providers may not support MANUAL flushing
-      // defer the decision to the provider manager component
-      persistenceProvider.get().setRenderFlushMode();
+      for (ManagedPersistenceContext context : persistenceContexts)
+      {
+         if (set.contains(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType())))
+         {
+            try
+            {
+               context.changeFlushMode(context.getProvider().getRenderFlushMode());
+            }
+            catch (UnsupportedOperationException uoe)
+            {
+               // we won't be nasty and throw and exception, but we'll log a
+               // warning to the developer
+               log.warn(uoe.getMessage());
+            }
+         }
+      }
    }
 
    public void afterRender()

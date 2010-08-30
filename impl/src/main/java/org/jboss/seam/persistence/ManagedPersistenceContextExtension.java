@@ -22,7 +22,9 @@
 package org.jboss.seam.persistence;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.Dependent;
@@ -33,6 +35,7 @@ import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.persistence.EntityManager;
@@ -44,6 +47,7 @@ import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.literal.AnyLiteral;
 import org.jboss.weld.extensions.literal.ApplicationScopedLiteral;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.weld.extensions.util.service.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +64,20 @@ public class ManagedPersistenceContextExtension implements Extension
 
    Set<Bean<?>> beans = new HashSet<Bean<?>>();
 
+   List<SeamPersistenceProvider> persistenceProviders = new ArrayList<SeamPersistenceProvider>();
+
    private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextExtension.class);
+
+   public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event)
+   {
+      ServiceLoader<SeamPersistenceProvider> providers = ServiceLoader.load(SeamPersistenceProvider.class);
+      for (SeamPersistenceProvider i : providers)
+      {
+         persistenceProviders.add(i);
+      }
+      // this is always the last one considered
+      persistenceProviders.add(new DefaultPersistenceProvider());
+   }
 
    /**
     * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
@@ -113,13 +130,12 @@ public class ManagedPersistenceContextExtension implements Extension
          // This allows the user to manually configure an EntityManagerFactory
          // and return it from a producer method
       }
-      // not look for SMPC's that are configured programatically via a producer
-      // method the producer method has its scope changes to application scoped
-      // this allows for programati config of the SMPC
+      // now look for SMPC's that are configured programatically via a producer
+      // method. This looks for both EMF's and SessionFactories
+      // The producer method has its scope changes to application scoped
+      // this allows for programatic config of the SMPC
       for (AnnotatedMethod<? super T> m : event.getAnnotatedType().getMethods())
       {
-         // look for a seam managed persistence unit declaration on EE resource
-         // producer fields
          if (m.isAnnotationPresent(SeamManaged.class) && m.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(m.getJavaMember().getReturnType()))
          {
             if (modifiedType == null)
@@ -145,51 +161,34 @@ public class ManagedPersistenceContextExtension implements Extension
                qualifiers.add(new DefaultLiteral());
             }
             qualifiers.add(AnyLiteral.INSTANCE);
-            // we need to remove the scope, they are not nessesarily supported
-            // on producer fields
+            // we need to change the scope to application scoped
             modifiedType.removeFromMethod(m.getJavaMember(), scope);
             modifiedType.addToMethod(m.getJavaMember(), ApplicationScopedLiteral.INSTANCE);
             registerManagedPersistenceContext(qualifiers, scope, manager, event.getAnnotatedType().getJavaClass().getClassLoader());
          }
-         // now look for producer methods that produce an EntityManagerFactory.
-         // This allows the user to manually configure an EntityManagerFactory
-         // and return it from a producer method
       }
 
       if (modifiedType != null)
       {
          event.setAnnotatedType(modifiedType.create());
       }
-      // prevent the install of HibernatePersistenceProvider is hibernate is not
-      // present
-      if (event.getAnnotatedType().getJavaClass() == HibernatePersistenceProvider.class)
-      {
-         try
-         {
-            if (Thread.currentThread().getContextClassLoader() != null)
-            {
-               Thread.currentThread().getContextClassLoader().loadClass("org.hibernate.Session");
-            }
-            else
-            {
-               Class.forName("org.hibernate.Session");
-            }
-         }
-         catch (ClassNotFoundException e)
-         {
-            event.veto();
-            log.debug("Hibernate is not availbile", e);
-         }
-      }
    }
 
-   public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader)
+   private void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader)
    {
-      // TODO: this is a massive hack. We need a much better way of doing this
-      HibernatePersistenceProvider prov = new HibernatePersistenceProvider();
-      Set<Class<?>> additionalInterfaces = prov.getAdditionalEntityManagerInterfaces();
+      // we need to add all additional interfaces from our
+      // SeamPersistenceProvider to the bean as at this stage we have no way of
+      // knowing which persistence provider is actually in use this only time
+      // that this may cause slightly odd behaviour is if two providers are on
+      // the class path, in which case the entity manager may be assignable to
+      // additional interfaces that it does not support.
+      Set<Class<?>> additionalInterfaces = new HashSet<Class<?>>();
+      for (SeamPersistenceProvider i : persistenceProviders)
+      {
+         additionalInterfaces.addAll(i.getAdditionalEntityManagerInterfaces());
+      }
       // create the new bean to be registered later
-      ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager, additionalInterfaces);
+      ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager, additionalInterfaces, persistenceProviders);
       AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
       BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
       builder.setQualifiers(qualifiers);

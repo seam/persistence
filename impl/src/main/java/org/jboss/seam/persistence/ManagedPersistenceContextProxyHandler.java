@@ -65,9 +65,9 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts)
+   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, SeamPersistenceProvider provider)
    {
-      super(delegate, beanManager, qualifiers);
+      super(delegate, beanManager, qualifiers, provider);
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
       this.persistenceContexts = persistenceContexts;

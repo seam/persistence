@@ -41,4 +41,6 @@ public interface ManagedPersistenceContext
 
    public Class<?> getBeanType();
 
+   public SeamPersistenceProvider getProvider();
+
 }

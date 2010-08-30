@@ -73,6 +73,7 @@ public class HibernateSearchTest
       war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
+      war.addWebResource("META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider", "classes/META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider");
       return war;
    }
 

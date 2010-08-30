@@ -26,6 +26,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -54,9 +56,9 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
 
    private final Constructor<?> proxyConstructor;
 
-   private PersistenceContexts persistenceContexts;
-
    private SeamPersistenceProvider persistenceProvider;
+
+   private PersistenceContexts persistenceContexts;
 
    protected final Annotation[] qualifiers;
 
@@ -64,9 +66,12 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
 
    private EntityManagerFactory emf;
 
-   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager, Set<Class<?>> additionalinterfaces)
+   private final List<SeamPersistenceProvider> persistenceProviders;
+
+   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager, Set<Class<?>> additionalinterfaces, List<SeamPersistenceProvider> persistenceProviders)
    {
       this.manager = manager;
+      this.persistenceProviders = new ArrayList<SeamPersistenceProvider>(persistenceProviders);
       Class<?>[] interfaces = new Class[additionalinterfaces.size() + 3];
       int count = 0;
       for (Class<?> i : additionalinterfaces)
@@ -92,6 +97,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       {
          this.qualifiers[i++] = a;
       }
+
    }
 
    /**
@@ -103,10 +109,10 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       {
          EntityManagerFactory emf = getEntityManagerFactory();
          EntityManager entityManager = emf.createEntityManager();
-         entityManager = getPersistenceProvider().proxyEntityManager(entityManager);
-         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts());
+         entityManager = getPersistenceProvider(entityManager).proxyEntityManager(entityManager);
+         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts(), getPersistenceProvider(entityManager));
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
-         getPersistenceProvider().setFlushMode(proxy, getPersistenceContexts().getFlushMode());
+         getPersistenceProvider(entityManager).setFlushMode(proxy, getPersistenceContexts().getFlushMode());
          return proxy;
       }
       catch (Exception e)
@@ -144,17 +150,18 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       return persistenceContexts;
    }
 
-   private SeamPersistenceProvider getPersistenceProvider()
+   private SeamPersistenceProvider getPersistenceProvider(EntityManager em)
    {
       if (persistenceProvider == null)
       {
-         Bean<SeamPersistenceProvider> bean = (Bean) manager.resolve(manager.getBeans(SeamPersistenceProvider.class, DefaultLiteral.INSTANCE));
-         if (bean == null)
+         for (SeamPersistenceProvider i : persistenceProviders)
          {
-            throw new RuntimeException("Could not find SeamPersistenceProvider bean");
+            if (i.isCorrectProvider(em))
+            {
+               persistenceProvider = i;
+               break;
+            }
          }
-         CreationalContext<SeamPersistenceProvider> ctx = manager.createCreationalContext(bean);
-         persistenceProvider = (SeamPersistenceProvider) manager.getReference(bean, SeamPersistenceProvider.class, ctx);
       }
       return persistenceProvider;
    }

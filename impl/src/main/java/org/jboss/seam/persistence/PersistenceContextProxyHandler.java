@@ -55,17 +55,20 @@ public class PersistenceContextProxyHandler implements Serializable
 
    private final Instance<Expressions> expressionsInstance;
 
-   private final Instance<SeamPersistenceProvider> persistenceProvider;
+   private final Instance<DefaultPersistenceProvider> persistenceProvider;
 
    private final Set<Annotation> qualifiers;
 
+   private final SeamPersistenceProvider provider;
+
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers)
+   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, SeamPersistenceProvider provider)
    {
       this.delegate = delegate;
+      this.provider = provider;
       expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
-      persistenceProvider = InstanceResolver.getInstance(SeamPersistenceProvider.class, beanManager);
+      persistenceProvider = InstanceResolver.getInstance(DefaultPersistenceProvider.class, beanManager);
       this.qualifiers = new HashSet<Annotation>(qualifiers);
    }
 
@@ -87,6 +90,10 @@ public class PersistenceContextProxyHandler implements Serializable
       if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0)
       {
          return Collections.unmodifiableSet(qualifiers);
+      }
+      if ("getPersistenceProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return provider;
       }
       return method.invoke(delegate, args);
    }

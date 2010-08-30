@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
@@ -27,11 +26,8 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class HibernatePersistenceProvider extends SeamPersistenceProvider
+public class HibernatePersistenceProvider extends DefaultPersistenceProvider
 {
-
-   @Inject
-   Instance<PersistenceContextsImpl> persistenceContexts;
 
    private static Logger log = LoggerFactory.getLogger(HibernatePersistenceProvider.class);
    private static Method FULL_TEXT_SESSION_CONSTRUCTOR;
@@ -91,6 +87,12 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
    }
 
    @Override
+   public boolean isCorrectProvider(EntityManager em)
+   {
+      return em.getDelegate() instanceof Session;
+   }
+
+   @Override
    public void setFlushModeManual(EntityManager entityManager)
    {
       try
@@ -104,9 +106,9 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
    }
 
    @Override
-   public void setRenderFlushMode()
+   public FlushModeType getRenderFlushMode()
    {
-      persistenceContexts.get().changeFlushMode(FlushModeType.MANUAL, true);
+      return FlushModeType.MANUAL;
    }
 
    @Override
