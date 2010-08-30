@@ -176,4 +176,5 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       }
       return emf;
    }
+
 }
