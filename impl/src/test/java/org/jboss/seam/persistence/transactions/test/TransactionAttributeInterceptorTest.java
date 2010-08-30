@@ -42,6 +42,7 @@ import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
 import org.jboss.seam.persistence.transaction.TransactionInterceptor;
+import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
 import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.DontRollBackException;
@@ -76,6 +77,7 @@ public class TransactionAttributeInterceptorTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(SeamPersistenceProvider.class.getPackage());
+      war.addPackage(TransactionScopeExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
       war.addClasses(TransactionAttributeInterceptorTest.class, TransactionAttributeManagedBean.class, HelloService.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");

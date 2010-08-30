@@ -108,6 +108,26 @@ public class ManagedPersistenceContextExtension implements Extension
       {
          event.setAnnotatedType(modifiedType.create());
       }
+      // prevent the install of HibernatePersistenceProvider is hibernate is not
+      // present
+      if (event.getAnnotatedType().getJavaClass() == HibernatePersistenceProvider.class)
+      {
+         try
+         {
+            if (Thread.currentThread().getContextClassLoader() != null)
+            {
+               Thread.currentThread().getContextClassLoader().loadClass("org.hibernate.Session");
+            }
+            else
+            {
+               Class.forName("org.hibernate.Session");
+            }
+         }
+         catch (ClassNotFoundException e)
+         {
+            event.veto();
+         }
+      }
    }
 
    public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader)
@@ -117,7 +137,7 @@ public class ManagedPersistenceContextExtension implements Extension
       BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
       builder.setQualifiers(qualifiers);
       builder.setScope(scope);
-      builder.getTypes().add(PersistenceContext.class);
+      builder.getTypes().add(ManagedPersistenceContext.class);
       builder.getTypes().add(Object.class);
       ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager);
       builder.setBeanLifecycle(lifecycle);

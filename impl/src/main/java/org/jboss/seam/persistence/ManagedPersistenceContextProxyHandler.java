@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -58,8 +57,6 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private final Instance<SeamTransaction> userTransactionInstance;
 
-   private final Set<Annotation> qualifiers;
-
    private transient boolean synchronizationRegistered;
 
    private final PersistenceContexts persistenceContexts;
@@ -73,7 +70,6 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       super(delegate, beanManager, qualifiers);
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
-      this.qualifiers = new HashSet<Annotation>(qualifiers);
       this.persistenceContexts = persistenceContexts;
    }
 
@@ -83,7 +79,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       {
          joinTransaction();
       }
-      touch((PersistenceContext) proxy);
+      touch((ManagedPersistenceContext) proxy);
       return super.invoke(proxy, method, args);
    }
 
@@ -108,7 +104,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       }
    }
 
-   void touch(PersistenceContext delegate)
+   void touch(ManagedPersistenceContext delegate)
    {
       if (!persistenceContextsTouched)
       {

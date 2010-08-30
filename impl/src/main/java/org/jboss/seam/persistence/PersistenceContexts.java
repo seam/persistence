@@ -13,9 +13,9 @@ public interface PersistenceContexts
 
    public abstract Set<PersistenceContextDefintition> getTouchedContexts();
 
-   public abstract void touch(PersistenceContext context);
+   public abstract void touch(ManagedPersistenceContext context);
 
-   public abstract void untouch(PersistenceContext context);
+   public abstract void untouch(ManagedPersistenceContext context);
 
    public abstract void changeFlushMode(FlushModeType flushMode);
 

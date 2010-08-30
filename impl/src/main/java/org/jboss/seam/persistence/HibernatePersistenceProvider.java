@@ -8,15 +8,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 
-import org.hibernate.EntityMode;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.StaleStateException;
 import org.hibernate.TransientObjectException;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.type.VersionType;
 import org.jboss.seam.persistence.transaction.FlushModeType;
+import org.jboss.weld.extensions.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
+@Veto
 public class HibernatePersistenceProvider extends SeamPersistenceProvider
 {
 
@@ -36,9 +34,9 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
    Instance<PersistenceContextsImpl> persistenceContexts;
 
    private static Logger log = LoggerFactory.getLogger(HibernatePersistenceProvider.class);
-   private static Class FULL_TEXT_SESSION_PROXY_CLASS;
+   private static Class<?> FULL_TEXT_SESSION_PROXY_CLASS;
    private static Method FULL_TEXT_SESSION_CONSTRUCTOR;
-   private static Class FULL_TEXT_ENTITYMANAGER_PROXY_CLASS;
+   private static Class<?> FULL_TEXT_ENTITYMANAGER_PROXY_CLASS;
    private static Method FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR;
    static
    {
@@ -47,7 +45,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
          String version = null;
          try
          {
-            Class searchVersionClass = Class.forName("org.hibernate.search.Version");
+            Class<?> searchVersionClass = Class.forName("org.hibernate.search.Version");
             Field versionField = searchVersionClass.getDeclaredField("VERSION");
             version = (String) versionField.get(null);
          }
@@ -57,7 +55,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
          }
          if (version != null)
          {
-            Class searchClass = Class.forName("org.hibernate.search.Search");
+            Class<?> searchClass = Class.forName("org.hibernate.search.Search");
             try
             {
                FULL_TEXT_SESSION_CONSTRUCTOR = searchClass.getDeclaredMethod("getFullTextSession", Session.class);
@@ -68,7 +66,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
                FULL_TEXT_SESSION_CONSTRUCTOR = searchClass.getDeclaredMethod("createFullTextSession", Session.class);
             }
             FULL_TEXT_SESSION_PROXY_CLASS = Class.forName("org.jboss.seam.persistence.FullTextHibernateSessionProxy");
-            Class jpaSearchClass = Class.forName("org.hibernate.search.jpa.Search");
+            Class<?> jpaSearchClass = Class.forName("org.hibernate.search.jpa.Search");
             try
             {
                FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR = jpaSearchClass.getDeclaredMethod("getFullTextEntityManager", EntityManager.class);
@@ -151,32 +149,6 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
    }
 
    @Override
-   public Object getVersion(Object bean, EntityManager entityManager)
-   {
-      try
-      {
-         return getVersion(bean, getSession(entityManager));
-      }
-      catch (NotHibernateException nhe)
-      {
-         return super.getVersion(bean, entityManager);
-      }
-   }
-
-   @Override
-   public void checkVersion(Object bean, EntityManager entityManager, Object oldVersion, Object version)
-   {
-      try
-      {
-         checkVersion(bean, getSession(entityManager), oldVersion, version);
-      }
-      catch (NotHibernateException nhe)
-      {
-         super.checkVersion(bean, entityManager, oldVersion, version);
-      }
-   }
-
-   @Override
    public boolean registerSynchronization(Synchronization sync, EntityManager entityManager)
    {
       try
@@ -210,59 +182,6 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
       }
    }
 
-   public static void checkVersion(Object value, Session session, Object oldVersion, Object version)
-   {
-      ClassMetadata classMetadata = getClassMetadata(value, session);
-      VersionType versionType = (VersionType) classMetadata.getPropertyTypes()[classMetadata.getVersionProperty()];
-      if (!versionType.isEqual(oldVersion, version))
-      {
-         throw new StaleStateException("current database version number does not match passivated version number");
-      }
-   }
-
-   public static Object getVersion(Object value, Session session)
-   {
-      ClassMetadata classMetadata = getClassMetadata(value, session);
-      return classMetadata != null && classMetadata.isVersioned() ? classMetadata.getVersion(value, EntityMode.POJO) : null;
-   }
-
-   private static ClassMetadata getClassMetadata(Object value, Session session)
-   {
-      Class entityClass = getEntityClass(value);
-      ClassMetadata classMetadata = null;
-      if (entityClass != null)
-      {
-         classMetadata = session.getSessionFactory().getClassMetadata(entityClass);
-         if (classMetadata == null)
-         {
-            throw new IllegalArgumentException("Could not find ClassMetadata object for entity class: " + entityClass.getName());
-         }
-      }
-      return classMetadata;
-   }
-
-   /**
-    * Returns the class of the specified Hibernate entity
-    */
-   @Override
-   public Class getBeanClass(Object bean)
-   {
-      return getEntityClass(bean);
-   }
-
-   public static Class getEntityClass(Object bean)
-   {
-      /*
-       * Class clazz = null; try { clazz = Entity.forBean(bean).getBeanClass();
-       * } catch (NotEntityException e) { // It's ok, try some other methods }
-       * 
-       * if (clazz == null) { clazz = Hibernate.getClass(bean); }
-       * 
-       * return clazz;
-       */
-      return null;
-   }
-
    private Session getSession(EntityManager entityManager)
    {
       Object delegate = entityManager.getDelegate();
@@ -273,6 +192,73 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
       else
       {
          throw new NotHibernateException();
+      }
+   }
+
+   /**
+    * Wrap the Hibernate Session in a proxy that implements FullTextSession if
+    * Hibernate Search is available in the classpath.
+    */
+   static Session proxySession(Session session)
+   {
+      if (FULL_TEXT_SESSION_PROXY_CLASS == null)
+      {
+         return session;
+      }
+      else
+      {
+         try
+         {
+            return (Session) FULL_TEXT_SESSION_CONSTRUCTOR.invoke(null, session);
+         }
+         catch (Exception e)
+         {
+            log.warn("Unable to wrap into a FullTextSessionProxy, regular SessionProxy returned", e);
+            return session;
+         }
+      }
+   }
+
+   /**
+    * Wrap the delegate Hibernate Session in a proxy that implements
+    * FullTextSession if Hibernate Search is available in the classpath.
+    */
+   @Override
+   public Object proxyDelegate(Object delegate)
+   {
+      try
+      {
+         return proxySession((Session) delegate);
+      }
+      catch (NotHibernateException nhe)
+      {
+         return super.proxyDelegate(delegate);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("could not proxy delegate", e);
+      }
+   }
+
+   @Override
+   public EntityManager proxyEntityManager(EntityManager entityManager)
+   {
+      if (FULL_TEXT_ENTITYMANAGER_PROXY_CLASS == null)
+      {
+         return super.proxyEntityManager(entityManager);
+      }
+      else
+      {
+         try
+         {
+            return (EntityManager) FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR.invoke(null, super.proxyEntityManager(entityManager));
+         }
+         catch (Exception e)
+         {
+            // throw new
+            // RuntimeException("could not proxy FullTextEntityManager", e);
+            return super.proxyEntityManager(entityManager);
+         }
       }
    }
 

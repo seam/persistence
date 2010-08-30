@@ -33,11 +33,12 @@ import org.jboss.seam.persistence.transaction.FlushModeType;
  * @author Stuart Douglas
  * 
  */
-public interface PersistenceContext
+public interface ManagedPersistenceContext
 {
    public void changeFlushMode(FlushModeType flushMode);
 
    public Set<Annotation> getQualifiers();
 
    public Class<?> getBeanType();
+
 }

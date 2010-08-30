@@ -32,6 +32,7 @@ import javax.persistence.PersistenceContexts;
 import javax.transaction.Synchronization;
 
 import org.jboss.seam.persistence.transaction.FlushModeType;
+import org.jboss.weld.extensions.defaultbean.DefaultBean;
 
 /**
  * Abstraction layer for persistence providers (JPA implementations). This class
@@ -46,6 +47,7 @@ import org.jboss.seam.persistence.transaction.FlushModeType;
  * @author Stuart Douglas
  * 
  */
+@DefaultBean(type = SeamPersistenceProvider.class)
 public class SeamPersistenceProvider
 {
    public enum Feature
@@ -226,6 +228,11 @@ public class SeamPersistenceProvider
    public Object proxyDelegate(Object delegate)
    {
       return delegate;
+   }
+
+   public EntityManager proxyEntityManager(EntityManager entityManager)
+   {
+      return entityManager;
    }
 
    /**

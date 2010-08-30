@@ -44,7 +44,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
 
    @Inject
    @Any
-   Instance<PersistenceContext> persistenceContexts;
+   Instance<ManagedPersistenceContext> persistenceContexts;
 
    @Inject
    Instance<SeamPersistenceProvider> persistenceProvider;
@@ -73,12 +73,12 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
       return Collections.unmodifiableSet(set);
    }
 
-   public void touch(PersistenceContext context)
+   public void touch(ManagedPersistenceContext context)
    {
       set.add(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType()));
    }
 
-   public void untouch(PersistenceContext context)
+   public void untouch(ManagedPersistenceContext context)
    {
       set.remove(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType()));
    }
@@ -111,7 +111,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
    private void changeFlushModes()
    {
 
-      for (PersistenceContext context : persistenceContexts)
+      for (ManagedPersistenceContext context : persistenceContexts)
       {
          if (set.contains(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType())))
             try
