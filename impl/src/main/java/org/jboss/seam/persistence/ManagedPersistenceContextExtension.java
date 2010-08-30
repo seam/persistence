@@ -132,14 +132,18 @@ public class ManagedPersistenceContextExtension implements Extension
 
    public void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader)
    {
-      // create the new bean to be registerd later
+      // TODO: this is a massive hack. We need a much better way of doing this
+      HibernatePersistenceProvider prov = new HibernatePersistenceProvider();
+      Set<Class<?>> additionalInterfaces = prov.getAdditionalEntityManagerInterfaces();
+      // create the new bean to be registered later
       AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
       BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
       builder.setQualifiers(qualifiers);
       builder.setScope(scope);
       builder.getTypes().add(ManagedPersistenceContext.class);
+      builder.getTypes().addAll(additionalInterfaces);
       builder.getTypes().add(Object.class);
-      ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager);
+      ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager, additionalInterfaces);
       builder.setBeanLifecycle(lifecycle);
       beans.add(builder.create());
    }

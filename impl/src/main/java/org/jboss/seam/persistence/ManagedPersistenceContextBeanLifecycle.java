@@ -48,11 +48,11 @@ import org.slf4j.LoggerFactory;
  */
 public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<EntityManager>
 {
+   private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextBeanLifecycle.class);
+
    private final Class<?> proxyClass;
 
    private final Constructor<?> proxyConstructor;
-
-   private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextBeanLifecycle.class);
 
    private PersistenceContexts persistenceContexts;
 
@@ -64,10 +64,20 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
 
    private EntityManagerFactory emf;
 
-   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager)
+   public ManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager, Set<Class<?>> additionalinterfaces)
    {
       this.manager = manager;
-      proxyClass = Proxy.getProxyClass(loader, EntityManager.class, Serializable.class, ManagedPersistenceContext.class);
+      Class<?>[] interfaces = new Class[additionalinterfaces.size() + 3];
+      int count = 0;
+      for (Class<?> i : additionalinterfaces)
+      {
+         interfaces[count++] = i;
+      }
+
+      interfaces[count++] = EntityManager.class;
+      interfaces[count++] = Serializable.class;
+      interfaces[count++] = ManagedPersistenceContext.class;
+      proxyClass = Proxy.getProxyClass(loader, interfaces);
       try
       {
          proxyConstructor = proxyClass.getConstructor(InvocationHandler.class);

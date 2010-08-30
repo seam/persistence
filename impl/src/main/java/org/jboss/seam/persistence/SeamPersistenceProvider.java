@@ -22,6 +22,7 @@
 package org.jboss.seam.persistence;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -233,6 +234,11 @@ public class SeamPersistenceProvider
    public EntityManager proxyEntityManager(EntityManager entityManager)
    {
       return entityManager;
+   }
+
+   public Set<Class<?>> getAdditionalEntityManagerInterfaces()
+   {
+      return Collections.emptySet();
    }
 
    /**

@@ -1,7 +1,8 @@
 package org.jboss.seam.persistence;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -13,7 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.seam.persistence.transaction.FlushModeType;
-import org.jboss.weld.extensions.core.Veto;
+import org.jboss.weld.extensions.util.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,6 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-@Veto
 public class HibernatePersistenceProvider extends SeamPersistenceProvider
 {
 
@@ -34,10 +34,9 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
    Instance<PersistenceContextsImpl> persistenceContexts;
 
    private static Logger log = LoggerFactory.getLogger(HibernatePersistenceProvider.class);
-   private static Class<?> FULL_TEXT_SESSION_PROXY_CLASS;
    private static Method FULL_TEXT_SESSION_CONSTRUCTOR;
-   private static Class<?> FULL_TEXT_ENTITYMANAGER_PROXY_CLASS;
    private static Method FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR;
+   private static Class<?> FULL_TEXT_ENTITYMANAGER;
    static
    {
       try
@@ -45,17 +44,18 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
          String version = null;
          try
          {
-            Class<?> searchVersionClass = Class.forName("org.hibernate.search.Version");
-            Field versionField = searchVersionClass.getDeclaredField("VERSION");
-            version = (String) versionField.get(null);
+            Class<?> searchVersionClass = Reflections.classForName("org.hibernate.search.Version");
+            Method versionMethod = searchVersionClass.getDeclaredMethod("getVersionString");
+            version = (String) versionMethod.invoke(null);
          }
          catch (Exception e)
          {
-            log.debug("no Hibernate Search, sorry :-(", e);
+            e.printStackTrace();
+            log.info("no Hibernate Search", e);
          }
          if (version != null)
          {
-            Class<?> searchClass = Class.forName("org.hibernate.search.Search");
+            Class<?> searchClass = Reflections.classForName("org.hibernate.search.Search");
             try
             {
                FULL_TEXT_SESSION_CONSTRUCTOR = searchClass.getDeclaredMethod("getFullTextSession", Session.class);
@@ -65,8 +65,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
                log.debug("org.hibernate.search.Search.getFullTextSession(Session) not found, trying deprecated method name createFullTextSession");
                FULL_TEXT_SESSION_CONSTRUCTOR = searchClass.getDeclaredMethod("createFullTextSession", Session.class);
             }
-            FULL_TEXT_SESSION_PROXY_CLASS = Class.forName("org.jboss.seam.persistence.FullTextHibernateSessionProxy");
-            Class<?> jpaSearchClass = Class.forName("org.hibernate.search.jpa.Search");
+            Class<?> jpaSearchClass = Reflections.classForName("org.hibernate.search.jpa.Search");
             try
             {
                FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR = jpaSearchClass.getDeclaredMethod("getFullTextEntityManager", EntityManager.class);
@@ -76,13 +75,14 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
                log.debug("org.hibernate.search.jpa.getFullTextSession(EntityManager) not found, trying deprecated method name createFullTextEntityManager");
                FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR = jpaSearchClass.getDeclaredMethod("createFullTextEntityManager", EntityManager.class);
             }
-            FULL_TEXT_ENTITYMANAGER_PROXY_CLASS = Class.forName("org.jboss.seam.persistence.FullTextEntityManagerProxy");
-            log.debug("Hibernate Search is available :-)");
+            FULL_TEXT_ENTITYMANAGER = Reflections.classForName("org.hibernate.search.jpa.FullTextEntityManager");
+            log.info("Hibernate Search is available");
          }
       }
       catch (Exception e)
       {
-         log.debug("no Hibernate Search, sorry :-(", e);
+         e.printStackTrace();
+         log.info("no Hibernate Search", e);
       }
    }
 
@@ -201,7 +201,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
     */
    static Session proxySession(Session session)
    {
-      if (FULL_TEXT_SESSION_PROXY_CLASS == null)
+      if (FULL_TEXT_SESSION_CONSTRUCTOR == null)
       {
          return session;
       }
@@ -243,7 +243,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
    @Override
    public EntityManager proxyEntityManager(EntityManager entityManager)
    {
-      if (FULL_TEXT_ENTITYMANAGER_PROXY_CLASS == null)
+      if (FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR == null)
       {
          return super.proxyEntityManager(entityManager);
       }
@@ -260,6 +260,15 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
             return super.proxyEntityManager(entityManager);
          }
       }
+   }
+
+   public Set<Class<?>> getAdditionalEntityManagerInterfaces()
+   {
+      if (FULL_TEXT_ENTITYMANAGER == null)
+      {
+         return Collections.emptySet();
+      }
+      return (Set) Collections.singleton(FULL_TEXT_ENTITYMANAGER);
    }
 
    /**
