@@ -50,8 +50,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
          }
          catch (Exception e)
          {
-            e.printStackTrace();
-            log.info("no Hibernate Search", e);
+            log.debug("no Hibernate Search", e);
          }
          if (version != null)
          {
@@ -81,8 +80,7 @@ public class HibernatePersistenceProvider extends SeamPersistenceProvider
       }
       catch (Exception e)
       {
-         e.printStackTrace();
-         log.info("no Hibernate Search", e);
+         log.debug("no Hibernate Search", e);
       }
    }
 

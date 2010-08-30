@@ -40,6 +40,8 @@ import javax.persistence.PersistenceUnit;
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Extension the wraps producer methods/fields that produce an entity manager to
@@ -53,6 +55,8 @@ public class ManagedPersistenceContextExtension implements Extension
 {
 
    Set<Bean<?>> beans = new HashSet<Bean<?>>();
+
+   private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextExtension.class);
 
    /**
     * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
@@ -126,6 +130,7 @@ public class ManagedPersistenceContextExtension implements Extension
          catch (ClassNotFoundException e)
          {
             event.veto();
+            log.debug("Hibernate is not availbile", e);
          }
       }
    }

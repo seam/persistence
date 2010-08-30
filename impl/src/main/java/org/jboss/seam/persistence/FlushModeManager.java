@@ -31,5 +31,11 @@ import org.jboss.seam.persistence.transaction.FlushModeType;
  */
 public interface FlushModeManager
 {
+   /**
+    * 
+    * @return the default flush mode for all seam managed persistence contexts
+    */
    public FlushModeType getFlushModeType();
+
+   public void setFlushModeType(FlushModeType flushModeType);
 }

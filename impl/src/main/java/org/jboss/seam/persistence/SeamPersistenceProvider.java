@@ -106,8 +106,10 @@ public class SeamPersistenceProvider
          break;
       case COMMIT:
          entityManager.setFlushMode(javax.persistence.FlushModeType.COMMIT);
+         break;
       case MANUAL:
          setFlushModeManual(entityManager);
+         break;
       default:
          throw new RuntimeException("Unkown flush mode: " + type);
       }

@@ -106,6 +106,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          entityManager = getPersistenceProvider().proxyEntityManager(entityManager);
          ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts());
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
+         getPersistenceProvider().setFlushMode(proxy, getPersistenceContexts().getFlushMode());
          return proxy;
       }
       catch (Exception e)
