@@ -21,6 +21,7 @@
  */
 package org.jboss.seam.persistence.test;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
@@ -36,7 +37,9 @@ import org.hibernate.Session;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.FlushModeManager;
+import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContextExtension;
+import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
 import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
@@ -79,11 +82,34 @@ public class ManagedPersistenceContextFlushModeTest
    @Inject
    EntityManager em;
 
+   @Inject
+   ManagedPersistenceContext context;
+
+   @Inject
+   PersistenceContexts pc;
+
+   @Inject
+   BeanManager bm;
+
    @Test
-   public void testPersistnceContextFlushMode() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void testPersistenceContextDefaultFlushMode() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
       manager.setFlushModeType(FlushModeType.MANUAL);
       Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
    }
 
+   @Test
+   public void testChangedTouchedPersistenceContextFlushMode()
+   {
+      try
+      {
+         em.setFlushMode(javax.persistence.FlushModeType.AUTO);
+         pc.changeFlushMode(FlushModeType.MANUAL);
+         Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
+      }
+      finally
+      {
+         em.setFlushMode(javax.persistence.FlushModeType.AUTO);
+      }
+   }
 }
