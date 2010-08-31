@@ -68,9 +68,9 @@ import org.slf4j.LoggerFactory;
  * @author Gavin King
  * @author Dan Allen
  */
-public class PersistenceContextExtension implements Extension
+public class SePersistenceContextExtension implements Extension
 {
-   private static final Logger log = LoggerFactory.getLogger(PersistenceContextExtension.class);
+   private static final Logger log = LoggerFactory.getLogger(SePersistenceContextExtension.class);
 
    private Map<String, Bean<EntityManagerFactory>> emfBeans = new HashMap<String, Bean<EntityManagerFactory>>();
 
