@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -34,6 +35,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
@@ -61,13 +63,19 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private final PersistenceContexts persistenceContexts;
 
+   private final Set<Annotation> qualifiers;
+
+   private final SeamPersistenceProvider provider;
+
    private boolean persistenceContextsTouched = false;
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
    public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, SeamPersistenceProvider provider)
    {
-      super(delegate, beanManager, qualifiers, provider);
+      super(delegate, beanManager);
+      this.qualifiers = qualifiers;
+      this.provider = provider;
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
       this.persistenceContexts = persistenceContexts;
@@ -80,6 +88,23 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          joinTransaction();
       }
       touch((ManagedPersistenceContext) proxy);
+      if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
+      {
+         changeFushMode((FlushModeType) args[0]);
+         return null;
+      }
+      if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return EntityManager.class;
+      }
+      if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return Collections.unmodifiableSet(qualifiers);
+      }
+      if ("getPersistenceProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return provider;
+      }
       return super.invoke(proxy, method, args);
    }
 
@@ -102,6 +127,11 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
             throw new RuntimeException(e);
          }
       }
+   }
+
+   private void changeFushMode(FlushModeType flushModeType)
+   {
+      provider.setFlushMode(delegate, flushModeType);
    }
 
    void touch(ManagedPersistenceContext delegate)

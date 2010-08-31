@@ -31,7 +31,7 @@ import javax.transaction.SystemException;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.PersistenceContextExtension;
+import org.jboss.seam.persistence.SePersistenceContextExtension;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
@@ -60,7 +60,7 @@ public class ManagedPersistenceContextELTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
-      war.addPackage(PersistenceContextExtension.class.getPackage());
+      war.addPackage(SePersistenceContextExtension.class.getPackage());
       war.addPackage(TransactionExtension.class.getPackage());
       war.addPackage(TransactionScopeExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());

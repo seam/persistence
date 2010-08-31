@@ -38,7 +38,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.FlushModeManager;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
-import org.jboss.seam.persistence.PersistenceContextExtension;
+import org.jboss.seam.persistence.SePersistenceContextExtension;
 import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
@@ -66,7 +66,7 @@ public class ManagedPersistenceContextFlushModeTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addPackage(TransactionExtension.class.getPackage());
-      war.addPackage(PersistenceContextExtension.class.getPackage());
+      war.addPackage(SePersistenceContextExtension.class.getPackage());
       war.addPackage(TransactionScopeExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
       war.addClasses(ManagedPersistenceContextFlushModeTest.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class);

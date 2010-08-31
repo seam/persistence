@@ -22,18 +22,13 @@
 package org.jboss.seam.persistence;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.weld.extensions.el.Expressions;
 import org.slf4j.Logger;
@@ -55,21 +50,12 @@ public class PersistenceContextProxyHandler implements Serializable
 
    private final Instance<Expressions> expressionsInstance;
 
-   private final Instance<DefaultPersistenceProvider> persistenceProvider;
-
-   private final Set<Annotation> qualifiers;
-
-   private final SeamPersistenceProvider provider;
-
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, SeamPersistenceProvider provider)
+   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
    {
       this.delegate = delegate;
-      this.provider = provider;
       expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
-      persistenceProvider = InstanceResolver.getInstance(DefaultPersistenceProvider.class, beanManager);
-      this.qualifiers = new HashSet<Annotation>(qualifiers);
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -78,29 +64,8 @@ public class PersistenceContextProxyHandler implements Serializable
       {
          return handleCreateQueryWithString(method, args);
       }
-      if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
-      {
-         changeFushMode((FlushModeType) args[0]);
-         return null;
-      }
-      if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return EntityManager.class;
-      }
-      if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return Collections.unmodifiableSet(qualifiers);
-      }
-      if ("getPersistenceProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return provider;
-      }
-      return method.invoke(delegate, args);
-   }
 
-   private void changeFushMode(FlushModeType flushModeType)
-   {
-      persistenceProvider.get().setFlushMode(delegate, flushModeType);
+      return method.invoke(delegate, args);
    }
 
    protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable

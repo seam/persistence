@@ -34,7 +34,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.PersistenceContextExtension;
+import org.jboss.seam.persistence.SePersistenceContextExtension;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.TransactionExtension;
@@ -66,7 +66,7 @@ public class HibernateSearchTest
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
       war.addPackage(TransactionExtension.class.getPackage());
-      war.addPackage(PersistenceContextExtension.class.getPackage());
+      war.addPackage(SePersistenceContextExtension.class.getPackage());
       war.addPackage(TransactionScopeExtension.class.getPackage());
       war.addPackage(NamingUtils.class.getPackage());
       war.addClasses(HibernateSearchTest.class, IndexedHotel.class, ManagedPersistenceContextProvider.class, HelloService.class);
