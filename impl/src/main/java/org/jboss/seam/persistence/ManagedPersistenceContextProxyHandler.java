@@ -68,6 +68,8 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    private final SeamPersistenceProvider provider;
 
    private boolean persistenceContextsTouched = false;
+   
+   private boolean closed = false;
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
@@ -105,6 +107,10 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       {
          return provider;
       }
+      if ("setClosed".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return provider;
+      }
       return super.invoke(proxy, method, args);
    }
 
@@ -129,6 +135,25 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       }
    }
 
+   private void setClosed()
+   {
+      SeamTransaction transaction = userTransactionInstance.get();
+      try
+      {
+         if(transaction.isActive())
+         {
+            closed = true;
+         }
+         else
+         {
+            delegate.close();
+         }
+      } catch (SystemException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+   
    private void changeFushMode(FlushModeType flushModeType)
    {
       provider.setFlushMode(delegate, flushModeType);
@@ -155,6 +180,10 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    public void afterCompletion(int status)
    {
       synchronizationRegistered = false;
+      if(closed)
+      {
+         delegate.close();
+      }
    }
 
    public void beforeCompletion()

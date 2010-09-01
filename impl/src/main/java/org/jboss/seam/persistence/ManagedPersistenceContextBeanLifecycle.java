@@ -123,7 +123,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
 
    public void destroy(Bean<EntityManager> bean, EntityManager em, CreationalContext<EntityManager> arg1)
    {
-      em.close();
+      ((ManagedPersistenceContext)em).setClosed();
       arg1.release();
       try
       {
