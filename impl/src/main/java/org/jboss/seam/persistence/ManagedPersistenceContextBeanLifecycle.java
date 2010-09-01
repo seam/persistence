@@ -97,7 +97,6 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       {
          this.qualifiers[i++] = a;
       }
-
    }
 
    /**
@@ -113,6 +112,8 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts(), getPersistenceProvider(entityManager));
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
          getPersistenceProvider(entityManager).setFlushMode(proxy, getPersistenceContexts().getFlushMode());
+         manager.fireEvent(new SeamManagedPersistenceContextCreated(proxy), qualifiers);
+         
          return proxy;
       }
       catch (Exception e)
