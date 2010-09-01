@@ -147,7 +147,10 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          }
          else
          {
-            delegate.close();
+            if(delegate.isOpen())
+            {
+               delegate.close();
+            }
          }
       } catch (SystemException e)
       {
