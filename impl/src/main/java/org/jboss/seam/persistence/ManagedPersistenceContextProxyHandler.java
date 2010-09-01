@@ -69,7 +69,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private boolean persistenceContextsTouched = false;
    
-   private boolean closed = false;
+   private boolean closeOnTransactionCommit = false;
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
 
@@ -136,25 +136,19 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       }
    }
 
-   private void setClosed()
+   private void setClosed()throws SystemException
    {
       SeamTransaction transaction = userTransactionInstance.get();
-      try
+      if (transaction.isActive())
       {
-         if(transaction.isActive())
-         {
-            closed = true;
-         }
-         else
-         {
-            if(delegate.isOpen())
-            {
-               delegate.close();
-            }
-         }
-      } catch (SystemException e)
+         closeOnTransactionCommit = true;
+      }
+      else
       {
-         throw new RuntimeException(e);
+         if (delegate.isOpen())
+         {
+            delegate.close();
+         }
       }
    }
    
@@ -184,7 +178,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    public void afterCompletion(int status)
    {
       synchronizationRegistered = false;
-      if(closed)
+      if(closeOnTransactionCommit && delegate.isOpen())
       {
          delegate.close();
       }
