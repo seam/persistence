@@ -109,7 +109,8 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       }
       if ("setClosed".equals(method.getName()) && method.getParameterTypes().length == 0)
       {
-         return provider;
+         setClosed();
+         return null;
       }
       return super.invoke(proxy, method, args);
    }
