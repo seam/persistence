@@ -51,7 +51,7 @@ import javax.persistence.EntityManagerFactory;
  * 
  * @SomeQualifier, however the scope for the producer field is changed to
  *                 {@link Dependent}, as the specification does not allow
- *                 resource producer fields to have a scope other than Depedent
+ *                 resource producer fields to have a scope other than Dependent
  * 
  * @author Stuart Douglas
  * 
