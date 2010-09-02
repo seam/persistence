@@ -31,13 +31,13 @@
 
 
    <dependencies>
-   
+
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <scope>test</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-core</artifactId>
@@ -55,7 +55,7 @@
          <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>javax.el</groupId>
          <artifactId>el-api</artifactId>
@@ -73,7 +73,7 @@
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.seam.persistence</groupId>
          <artifactId>seam-persistence-api</artifactId>
@@ -84,25 +84,25 @@
          <artifactId>slf4j-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-simple</artifactId>
          <scope>test</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.weld</groupId>
          <artifactId>weld-core</artifactId>
          <scope>test</scope>
       </dependency>
 
-       <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <type>pom</type>
-          <scope>provided</scope>
-       </dependency>
+      <dependency>
+         <groupId>org.jboss.spec</groupId>
+         <artifactId>jboss-javaee-6.0</artifactId>
+         <type>pom</type>
+         <scope>provided</scope>
+      </dependency>
 
       <dependency>
          <groupId>org.jboss.weld</groupId>
@@ -111,48 +111,48 @@
          <type>jar</type>
          <scope>compile</scope>
       </dependency>
-		<dependency>
-		     <groupId>org.hibernate</groupId>
-		     <artifactId>hibernate-search</artifactId>
-		     <version>3.2.1.Final</version>
-		     <optional>true</optional>
-		 </dependency>
+      <dependency>
+         <groupId>org.hibernate</groupId>
+         <artifactId>hibernate-search</artifactId>
+         <version>3.2.1.Final</version>
+         <optional>true</optional>
+      </dependency>
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
          <scope>test</scope>
       </dependency>
-      
+
    </dependencies>
 
-	  <build>
-	      <plugins>
-	         <!--
-	            skip unit test run, tests to be executed during
-	            integration-test
-	         -->
-	         <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-surefire-plugin</artifactId>
-	            <configuration>
-	               <skip>true</skip>
-	            </configuration>
-	            <executions>
-	               <execution>
-	                  <id>surefire-it</id>
-	                  <phase>integration-test</phase>
-	                  <goals>
-	                     <goal>test</goal>
-	                  </goals>
-	                  <configuration>
-	                     <skip>false</skip>
-	                  </configuration>
-	               </execution>
-	            </executions>
-	         </plugin>
-	
-	      </plugins>
-	   </build>
+   <build>
+      <plugins>
+         <!--
+            skip unit test run, tests to be executed during
+            integration-test
+         -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <skip>true</skip>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>surefire-it</id>
+                  <phase>integration-test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skip>false</skip>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+      </plugins>
+   </build>
 
    <profiles>
       <profile>
@@ -165,12 +165,12 @@
                <scope>test</scope>
             </dependency>
             <dependency>
-	            <groupId>org.jboss.jbossas</groupId>
-	            <artifactId>jboss-server-manager</artifactId>
-	            <version>1.0.3.GA</version>
-                <scope>test</scope>
-	        </dependency>
-            
+               <groupId>org.jboss.jbossas</groupId>
+               <artifactId>jboss-server-manager</artifactId>
+               <version>1.0.3.GA</version>
+               <scope>test</scope>
+            </dependency>
+
             <!-- need for org.jnp.interfaces.NamingContextFactory -->
             <dependency>
                <groupId>org.jboss.jbossas</groupId>
@@ -190,30 +190,30 @@
                </testResource>
             </testResources>
             <plugins>
-	            <plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-enforcer-plugin</artifactId>
-					  <executions>
-					    <execution>
-					      <id>enforce-property</id>
-					      <goals>
-					        <goal>enforce</goal>
-					      </goals>
-					      <configuration>
-					        <rules>
-					          <requireProperty>
-					            <property>jboss.home</property>
-					          </requireProperty>
-					        </rules>
-					        <fail>true</fail>
-					      </configuration>
-					    </execution>
-					  </executions>
-					</plugin>
-				</plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-enforcer-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>enforce-property</id>
+                        <goals>
+                           <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                           <rules>
+                              <requireProperty>
+                                 <property>jboss.home</property>
+                              </requireProperty>
+                           </rules>
+                           <fail>true</fail>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
          </build>
       </profile>
-   
+
       <profile>
          <id>jbossas-remote-6</id>
          <dependencies>
