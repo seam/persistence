@@ -178,7 +178,7 @@ public class ManagedPersistenceContextExtension implements Extension
    {
       // we need to add all additional interfaces from our
       // SeamPersistenceProvider to the bean as at this stage we have no way of
-      // knowing which persistence provider is actually in use this only time
+      // knowing which persistence provider is actually in use. The only time
       // that this may cause slightly odd behaviour is if two providers are on
       // the class path, in which case the entity manager may be assignable to
       // additional interfaces that it does not support.

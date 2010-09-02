@@ -31,8 +31,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
 import javax.transaction.Synchronization;
 
-import org.jboss.weld.extensions.defaultbean.DefaultBean;
-
 /**
  * Abstraction layer for persistence providers (JPA implementations). This class
  * provides a working base implementation that can be optimized for performance
@@ -46,7 +44,6 @@ import org.jboss.weld.extensions.defaultbean.DefaultBean;
  * @author Stuart Douglas
  * 
  */
-@DefaultBean(type = DefaultPersistenceProvider.class)
 public class DefaultPersistenceProvider implements SeamPersistenceProvider
 {
    public enum Feature
