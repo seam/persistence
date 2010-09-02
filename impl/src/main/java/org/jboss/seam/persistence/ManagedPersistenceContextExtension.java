@@ -195,6 +195,7 @@ public class ManagedPersistenceContextExtension implements Extension
       BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
       builder.setQualifiers(qualifiers);
       builder.setScope(scope);
+      builder.setBeanClass(member.getDeclaringType().getJavaClass());
       builder.getTypes().add(ManagedPersistenceContext.class);
       builder.getTypes().addAll(additionalInterfaces);
       builder.getTypes().add(Object.class);
