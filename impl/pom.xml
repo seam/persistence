@@ -35,6 +35,7 @@
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
+         <scope>test</scope>
       </dependency>
       
       <dependency>
@@ -58,6 +59,7 @@
       <dependency>
          <groupId>javax.el</groupId>
          <artifactId>el-api</artifactId>
+         <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -69,6 +71,7 @@
       <dependency>
          <groupId>javax.enterprise</groupId>
          <artifactId>cdi-api</artifactId>
+         <scope>provided</scope>
       </dependency>
       
       <dependency>
@@ -153,10 +156,7 @@
 
    <profiles>
       <profile>
-         <id>default</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
+         <id>jbossas-managed-60</id>
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
@@ -168,6 +168,7 @@
 	            <groupId>org.jboss.jbossas</groupId>
 	            <artifactId>jboss-server-manager</artifactId>
 	            <version>1.0.3.GA</version>
+                <scope>test</scope>
 	        </dependency>
             
             <!-- need for org.jnp.interfaces.NamingContextFactory -->
