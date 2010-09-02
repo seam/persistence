@@ -32,6 +32,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedField;
+import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -124,7 +125,7 @@ public class ManagedPersistenceContextExtension implements Extension
             {
                modifiedType.removeFromField(f.getJavaMember(), scope);
             }
-            registerManagedPersistenceContext(qualifiers, scope, manager, event.getAnnotatedType().getJavaClass().getClassLoader());
+            registerManagedPersistenceContext(qualifiers, scope, manager, event.getAnnotatedType().getJavaClass().getClassLoader(), f);
          }
          // now look for producer methods that produce an EntityManagerFactory.
          // This allows the user to manually configure an EntityManagerFactory
@@ -164,7 +165,7 @@ public class ManagedPersistenceContextExtension implements Extension
             // we need to change the scope to application scoped
             modifiedType.removeFromMethod(m.getJavaMember(), scope);
             modifiedType.addToMethod(m.getJavaMember(), ApplicationScopedLiteral.INSTANCE);
-            registerManagedPersistenceContext(qualifiers, scope, manager, event.getAnnotatedType().getJavaClass().getClassLoader());
+            registerManagedPersistenceContext(qualifiers, scope, manager, event.getAnnotatedType().getJavaClass().getClassLoader(), m);
          }
       }
 
@@ -174,7 +175,7 @@ public class ManagedPersistenceContextExtension implements Extension
       }
    }
 
-   private void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader)
+   private void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, BeanManager manager, ClassLoader loader, AnnotatedMember<?> member)
    {
       // we need to add all additional interfaces from our
       // SeamPersistenceProvider to the bean as at this stage we have no way of
@@ -197,6 +198,7 @@ public class ManagedPersistenceContextExtension implements Extension
       builder.getTypes().addAll(additionalInterfaces);
       builder.getTypes().add(Object.class);
       builder.setBeanLifecycle(lifecycle);
+      builder.setToString("Seam Managed Persistence Context with qualifiers [" + qualifiers + "] with configured by [" + member + "]");
       beans.add(builder.create());
    }
 
