@@ -25,7 +25,6 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.weld.extensions.defaultbean.DefaultBean;
 
 /**

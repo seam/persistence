@@ -22,11 +22,13 @@
 package org.jboss.seam.persistence;
 
 import javax.persistence.EntityManager;
+
 /**
- * event that is fired when the SMPC is created
+ * event that is fired when the SMPC is created. This allows you to configure
+ * the SMPC before it is used, e.g. by enabling hibernate filters
  * 
  * @author Stuart Douglas <stuart@baileyroberts.com.au>
- *
+ * 
  */
 public class SeamManagedPersistenceContextCreated
 {

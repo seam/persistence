@@ -1,19 +1,21 @@
 package org.jboss.seam.persistence;
 
-import java.lang.reflect.Method;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
-
 /**
  * The interface can be implemented to provide extra functionality to a seam
  * managed persistence context.
  * 
- * seam-persistence contains a default implementation and a hinbernate based
+ * seam-persistence contains a default implementation and a hibernate based
  * implementation.
+ * 
+ * Persistence providers are services rather than beans. Injection etc is not
+ * availible and the implementations classes must be listed in
+ * 
+ * META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider
  * 
  * @author Stuart Douglas
  * 
@@ -87,14 +89,6 @@ public interface SeamPersistenceProvider
    public abstract void checkVersion(Object bean, EntityManager entityManager, Object oldVersion, Object version);
 
    /**
-    * Enable a Filter. This is here just especially for Hibernate, since we well
-    * know that other products don't have such cool features.
-    * 
-    * public void enableFilter(Filter filter, EntityManager entityManager) {
-    * throw new UnsupportedOperationException("Use of filters requires Hibernate as the persistence provider. Please use Hibernate or remove the filters configuration."
-    * ); }
-    */
-   /**
     * Register a Synchronization with the current transaction.
     */
    public abstract boolean registerSynchronization(Synchronization sync, EntityManager entityManager);
@@ -115,13 +109,5 @@ public interface SeamPersistenceProvider
     * @return The class of the entity bean
     */
    public abstract Class<?> getBeanClass(Object bean);
-
-   public abstract Method getPostLoadMethod(Object bean, EntityManager entityManager);
-
-   public abstract Method getPrePersistMethod(Object bean, EntityManager entityManager);
-
-   public abstract Method getPreUpdateMethod(Object bean, EntityManager entityManager);
-
-   public abstract Method getPreRemoveMethod(Object bean, EntityManager entityManager);
 
 }

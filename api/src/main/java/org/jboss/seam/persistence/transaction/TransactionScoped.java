@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
 import javax.enterprise.context.NormalScope;
 
 /**
+ * CDI Scope that spans the current transaction
  * 
  * @author Stuart Douglas
  * 

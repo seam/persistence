@@ -12,7 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,15 +84,6 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
 
    public void changeFlushMode(FlushModeType flushMode)
    {
-      changeFlushMode(flushMode, false);
-   }
-
-   public void changeFlushMode(FlushModeType flushMode, boolean temporary)
-   {
-      if (temporary)
-      {
-         realFlushMode = this.flushMode;
-      }
       this.flushMode = flushMode;
       changeFlushModes();
    }

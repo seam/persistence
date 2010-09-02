@@ -21,10 +21,11 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
-
 /**
  * provides a means of configuring the default flush mode
+ * 
+ * TODO: This needs more thought, especially with regard to how it works in with
+ * {@link PersistenceContexts}
  * 
  * @author Stuart Douglas
  * 

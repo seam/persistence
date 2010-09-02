@@ -35,7 +35,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
@@ -68,7 +67,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    private final SeamPersistenceProvider provider;
 
    private boolean persistenceContextsTouched = false;
-   
+
    private boolean closeOnTransactionCommit = false;
 
    static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
@@ -107,9 +106,9 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       {
          return provider;
       }
-      if ("setClosed".equals(method.getName()) && method.getParameterTypes().length == 0)
+      if ("closeAfterTransaction".equals(method.getName()) && method.getParameterTypes().length == 0)
       {
-         setClosed();
+         closeAfterTransaction();
          return null;
       }
       return super.invoke(proxy, method, args);
@@ -136,7 +135,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       }
    }
 
-   private void setClosed()throws SystemException
+   private void closeAfterTransaction() throws SystemException
    {
       SeamTransaction transaction = userTransactionInstance.get();
       if (transaction.isActive())
@@ -151,7 +150,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          }
       }
    }
-   
+
    private void changeFushMode(FlushModeType flushModeType)
    {
       provider.setFlushMode(delegate, flushModeType);
@@ -178,7 +177,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
    public void afterCompletion(int status)
    {
       synchronizationRegistered = false;
-      if(closeOnTransactionCommit && delegate.isOpen())
+      if (closeOnTransactionCommit && delegate.isOpen())
       {
          delegate.close();
       }

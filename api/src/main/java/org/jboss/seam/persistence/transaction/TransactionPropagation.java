@@ -26,7 +26,25 @@ package org.jboss.seam.persistence.transaction;
  */
 public enum TransactionPropagation
 {
-   REQUIRED, SUPPORTS, MANDATORY, NEVER;
+   /**
+    * A transaction will be started if one is not currently active.
+    */
+   REQUIRED,
+   /**
+    * A transaction will not be started if there is not one currently active,
+    * however this method supports running inside an existing transaction
+    */
+   SUPPORTS,
+   /**
+    * Requires a transaction to be active. If no transaction is active an
+    * {@link IllegalStateException} is thrown
+    */
+   MANDATORY,
+   /**
+    * Requires no transaction to be active. If a transaction is active an
+    * {@link IllegalStateException} is thrown
+    */
+   NEVER;
 
    public boolean isNewTransactionRequired(boolean transactionActive)
    {

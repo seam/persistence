@@ -31,7 +31,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
 import javax.transaction.Synchronization;
 
-import org.jboss.seam.persistence.transaction.FlushModeType;
 import org.jboss.weld.extensions.defaultbean.DefaultBean;
 
 /**
