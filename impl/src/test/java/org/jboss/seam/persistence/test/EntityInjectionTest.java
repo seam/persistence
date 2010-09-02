@@ -32,12 +32,8 @@ import javax.transaction.SystemException;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.InjectionEventListener;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.seam.persistence.transaction.TransactionExtension;
-import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
-import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.HelloService;
 import org.jboss.seam.transactions.test.util.Hotel;
@@ -66,10 +62,7 @@ public class EntityInjectionTest
       WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-      war.addPackage(TransactionExtension.class.getPackage());
-      war.addPackage(TransactionScopeExtension.class.getPackage());
-      war.addPackage(InjectionEventListener.class.getPackage());
-      war.addPackage(NamingUtils.class.getPackage());
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
       war.addClasses(EntityInjectionTest.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class);
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
       war.addWebResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");

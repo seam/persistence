@@ -37,13 +37,9 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.DefaultPersistenceProvider;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.seam.persistence.transaction.TransactionExtension;
 import org.jboss.seam.persistence.transaction.TransactionInterceptor;
-import org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension;
-import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.transactions.test.util.ArtifactNames;
 import org.jboss.seam.transactions.test.util.DontRollBackException;
 import org.jboss.seam.transactions.test.util.EntityManagerProvider;
@@ -75,10 +71,7 @@ public class TransactionAttributeInterceptorTest
       WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-      war.addPackage(TransactionExtension.class.getPackage());
-      war.addPackage(DefaultPersistenceProvider.class.getPackage());
-      war.addPackage(TransactionScopeExtension.class.getPackage());
-      war.addPackage(NamingUtils.class.getPackage());
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
       war.addClasses(TransactionAttributeInterceptorTest.class, TransactionAttributeManagedBean.class, HelloService.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class);
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
