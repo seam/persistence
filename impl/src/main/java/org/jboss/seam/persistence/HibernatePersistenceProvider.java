@@ -29,6 +29,7 @@ public class HibernatePersistenceProvider extends DefaultPersistenceProvider
 {
 
    private static Logger log = LoggerFactory.getLogger(HibernatePersistenceProvider.class);
+   private static Class<?> FULL_TEXT_SESSION;
    private static Method FULL_TEXT_SESSION_CONSTRUCTOR;
    private static Method FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR;
    private static Class<?> FULL_TEXT_ENTITYMANAGER;
@@ -59,6 +60,7 @@ public class HibernatePersistenceProvider extends DefaultPersistenceProvider
                log.debug("org.hibernate.search.Search.getFullTextSession(Session) not found, trying deprecated method name createFullTextSession");
                FULL_TEXT_SESSION_CONSTRUCTOR = searchClass.getDeclaredMethod("createFullTextSession", Session.class);
             }
+            FULL_TEXT_SESSION = Reflections.classForName("org.hibernate.search.FullTextSession");
             Class<?> jpaSearchClass = Reflections.classForName("org.hibernate.search.jpa.Search");
             try
             {
@@ -268,6 +270,15 @@ public class HibernatePersistenceProvider extends DefaultPersistenceProvider
          return Collections.emptySet();
       }
       return (Set) Collections.singleton(FULL_TEXT_ENTITYMANAGER);
+   }
+
+   public Set<Class<?>> getAdditionalSessionInterfaces()
+   {
+      if (FULL_TEXT_SESSION == null)
+      {
+         return Collections.emptySet();
+      }
+      return (Set) Collections.singleton(FULL_TEXT_SESSION);
    }
 
    /**

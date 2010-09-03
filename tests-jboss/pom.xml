@@ -9,20 +9,14 @@
 
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.jboss.seam.persistence</groupId>
-   <artifactId>seam-persistence-impl</artifactId>
+   <artifactId>seam-persistence-tests-jboss</artifactId>
    <packaging>jar</packaging>
    <version>3.0.0-SNAPSHOT</version>
-   <name>Seam Persistence</name>
+   <name>Seam Persistence Jboss Tests</name>
 
    <properties>
-      <seam.version>3.0.0.b01</seam.version>
-      <arquillian.version>1.0.0.Alpha3</arquillian.version>
-      <junit.version>4.8.1</junit.version>
       <jboss.home>${env.JBOSS_HOME}</jboss.home>
       <jboss.domain>default</jboss.domain>
-      <glassfish.version>3.0.1-b19</glassfish.version>
-      <jboss-as-client.version>6.0.0.20100721-M4</jboss-as-client.version>
-      <jboss-server-manager.version>1.0.3.GA</jboss-server-manager.version>
    </properties>
 
    <prerequisites>
@@ -80,6 +74,11 @@
       </dependency>
 
       <dependency>
+         <groupId>org.jboss.seam.persistence</groupId>
+         <artifactId>seam-persistence-impl</artifactId>
+      </dependency>
+
+      <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-api</artifactId>
          <scope>provided</scope>
@@ -107,20 +106,24 @@
       <dependency>
          <groupId>org.jboss.weld</groupId>
          <artifactId>weld-extensions</artifactId>
-         <version>1.0.0-SNAPSHOT</version>
          <scope>compile</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-search</artifactId>
-         <version>3.2.1.Final</version>
          <optional>true</optional>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.seam.persistence</groupId>
+         <artifactId>seam-persistence-tests-base</artifactId>
          <scope>test</scope>
       </dependency>
 
@@ -145,32 +148,31 @@
 
    <profiles>
       <profile>
-         <id>jbossas-managed-60</id>
+         <id>jbossas-managed-6</id>
          <activation>
-            
+            <activeByDefault>true</activeByDefault>
          </activation>
          <dependencies>
+
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-managed-6</artifactId>
-               <version>${arquillian.version}</version>
-               <scope>test</scope>
-            </dependency>
-            <dependency>
-               <groupId>org.jboss.jbossas</groupId>
-               <artifactId>jboss-server-manager</artifactId>
-               <version>1.0.3.GA</version>
                <scope>test</scope>
             </dependency>
 
-            <!-- need for org.jnp.interfaces.NamingContextFactory -->
+            <dependency>
+               <groupId>org.jboss.jbossas</groupId>
+               <artifactId>jboss-server-manager</artifactId>
+               <scope>test</scope>
+            </dependency>
+
             <dependency>
                <groupId>org.jboss.jbossas</groupId>
                <artifactId>jboss-as-client</artifactId>
-               <version>${jboss-as-client.version}</version>
                <type>pom</type>
                <scope>test</scope>
             </dependency>
+
          </dependencies>
          <build>
             <testResources>
@@ -231,14 +233,12 @@
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-remote-6</artifactId>
-               <version>${arquillian.version}</version>
                <scope>test</scope>
             </dependency>
             <!-- need for org.jnp.interfaces.NamingContextFactory -->
             <dependency>
                <groupId>org.jboss.jbossas</groupId>
                <artifactId>jboss-as-client</artifactId>
-               <version>${jboss-as-client.version}</version>
                <type>pom</type>
                <scope>test</scope>
             </dependency>
@@ -275,110 +275,12 @@
             </plugins>
          </build>
       </profile>
-
-      <profile>
-         <id>glassfish-embedded-30</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-glassfish-embedded-30</artifactId>
-               <version>${arquillian.version}</version>
-               <scope>test</scope>
-            </dependency>
-            <dependency>
-               <groupId>org.glassfish.extras</groupId>
-               <artifactId>glassfish-embedded-all</artifactId>
-               <version>${glassfish.version}</version>
-               <scope>provided</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <testResources>
-               <testResource>
-                  <directory>src/test/resources</directory>
-               </testResource>
-               <testResource>
-                  <directory>src/test/resources-glassfish</directory>
-               </testResource>
-            </testResources>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <skip>true</skip>
-                  </configuration>
-                  <executions>
-                     <execution>
-                        <id>surefire-it</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                           <goal>test</goal>
-                        </goals>
-                        <configuration>
-                           <skip>false</skip>
-                        </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-
-      <profile>
-         <id>glassfish-remote-30</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-glassfish-remote-30</artifactId>
-               <version>${arquillian.version}</version>
-               <scope>test</scope>
-            </dependency>
-            <dependency>
-               <groupId>org.glassfish.extras</groupId>
-               <artifactId>glassfish-embedded-all</artifactId>
-               <version>${glassfish.version}</version>
-               <scope>provided</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <testResources>
-               <testResource>
-                  <directory>src/test/resources</directory>
-               </testResource>
-               <testResource>
-                  <directory>src/test/resources-glassfish</directory>
-               </testResource>
-            </testResources>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <skip>true</skip>
-                  </configuration>
-                  <executions>
-                     <execution>
-                        <id>surefire-it</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                           <goal>test</goal>
-                        </goals>
-                        <configuration>
-                           <skip>false</skip>
-                        </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
    </profiles>
 
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/impl</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/impl</developerConnection>
-      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/trunk/impl</url>
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/tests-jboss</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/tests-jboss</developerConnection>
+      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/trunk/tests-jboss</url>
    </scm>
 
 </project>

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -27,11 +28,17 @@
    <modules>
       <module>api</module>
       <module>impl</module>
+      <module>tests-base</module>
    </modules>
 
    <properties>
       <seam.version>3.0.0.b01</seam.version>
       <jboss-javaee6-spec.version>1.0.0.Beta4</jboss-javaee6-spec.version>
+      <weld.extensions.version>1.0.0-SNAPSHOT</weld.extensions.version>
+      <hibernate.search.version>3.2.1.Final</hibernate.search.version>
+      <arquillian.version>1.0.0.Alpha3</arquillian.version>
+      <jboss.server.manager.version>1.0.3.GA</jboss.server.manager.version>
+      <jboss-as-client.version>6.0.0.20100721-M4</jboss-as-client.version>
    </properties>
 
    <dependencyManagement>
@@ -45,28 +52,83 @@
             <type>pom</type>
          </dependency>
 
-         <!-- Need to use dependencyManagement to override org.jboss.seam:seam for submodules -->
+         <!--
+            Need to use dependencyManagement to override
+            org.jboss.seam:seam for submodules
+         -->
          <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
             <artifactId>seam-persistence-api</artifactId>
             <version>${project.version}</version>
          </dependency>
-         
-        <dependency>
-          <groupId>org.jboss.spec</groupId>
-          <artifactId>jboss-javaee-6.0</artifactId>
-          <version>${jboss-javaee6-spec.version}</version>
-          <type>pom</type>
-          <scope>provided</scope>
-        </dependency>
-       
+
+         <dependency>
+            <groupId>org.jboss.seam.persistence</groupId>
+            <artifactId>seam-persistence-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.seam.persistence</groupId>
+            <artifactId>seam-persistence-tests-base</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-extensions</artifactId>
+            <version>${weld.extensions.version}</version>
+            <scope>compile</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search</artifactId>
+            <version>${hibernate.search.version}</version>
+            <optional>true</optional>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-6.0</artifactId>
+            <version>${jboss-javaee6-spec.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+         </dependency>
+
          <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
             <artifactId>seam-persistence</artifactId>
             <version>${project.version}</version>
          </dependency>
-         
+
+         <!-- Arquillian -->
+         <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-jbossas-managed-6</artifactId>
+            <version>${arquillian.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-jbossas-remote-6</artifactId>
+            <version>${arquillian.version}</version>
+         </dependency>
+         <!-- Jboss dependencies -->
+         <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-server-manager</artifactId>
+            <version>${jboss.server.manager.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-as-client</artifactId>
+            <version>${jboss-as-client.version}</version>
+            <type>pom</type>
+         </dependency>
       </dependencies>
+      
    </dependencyManagement>
 
    <profiles>
@@ -130,7 +192,27 @@
             </pluginRepository>
          </pluginRepositories>
       </profile>
-
+      <profile>
+         <!-- all tests using managed containers -->
+         <id>all</id>
+         <modules>
+            <module>tests-jboss</module>
+         </modules>
+      </profile>
+      <profile>
+         <!-- jboss remote profile-->
+         <id>jbossas-remote-6</id>
+         <modules>
+            <module>tests-jboss</module>
+         </modules>
+      </profile>
+      <profile>
+         <!-- jboss managed profile-->
+         <id>jbossas-managed-6</id>
+         <modules>
+            <module>tests-jboss</module>
+         </modules>
+      </profile>
    </profiles>
 
    <developers>
