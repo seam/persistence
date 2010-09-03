@@ -29,6 +29,7 @@
       <module>api</module>
       <module>impl</module>
       <module>tests-base</module>
+      <module>tests-weld-se</module>
    </modules>
 
    <properties>
@@ -114,6 +115,13 @@
             <artifactId>arquillian-jbossas-remote-6</artifactId>
             <version>${arquillian.version}</version>
          </dependency>
+
+         <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-weld-se-embedded-1</artifactId>
+            <version>${arquillian.version}</version>
+         </dependency>
+         
          <!-- Jboss dependencies -->
          <dependency>
             <groupId>org.jboss.jbossas</groupId>
@@ -128,7 +136,7 @@
             <type>pom</type>
          </dependency>
       </dependencies>
-      
+
    </dependencyManagement>
 
    <profiles>
