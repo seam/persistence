@@ -29,7 +29,7 @@
       <module>api</module>
       <module>impl</module>
       <module>tests-base</module>
-      <module>tests-weld-se</module>
+      <!-- <module>tests-weld-se</module> -->
    </modules>
 
    <properties>
