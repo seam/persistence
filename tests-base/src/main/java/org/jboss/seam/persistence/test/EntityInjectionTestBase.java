@@ -34,7 +34,6 @@ import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.transactions.test.util.HelloService;
 import org.jboss.seam.transactions.test.util.Hotel;
-import org.jboss.seam.transactions.test.util.IndexedHotel;
 import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
 import org.junit.Assert;
 import org.junit.Test;

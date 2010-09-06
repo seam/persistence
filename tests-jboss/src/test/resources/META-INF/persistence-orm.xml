@@ -15,13 +15,6 @@
       <properties>
          <!-- Properties for Hibernate (default provider for JBoss AS) -->
          <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
-         <property name="hibernate.show_sql" value="true"/>
-         <!-- Only format when you need to debug, because it slows things down -->
-         <property name="hibernate.format_sql" value="false"/>
-
-         <!-- Properties for EclipseLink (default provider for GlassFish) -->
-         <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-         <property name="eclipselink.logging.level" value="FINE"/>
       </properties>
    </persistence-unit>
 </persistence>

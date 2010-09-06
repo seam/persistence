@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
@@ -95,7 +96,7 @@ public class ManagedPersistenceContextExtension implements Extension
       {
          // look for a seam managed persistence unit declaration on EE resource
          // producer fields
-         if (f.isAnnotationPresent(SeamManaged.class) && f.isAnnotationPresent(PersistenceUnit.class) && f.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(f.getJavaMember().getType()))
+         if (f.isAnnotationPresent(SeamManaged.class) && (f.isAnnotationPresent(PersistenceUnit.class) || f.isAnnotationPresent(Resource.class)) && f.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(f.getJavaMember().getType()))
          {
             if (modifiedType == null)
             {
@@ -127,6 +128,7 @@ public class ManagedPersistenceContextExtension implements Extension
                modifiedType.removeFromField(f.getJavaMember(), scope);
             }
             registerManagedPersistenceContext(qualifiers, scope, f.isAnnotationPresent(Alternative.class), manager, event.getAnnotatedType().getJavaClass().getClassLoader(), f);
+            log.info("Configuring Seam Managed Persistence Context from producer field " + f.getDeclaringType().getJavaClass().getName() + "." + f.getJavaMember().getName() + " with qualifiers " + qualifiers);
          }
          // now look for producer methods that produce an EntityManagerFactory.
          // This allows the user to manually configure an EntityManagerFactory
@@ -167,6 +169,7 @@ public class ManagedPersistenceContextExtension implements Extension
             modifiedType.removeFromMethod(m.getJavaMember(), scope);
             modifiedType.addToMethod(m.getJavaMember(), ApplicationScopedLiteral.INSTANCE);
             registerManagedPersistenceContext(qualifiers, scope, m.isAnnotationPresent(Alternative.class), manager, event.getAnnotatedType().getJavaClass().getClassLoader(), m);
+            log.info("Configuring Seam Managed Persistence Context from producer method " + m.getDeclaringType().getJavaClass().getName() + "." + m.getJavaMember().getName() + " with qualifiers " + qualifiers);
          }
       }
 

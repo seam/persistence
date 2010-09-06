@@ -21,6 +21,7 @@
          <!-- Properties for EclipseLink (default provider for GlassFish) -->
          <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
          <property name="eclipselink.logging.level" value="FINE"/>
+         <property name="jboss.entity.manager.factory.jndi.name" value="java:EntityManagerFactory"/>
       </properties>
    </persistence-unit>
 </persistence>

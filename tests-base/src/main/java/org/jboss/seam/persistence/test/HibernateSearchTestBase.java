@@ -40,12 +40,11 @@ import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class HibernateSearchTestBase
 {
    public static Class<?>[] getTestClasses()
    {
-      return new Class[] { HibernateSearchTestBase.class, IndexedHotel.class, ManagedPersistenceContextProvider.class, HelloService.class };
+      return new Class[] { IndexedHotel.class, ManagedPersistenceContextProvider.class, HelloService.class, HibernateSearchTestBase.class };
    }
 
    @Inject
