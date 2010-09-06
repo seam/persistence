@@ -65,6 +65,12 @@ import org.slf4j.LoggerFactory;
  * unit (naturally).
  * </p>
  * 
+ * <b>WARNING</b>
+ * 
+ * If this is used to Bootstrap @PersistenceContext injection you will end up
+ * with a @Dependent scoped application manager, rather than a transaction
+ * scoped container managed entity manager.
+ * 
  * @author Gavin King
  * @author Dan Allen
  */
