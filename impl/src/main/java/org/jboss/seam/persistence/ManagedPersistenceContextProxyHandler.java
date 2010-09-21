@@ -84,11 +84,6 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
    {
-      if (!synchronizationRegistered)
-      {
-         joinTransaction();
-      }
-      touch((ManagedPersistenceContext) proxy);
       if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
       {
          changeFushMode((FlushModeType) args[0]);
@@ -111,11 +106,25 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          closeAfterTransaction();
          return null;
       }
+      // we do not join the transaction for setFlushMode calls, as this may
+      // result in an infinite loop, as this is called during SMPC
+      // initialisation
+      if (!"setFlushMode".equals(method.getName()))
+      {
+         if (!synchronizationRegistered)
+         {
+            joinTransaction();
+         }
+      }
+
+      touch((ManagedPersistenceContext) proxy);
+
       return super.invoke(proxy, method, args);
    }
 
    private void joinTransaction() throws SystemException
    {
+      synchronizationRegistered = true;
       SeamTransaction transaction = userTransactionInstance.get();
       if (transaction.isActive())
       {
@@ -123,13 +132,13 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          try
          {
             transaction.registerSynchronization(this);
-            synchronizationRegistered = true;
          }
          catch (Exception e)
          {
             // synchronizationRegistered =
             // PersistenceProvider.instance().registerSynchronization(this,
             // entityManager);
+            synchronizationRegistered = false;
             throw new RuntimeException(e);
          }
       }

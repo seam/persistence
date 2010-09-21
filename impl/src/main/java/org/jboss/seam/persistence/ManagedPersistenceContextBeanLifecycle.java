@@ -27,6 +27,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -111,9 +112,10 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          entityManager = getPersistenceProvider(entityManager).proxyEntityManager(entityManager);
          ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts(), getPersistenceProvider(entityManager));
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
+         arg0.push(proxy);
          getPersistenceProvider(entityManager).setFlushMode(proxy, getPersistenceContexts().getFlushMode());
          manager.fireEvent(new SeamManagedPersistenceContextCreated(proxy), qualifiers);
-         
+
          return proxy;
       }
       catch (Exception e)
@@ -124,7 +126,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
 
    public void destroy(Bean<EntityManager> bean, EntityManager em, CreationalContext<EntityManager> arg1)
    {
-      ((ManagedPersistenceContext)em).closeAfterTransaction();
+      ((ManagedPersistenceContext) em).closeAfterTransaction();
       arg1.release();
       try
       {
@@ -177,7 +179,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          Bean<EntityManagerFactory> bean = (Bean) manager.resolve(manager.getBeans(EntityManagerFactory.class, qualifiers));
          if (bean == null)
          {
-            throw new RuntimeException("Could not find EntityManagerFactory bean with qualifiers" + qualifiers);
+            throw new RuntimeException("Could not find EntityManagerFactory bean with qualifiers" + Arrays.toString(qualifiers));
          }
          CreationalContext<EntityManagerFactory> ctx = manager.createCreationalContext(bean);
          emf = (EntityManagerFactory) manager.getReference(bean, EntityManagerFactory.class, ctx);

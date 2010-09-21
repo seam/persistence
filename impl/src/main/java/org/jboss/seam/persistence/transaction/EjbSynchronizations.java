@@ -35,6 +35,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
+import org.jboss.weld.extensions.defaultbean.DefaultBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
 @Stateful
 @RequestScoped
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@DefaultBean(type = Synchronizations.class)
 public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSynchronization
 {
    private static final Logger log = LoggerFactory.getLogger(EjbSynchronizations.class);

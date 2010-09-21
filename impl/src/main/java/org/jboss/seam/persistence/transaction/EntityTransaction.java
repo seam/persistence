@@ -138,12 +138,12 @@ public class EntityTransaction extends AbstractUserTransaction
 
    public int getStatus() throws SystemException
    {
-      if (getDelegate().getRollbackOnly())
+      if (getDelegate().isActive())
       {
-         return Status.STATUS_MARKED_ROLLBACK;
-      }
-      else if (getDelegate().isActive())
-      {
+         if (getDelegate().getRollbackOnly())
+         {
+            return Status.STATUS_MARKED_ROLLBACK;
+         }
          return Status.STATUS_ACTIVE;
       }
       else

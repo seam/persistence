@@ -22,13 +22,19 @@
 package org.jboss.seam.persistence;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
@@ -36,17 +42,22 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 
+import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
+import org.jboss.weld.extensions.bean.Beans;
 import org.jboss.weld.extensions.literal.AnyLiteral;
 import org.jboss.weld.extensions.literal.ApplicationScopedLiteral;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
@@ -71,6 +82,8 @@ public class ManagedPersistenceContextExtension implements Extension
 
    private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextExtension.class);
 
+   private Map<String, Bean<EntityManagerFactory>> emfBeans = new HashMap<String, Bean<EntityManagerFactory>>();
+
    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event)
    {
       ServiceLoader<SeamPersistenceProvider> providers = ServiceLoader.load(SeamPersistenceProvider.class);
@@ -88,12 +101,28 @@ public class ManagedPersistenceContextExtension implements Extension
     * smpc bean is created and registered. Any scope declaration on the producer
     * are removed as this is not supported by the spec
     * 
+    * For non-ee environments this extension also bootstraps @PersistenceUnit
+    * producer fields
+    * 
     */
-   public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> event, BeanManager manager)
+   public <T> void processAnnotatedType(@Observes final ProcessAnnotatedType<T> event, BeanManager manager)
    {
       AnnotatedTypeBuilder<T> modifiedType = null;
+      boolean bootstrapped = false;
       for (AnnotatedField<? super T> f : event.getAnnotatedType().getFields())
       {
+         if (f.isAnnotationPresent(PersistenceUnit.class) && f.isAnnotationPresent(Produces.class) && EnvironmentUtils.isEEEnvironment())
+         {
+            bootstrapped = true;
+            final String unitName = f.getAnnotation(PersistenceUnit.class).unitName();
+            final Set<Annotation> qualifiers = Beans.getQualifiers(manager, f.getAnnotations());
+            if (qualifiers.isEmpty())
+            {
+               qualifiers.add(DefaultLiteral.INSTANCE);
+            }
+            qualifiers.add(AnyLiteral.INSTANCE);
+            beans.add(createEMFBean(unitName, qualifiers, event.getAnnotatedType()));
+         }
          // look for a seam managed persistence unit declaration on EE resource
          // producer fields
          if (f.isAnnotationPresent(SeamManaged.class) && (f.isAnnotationPresent(PersistenceUnit.class) || f.isAnnotationPresent(Resource.class)) && f.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(f.getJavaMember().getType()))
@@ -126,6 +155,10 @@ public class ManagedPersistenceContextExtension implements Extension
             if (scope != Dependent.class)
             {
                modifiedType.removeFromField(f.getJavaMember(), scope);
+            }
+            if (bootstrapped)
+            {
+               modifiedType.removeFromField(f.getJavaMember(), Produces.class);
             }
             registerManagedPersistenceContext(qualifiers, scope, f.isAnnotationPresent(Alternative.class), manager, event.getAnnotatedType().getJavaClass().getClassLoader(), f);
             log.info("Configuring Seam Managed Persistence Context from producer field " + f.getDeclaringType().getJavaClass().getName() + "." + f.getJavaMember().getName() + " with qualifiers " + qualifiers);
@@ -179,6 +212,72 @@ public class ManagedPersistenceContextExtension implements Extension
       }
    }
 
+   private Bean<?> createEMFBean(final String unitName, final Set<Annotation> qualifiers, final AnnotatedType<?> type)
+   {
+      return new Bean<EntityManagerFactory>()
+      {
+         public Set<Type> getTypes()
+         {
+            Set<Type> types = new HashSet<Type>();
+            types.add(Object.class);
+            types.add(EntityManagerFactory.class);
+            return types;
+         }
+
+         public Class<? extends Annotation> getScope()
+         {
+            return ApplicationScoped.class;
+         }
+
+         public EntityManagerFactory create(CreationalContext<EntityManagerFactory> ctx)
+         {
+            return Persistence.createEntityManagerFactory(unitName);
+         }
+
+         public void destroy(EntityManagerFactory emf, CreationalContext<EntityManagerFactory> ctx)
+         {
+            emf.close();
+            ctx.release();
+         }
+
+         public Class<?> getBeanClass()
+         {
+            return type.getJavaClass();
+         }
+
+         public Set<InjectionPoint> getInjectionPoints()
+         {
+            return Collections.emptySet();
+         }
+
+         public String getName()
+         {
+            return null;
+         }
+
+         public Set<Annotation> getQualifiers()
+         {
+            return qualifiers;
+         }
+
+         public Set<Class<? extends Annotation>> getStereotypes()
+         {
+            return Collections.emptySet();
+
+         }
+
+         public boolean isAlternative()
+         {
+            return false;
+         }
+
+         public boolean isNullable()
+         {
+            return false;
+         }
+      };
+   }
+
    private void registerManagedPersistenceContext(Set<Annotation> qualifiers, Class<? extends Annotation> scope, boolean alternative, BeanManager manager, ClassLoader loader, AnnotatedMember<?> member)
    {
       // we need to add all additional interfaces from our
@@ -214,6 +313,6 @@ public class ManagedPersistenceContextExtension implements Extension
       {
          event.addBean(i);
       }
-   }
 
+   }
 }
