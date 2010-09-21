@@ -25,10 +25,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -82,8 +80,6 @@ public class ManagedPersistenceContextExtension implements Extension
 
    private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextExtension.class);
 
-   private Map<String, Bean<EntityManagerFactory>> emfBeans = new HashMap<String, Bean<EntityManagerFactory>>();
-
    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event)
    {
       ServiceLoader<SeamPersistenceProvider> providers = ServiceLoader.load(SeamPersistenceProvider.class);
@@ -111,7 +107,7 @@ public class ManagedPersistenceContextExtension implements Extension
       boolean bootstrapped = false;
       for (AnnotatedField<? super T> f : event.getAnnotatedType().getFields())
       {
-         if (f.isAnnotationPresent(PersistenceUnit.class) && f.isAnnotationPresent(Produces.class) && EnvironmentUtils.isEEEnvironment())
+         if (f.isAnnotationPresent(PersistenceUnit.class) && f.isAnnotationPresent(Produces.class) && !EnvironmentUtils.isEEEnvironment())
          {
             bootstrapped = true;
             final String unitName = f.getAnnotation(PersistenceUnit.class).unitName();
