@@ -53,12 +53,12 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 
 import org.jboss.seam.persistence.util.EnvironmentUtils;
-import org.jboss.weld.extensions.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.bean.BeanBuilder;
 import org.jboss.weld.extensions.bean.Beans;
 import org.jboss.weld.extensions.literal.AnyLiteral;
 import org.jboss.weld.extensions.literal.ApplicationScopedLiteral;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.util.service.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

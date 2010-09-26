@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 @Stateful
 @RequestScoped
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@DefaultBean(type = Synchronizations.class)
+@DefaultBean(Synchronizations.class)
 public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSynchronization
 {
    private static final Logger log = LoggerFactory.getLogger(EjbSynchronizations.class);

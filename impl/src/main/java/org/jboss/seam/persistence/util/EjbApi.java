@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 
 import javax.enterprise.inject.spi.AnnotatedType;
 
-import org.jboss.weld.extensions.util.Reflections;
+import org.jboss.weld.extensions.reflection.Reflections;
 
 /**
  * Utility class that provides access to some annotations from the Java

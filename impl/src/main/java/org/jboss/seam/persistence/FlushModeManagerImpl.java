@@ -36,7 +36,7 @@ import org.jboss.weld.extensions.defaultbean.DefaultBean;
  * 
  */
 @ApplicationScoped
-@DefaultBean(type = FlushModeManager.class)
+@DefaultBean(FlushModeManager.class)
 public class FlushModeManagerImpl implements Serializable, FlushModeManager
 {
    FlushModeType flushModeType = FlushModeType.AUTO;

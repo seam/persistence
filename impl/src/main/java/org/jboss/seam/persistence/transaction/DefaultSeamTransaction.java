@@ -45,7 +45,7 @@ import org.jboss.weld.extensions.defaultbean.DefaultBean;
  * @author Stuart Douglas
  * 
  */
-@DefaultBean(type = SeamTransaction.class)
+@DefaultBean(SeamTransaction.class)
 @DefaultTransaction
 public class DefaultSeamTransaction implements SeamTransaction
 {
