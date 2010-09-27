@@ -110,10 +110,19 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          EntityManagerFactory emf = getEntityManagerFactory();
          EntityManager entityManager = emf.createEntityManager();
          entityManager = getPersistenceProvider(entityManager).proxyEntityManager(entityManager);
-         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), getPersistenceContexts(), getPersistenceProvider(entityManager));
+         PersistenceContexts persistenceContexts = null;
+         try
+         {
+            persistenceContexts = getPersistenceContexts();
+         }
+         catch (ContextNotActiveException e) 
+         {
+            // it's null already
+         }
+         ManagedPersistenceContextProxyHandler handler = new ManagedPersistenceContextProxyHandler(entityManager, manager, bean.getQualifiers(), persistenceContexts, getPersistenceProvider(entityManager));
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
          arg0.push(proxy);
-         getPersistenceProvider(entityManager).setFlushMode(proxy, getPersistenceContexts().getFlushMode());
+         getPersistenceProvider(entityManager).setFlushMode(proxy, getFlushMode());
          manager.fireEvent(new SeamManagedPersistenceContextCreated(proxy), qualifiers);
 
          return proxy;
@@ -121,6 +130,19 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
       catch (Exception e)
       {
          throw new RuntimeException(e);
+      }
+   }
+   
+   private FlushModeType getFlushMode()
+   {
+      try
+      {
+         return getPersistenceContexts().getFlushMode();
+      }
+      catch (ContextNotActiveException e) 
+      {
+         // TODO Set the default flush mode for the app
+         return FlushModeType.AUTO;
       }
    }
 

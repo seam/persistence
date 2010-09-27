@@ -173,7 +173,10 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          {
             // we need to do this first to prevent an infinite loop
             persistenceContextsTouched = true;
-            persistenceContexts.touch(delegate);
+            if (persistenceContexts != null)
+            {
+               persistenceContexts.touch(delegate);
+            }
          }
          catch (ContextNotActiveException e)
          {
