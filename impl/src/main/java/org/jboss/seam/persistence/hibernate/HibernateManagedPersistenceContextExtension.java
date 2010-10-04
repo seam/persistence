@@ -178,13 +178,13 @@ public class HibernateManagedPersistenceContextExtension implements Extension
       // create the new bean to be registered later
       HibernateManagedPersistenceContextBeanLifecycle lifecycle = new HibernateManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager);
       AnnotatedTypeBuilder<Session> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(Session.class);
-      BeanBuilder<Session> builder = new BeanBuilder<Session>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
-      builder.setQualifiers(qualifiers);
-      builder.setScope(scope);
+      BeanBuilder<Session> builder = new BeanBuilder<Session>(manager).readFromType(typeBuilder.create());
+      builder.qualifiers(qualifiers);
+      builder.scope(scope);
       builder.getTypes().add(ManagedPersistenceContext.class);
       builder.getTypes().addAll(additionalInterfaces);
       builder.getTypes().add(Object.class);
-      builder.setBeanLifecycle(lifecycle);
+      builder.beanLifecycle(lifecycle);
       beans.add(builder.create());
    }
 

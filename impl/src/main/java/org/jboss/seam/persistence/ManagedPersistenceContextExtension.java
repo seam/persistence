@@ -290,15 +290,15 @@ public class ManagedPersistenceContextExtension implements Extension
       // create the new bean to be registered later
       ManagedPersistenceContextBeanLifecycle lifecycle = new ManagedPersistenceContextBeanLifecycle(qualifiers, loader, manager, additionalInterfaces, persistenceProviders);
       AnnotatedTypeBuilder<EntityManager> typeBuilder = new AnnotatedTypeBuilder().setJavaClass(EntityManager.class);
-      BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).defineBeanFromAnnotatedType(typeBuilder.create());
-      builder.setQualifiers(qualifiers);
-      builder.setScope(scope);
-      builder.setBeanClass(member.getDeclaringType().getJavaClass());
+      BeanBuilder<EntityManager> builder = new BeanBuilder<EntityManager>(manager).readFromType(typeBuilder.create());
+      builder.qualifiers(qualifiers);
+      builder.scope(scope);
+      builder.beanClass(member.getDeclaringType().getJavaClass());
       builder.getTypes().add(ManagedPersistenceContext.class);
       builder.getTypes().addAll(additionalInterfaces);
       builder.getTypes().add(Object.class);
-      builder.setBeanLifecycle(lifecycle);
-      builder.setAlternative(alternative);
+      builder.beanLifecycle(lifecycle);
+      builder.alternative(alternative);
       builder.setToString("Seam Managed Persistence Context with qualifiers [" + qualifiers + "] with configured by [" + member + "]");
       beans.add(builder.create());
    }
