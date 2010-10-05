@@ -29,7 +29,7 @@
       <module>api</module>
       <module>impl</module>
       <module>tests-base</module>
-      <!-- <module>tests-weld-se</module> -->
+      <module>tests-jetty</module>
    </modules>
 
    <properties>
@@ -40,6 +40,12 @@
       <arquillian.version>1.0.0.Alpha4</arquillian.version>
       <jboss.server.manager.version>1.0.3.GA</jboss.server.manager.version>
       <jboss-as-client.version>6.0.0.20100721-M4</jboss-as-client.version>
+      <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
+      <jetty.version>7.0.2.v20100331</jetty.version>
+      <el.version>2.2</el.version>
+      <jsp.version>2.2</jsp.version>
+      <weld.version>1.1.0.Beta1</weld.version>
+      <hsqldb.version>1.8.0.10</hsqldb.version>
    </properties>
 
    <dependencyManagement>
@@ -74,6 +80,18 @@
             <artifactId>seam-persistence-tests-base</artifactId>
             <version>${project.version}</version>
          </dependency>
+         
+         <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+         </dependency>
+         
+         <dependency>
+            <groupId>org.jboss.seam.xml</groupId>
+            <artifactId>seam-xml-config</artifactId>
+            <version>${project.version}</version>
+         </dependency>
 
          <dependency>
             <groupId>org.jboss.weld</groupId>
@@ -95,6 +113,13 @@
             <version>${jboss-javaee6-spec.version}</version>
             <type>pom</type>
             <scope>provided</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${jboss.logging.version}</version>
+            <scope>test</scope>
          </dependency>
 
          <dependency>
@@ -135,8 +160,77 @@
             <version>${jboss-as-client.version}</version>
             <type>pom</type>
          </dependency>
-      </dependencies>
+      
+         <!-- Jetty Dependencies -->
+      
+         <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-jetty-embedded-7</artifactId>
+            <version>${arquillian.version}</version>
+         </dependency>
+            
+         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty.version}</version>
+         </dependency>
+      
+         <!-- plus and naming requires for using JNDI -->
+      
+         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-plus</artifactId>
+            <version>${jetty.version}</version>
+         </dependency>
+      
+         <!-- Weld servlet, EL and JSP required for testing CDI injections -->
+      
+         <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>el-impl</artifactId>
+            <version>${el.version}</version>
+         </dependency>
+      
+         <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>${jsp.version}</version>
+         </dependency>
+                  
+         <!-- Temp weld deps -->
+         
+         <dependency>
+            <groupId>org.jboss.weld.servlet</groupId>
+            <artifactId>weld-servlet</artifactId>
+            <version>${weld.version}</version>            
+         </dependency>
+         
+         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>${weld.version}</version>            
+         </dependency>
 
+         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core-api</artifactId>
+            <version>${weld.version}</version>            
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core-spi</artifactId>
+            <version>${weld.version}</version>            
+         </dependency>         
+       
+         <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>1.0-SP2</version>
+         </dependency>    
+         
+      </dependencies>       
+           
    </dependencyManagement>
 
    <profiles>

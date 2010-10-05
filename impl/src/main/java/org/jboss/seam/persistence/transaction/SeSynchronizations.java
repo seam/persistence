@@ -24,10 +24,11 @@ package org.jboss.seam.persistence.transaction;
 import java.util.Stack;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
+
+import org.jboss.weld.extensions.core.Veto;
 
 /**
  * This implementation does not have access to the JTA TransactionManager, so it
@@ -40,7 +41,7 @@ import javax.transaction.Synchronization;
  * @author Stuart Douglas
  */
 @RequestScoped
-@Alternative
+@Veto
 public class SeSynchronizations implements Synchronizations
 {
    protected Stack<SynchronizationRegistry> synchronizations = new Stack<SynchronizationRegistry>();

@@ -19,20 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.jetty;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.test.HibernateSearchTestBase;
+import org.jboss.seam.persistence.test.jetty.util.JettyTestUtils;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.runner.RunWith;
 
-import org.jboss.seam.persistence.SeamManaged;
-
-public class ManagedPersistenceContextProvider
+@RunWith(Arquillian.class)
+public class HibernateSearchTest extends HibernateSearchTestBase
 {
-   @PersistenceUnit(unitName = "seamPersistencePu")
-   @RequestScoped
-   @Produces
-   @SeamManaged
-   EntityManagerFactory emf;
+   @Deployment
+   public static Archive<?> createTestArchive()
+   {
+      WebArchive war = JettyTestUtils.createTestArchive();
+      war.addWebResource("WEB-INF/beans.xml", "beans.xml");
+      war.addClasses(getTestClasses());
+      war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
+      return war;
+   }
+
 }

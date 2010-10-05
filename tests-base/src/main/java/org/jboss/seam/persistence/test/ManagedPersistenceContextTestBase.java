@@ -56,7 +56,7 @@ public class ManagedPersistenceContextTestBase
    EntityManager em;
 
    @Test
-   public void testManagedPsersistenceContext() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void testManagedPersistenceContext() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
       transaction.begin();
       Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");

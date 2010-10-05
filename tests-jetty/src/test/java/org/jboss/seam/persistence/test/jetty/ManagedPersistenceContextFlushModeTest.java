@@ -19,20 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.jetty;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.test.ManagedPersistenceContextFlushModeTestBase;
+import org.jboss.seam.persistence.test.jetty.util.JettyTestUtils;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.runner.RunWith;
 
-import org.jboss.seam.persistence.SeamManaged;
-
-public class ManagedPersistenceContextProvider
+@RunWith(Arquillian.class)
+public class ManagedPersistenceContextFlushModeTest extends ManagedPersistenceContextFlushModeTestBase
 {
-   @PersistenceUnit(unitName = "seamPersistencePu")
-   @RequestScoped
-   @Produces
-   @SeamManaged
-   EntityManagerFactory emf;
+   @Deployment
+   public static Archive<?> createTestArchive()
+   {
+      WebArchive war = JettyTestUtils.createTestArchive();
+      war.addWebResource("WEB-INF/beans.xml", "beans.xml");
+      war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
+      war.addClasses(getTestClasses());
+      return war;
+   }
 }

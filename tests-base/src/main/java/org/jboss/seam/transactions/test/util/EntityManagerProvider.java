@@ -27,7 +27,7 @@ import javax.persistence.PersistenceContext;
 
 public class EntityManagerProvider
 {
-   @PersistenceContext
+   @PersistenceContext(unitName = "seamPersistencePu")
    @Produces
    EntityManager em;
 }

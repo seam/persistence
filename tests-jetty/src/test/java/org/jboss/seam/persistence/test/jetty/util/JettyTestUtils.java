@@ -19,20 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.jetty.util;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-import org.jboss.seam.persistence.SeamManaged;
-
-public class ManagedPersistenceContextProvider
+/**
+ * 
+ * @author Stuart Douglas
+ * 
+ */
+public class JettyTestUtils
 {
-   @PersistenceUnit(unitName = "seamPersistencePu")
-   @RequestScoped
-   @Produces
-   @SeamManaged
-   EntityManagerFactory emf;
+   public static WebArchive createTestArchive()
+   {
+      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
+      war.addResource("META-INF/seam-beans.xml", "seam-beans.xml");
+      war.addWebResource("WEB-INF/jetty-env.xml", "jetty-env.xml");
+      war.addWebResource("WEB-INF/web.xml", "web.xml");
+      return war;
+   }
 }
