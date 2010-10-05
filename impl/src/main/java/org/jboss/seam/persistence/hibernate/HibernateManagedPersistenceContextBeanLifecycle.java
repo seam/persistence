@@ -38,7 +38,7 @@ import org.hibernate.SessionFactory;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
-import org.jboss.weld.extensions.bean.BeanLifecycle;
+import org.jboss.weld.extensions.bean.ContextualLifecycle;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class HibernateManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Session>
+public class HibernateManagedPersistenceContextBeanLifecycle implements ContextualLifecycle<Session>
 {
    private static final Logger log = LoggerFactory.getLogger(HibernateManagedPersistenceContextBeanLifecycle.class);
 

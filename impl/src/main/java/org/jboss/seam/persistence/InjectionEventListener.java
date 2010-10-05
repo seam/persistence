@@ -29,11 +29,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 
-import org.jboss.weld.extensions.beanManager.BeanManagerAccessor;
+import org.jboss.weld.extensions.beanManager.BeanManagerAware;
 import org.jboss.weld.extensions.reflection.Reflections;
 import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
 import org.slf4j.Logger;
@@ -53,21 +52,15 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class InjectionEventListener
+public class InjectionEventListener extends BeanManagerAware
 {
 
    private final static Logger log = LoggerFactory.getLogger(InjectionEventListener.class);
 
    private final Map<Class<?>, InjectionTarget<?>> injectionTargets = new ConcurrentHashMap<Class<?>, InjectionTarget<?>>();
 
-   BeanManager manager;
-
    public void load(Object entity)
    {
-      if (manager == null)
-      {
-         this.manager = BeanManagerAccessor.getManager();
-      }
       if (!injectionTargets.containsKey(entity.getClass()))
       {
          if (!injectionRequired(entity.getClass()))
@@ -80,7 +73,7 @@ public class InjectionEventListener
             // it is ok for this code to run twice, so we don't really need to
             // lock
             AnnotatedTypeBuilder<?> builder = new AnnotatedTypeBuilder().readFromType(entity.getClass());
-            InjectionTarget<?> injectionTarget = manager.createInjectionTarget(builder.create());
+            InjectionTarget<?> injectionTarget = getBeanManager().createInjectionTarget(builder.create());
             injectionTargets.put(entity.getClass(), injectionTarget);
             log.info("Enabling injection into entity {}", entity.getClass());
          }

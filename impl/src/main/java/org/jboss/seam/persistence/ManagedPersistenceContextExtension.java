@@ -299,7 +299,7 @@ public class ManagedPersistenceContextExtension implements Extension
       builder.getTypes().add(Object.class);
       builder.beanLifecycle(lifecycle);
       builder.alternative(alternative);
-      builder.setToString("Seam Managed Persistence Context with qualifiers [" + qualifiers + "] with configured by [" + member + "]");
+      builder.toString("Seam Managed Persistence Context with qualifiers [" + qualifiers + "] with configured by [" + member + "]");
       beans.add(builder.create());
    }
 

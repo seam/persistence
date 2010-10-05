@@ -38,7 +38,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.weld.extensions.bean.BeanLifecycle;
+import org.jboss.weld.extensions.bean.ContextualLifecycle;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<EntityManager>
+public class ManagedPersistenceContextBeanLifecycle implements ContextualLifecycle<EntityManager>
 {
    private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextBeanLifecycle.class);
 
@@ -115,7 +115,7 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          {
             persistenceContexts = getPersistenceContexts();
          }
-         catch (ContextNotActiveException e) 
+         catch (ContextNotActiveException e)
          {
             // it's null already
          }
@@ -132,14 +132,14 @@ public class ManagedPersistenceContextBeanLifecycle implements BeanLifecycle<Ent
          throw new RuntimeException(e);
       }
    }
-   
+
    private FlushModeType getFlushMode()
    {
       try
       {
          return getPersistenceContexts().getFlushMode();
       }
-      catch (ContextNotActiveException e) 
+      catch (ContextNotActiveException e)
       {
          // TODO Set the default flush mode for the app
          return FlushModeType.AUTO;
