@@ -37,18 +37,17 @@ public class HibernatePersistenceProvider extends DefaultPersistenceProvider
    {
       try
       {
-         String version = null;
+         boolean hibernateSearchPresent = false;
          try
          {
-            Class<?> searchVersionClass = Reflections.classForName("org.hibernate.search.Version");
-            Method versionMethod = searchVersionClass.getDeclaredMethod("getVersionString");
-            version = (String) versionMethod.invoke(null);
+            Reflections.classForName("org.hibernate.search.Version");
+            hibernateSearchPresent = true;
          }
          catch (Exception e)
          {
             log.debug("no Hibernate Search", e);
          }
-         if (version != null)
+         if (hibernateSearchPresent)
          {
             Class<?> searchClass = Reflections.classForName("org.hibernate.search.Search");
             try
@@ -202,12 +201,16 @@ public class HibernatePersistenceProvider extends DefaultPersistenceProvider
     */
    static Session proxySession(Session session)
    {
-      if (FULL_TEXT_SESSION_CONSTRUCTOR == null)
+      if (FULL_TEXT_SESSION_CONSTRUCTOR == null || FULL_TEXT_SESSION == null)
       {
          return session;
       }
       else
       {
+         if (FULL_TEXT_SESSION.isAssignableFrom(session.getClass()))
+         {
+            return session;
+         }
          try
          {
             return (Session) FULL_TEXT_SESSION_CONSTRUCTOR.invoke(null, session);
