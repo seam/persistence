@@ -6,6 +6,6 @@
    <toc/>
    
    <title>Seam Persistence</title>      
-   <xi:include href="persistence-introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />  
+   <xi:include href="persistence-general.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />  
 
 </book>
