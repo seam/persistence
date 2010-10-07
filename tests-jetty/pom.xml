@@ -12,7 +12,7 @@
    <artifactId>seam-persistence-tests-jetty</artifactId>
    <packaging>jar</packaging>
    <version>3.0.0-SNAPSHOT</version>
-   <name>Seam Persistence Weld SE Tests</name>
+   <name>Seam Persistence Jetty Tests</name>
 
    <prerequisites>
       <maven>3.0</maven>
