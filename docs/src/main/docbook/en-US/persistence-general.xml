@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<chapter id="persistence">
+  <title>Seam Persistence Reference</title>
+
+ <section>
+    <title>The Seam Managed Persistence Context</title>
+    <para>
+      The seam managed persistence context is an EntityManager that has its lifecycle managed by Seam. You configure one as follows:
+    </para>
+    
+    <programlisting role="java">
+@SeamManaged
+@Produces
+@PersistenceUnit
+@ConversationScoped
+EntityManagerFactory producerField;
+    </programlisting>
+    <para>
+      This is just an ordinary resource producer field as defined by the CDI specification, however the presence of the <literal>@SeamManaged</literal>
+      annotation tells seam to create a seam managed persistence context from this <literal>EntityManagerFactory</literal>. This managed
+      persistence context can be injected normally, and has the same scope and qualifiers that are specified on the resource producer field.
+    </para>
+    <note>
+      <para>
+         The more eagle eyed among you may have noticed that the resource producer field appears to be conversation scoped, which the CDI 
+         specification does not require containers to support. This is in fact not the case, as the @ConversationScoped annotation is removed
+         by the seam persistence portable extension. It only specifies the scope of the created SMPC, not the EntityManagerFactory.
+      </para>
+    </note>
+    <programlisting role="java">
+@Inject
+EntityManager smpc;
+    </programlisting>    
+     <para>
+      The seam managed persistence context provides the following features:
+     </para>
+     <itemizedlist>
+      <listitem>Automatic enrollment in the active transaction</listitem>
+      <listitem>The ability to use EL in JPA queries</listitem>
+     </itemizedlist>
+    </section>
+    <section>
+      <title>Seam Transactions</title>
+      <para>Seam provides a lightweight UserTransaction wrapper called SeamTransaction.</para>
+      <para>Seam also provides a transaction intercepter. In EE environments the normal <literal>@TransactionAttribute</literal> annotation
+      can be used to demarcate transaction boundaries on managed beans, not just EJB's.</para>
+      
+    </section>
+</chapter>
