@@ -22,10 +22,21 @@
 package org.jboss.seam.persistence;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
+import org.jboss.seam.persistence.transaction.SeamTransaction;
 
 /**
- * event that is fired when the SMPC is created. This allows you to configure
- * the SMPC before it is used, e.g. by enabling hibernate filters
+ * Event that is fired when the SMPC is created. This allows you to configure
+ * the SMPC before it is used, e.g. by enabling Hibernate filters.
+ * <p/>
+ * NOTE: If you are using {@link EntityTransaction} you must not attempt to
+ * access the current {@link SeamTransaction} from observers for this event, as
+ * an infinite loop will result.
+ * <p/>
+ * NOTE: The entityManger property is the unproxied EntityManager, not the seam
+ * proxy.
+ * 
  * 
  * @author Stuart Douglas <stuart@baileyroberts.com.au>
  * 

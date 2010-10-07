@@ -13,9 +13,9 @@ import javax.ejb.ApplicationException;
  * Seam Annotation for identifying an Exception class as an Application
  * Exception, which does not cause a transaction rollback.
  * 
- * This will NOT control the behaviour of EJB container managed transactions. To
+ * This will NOT control the behavior of EJB container managed transactions. To
  * avoid confusion, it is recommended that this annotation is only used outside
- * an EE environment when @{link {@link ApplicationException} is not availible.
+ * an EE environment when @{link {@link ApplicationException} is not available.
  * 
  */
 @Target(ElementType.TYPE)

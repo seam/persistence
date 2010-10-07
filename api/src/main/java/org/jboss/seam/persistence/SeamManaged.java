@@ -43,15 +43,14 @@ import javax.persistence.EntityManagerFactory;
  * &#064;SomeQualifier
  * EntityManagerFactory emf;
  * </pre>
- * 
- * will create a conversation scoped seam managed persistence context that is
+ * <p/>
+ * Will create a conversation scoped seam managed persistence context that is
  * conversation scoped with the qualifier @SomeQualifier.
- * 
+ * <p/>
  * This field still produces the EntityManagerFactory with qualifier
- * 
- * @SomeQualifier, however the scope for the producer field is changed to
- *                 {@link Dependent}, as the specification does not allow
- *                 resource producer fields to have a scope other than Dependent
+ * &#064;SomeQualifier, however the scope for the producer field is changed to
+ * {@link Dependent}, as the specification does not allow resource producer
+ * fields to have a scope other than Dependent
  * 
  * @author Stuart Douglas
  * 

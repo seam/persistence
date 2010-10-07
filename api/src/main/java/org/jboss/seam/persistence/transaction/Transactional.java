@@ -31,10 +31,10 @@ import java.lang.annotation.Target;
  * Demarcates transaction boundaries
  * 
  * Note that is you are using seam managed transactions seam will automatically
- * manage your transactions for you, rendering this unnessesary
+ * manage your transactions for you, rendering this unnecessary
  * 
- * Note that this annotation is not actually an interceptor binding. It is
- * replaced by an interceptor binding at runtime by a portable extension in the
+ * Note that this annotation is not actually an intercepter binding. It is
+ * replaced by an intercepter binding at runtime by a portable extension in the
  * ProcessAnnotatedType phase
  * 
  * 

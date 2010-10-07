@@ -123,7 +123,7 @@ public class ManagedPersistenceContextBeanLifecycle implements ContextualLifecyc
          EntityManager proxy = (EntityManager) proxyConstructor.newInstance(handler);
          arg0.push(proxy);
          getPersistenceProvider(entityManager).setFlushMode(proxy, getFlushMode());
-         manager.fireEvent(new SeamManagedPersistenceContextCreated(proxy), qualifiers);
+         manager.fireEvent(new SeamManagedPersistenceContextCreated(entityManager), qualifiers);
 
          return proxy;
       }

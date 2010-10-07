@@ -13,9 +13,9 @@ import javax.transaction.UserTransaction;
  * Qualifier that is used to denote the SeamTransaction implementation that is
  * used by the transaction interceptor and other seam transaction services.
  * 
- * A qualifier is nessesary to prevent the seam provided {@link UserTransaction}
+ * A qualifier is necessary to prevent the seam provided {@link UserTransaction}
  * wrapper {@link SeamTransaction} from conflicting with the container provided
- * builtin UserTransaction
+ * built-in UserTransaction
  * 
  * @author Stuart Douglas
  * 
