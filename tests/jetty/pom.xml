@@ -4,15 +4,15 @@
       <artifactId>seam-persistence-parent</artifactId>
       <groupId>org.jboss.seam.persistence</groupId>
       <version>3.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
+      <relativePath>../../pom.xml</relativePath>
    </parent>
 
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.jboss.seam.persistence</groupId>
-   <artifactId>seam-persistence-tests-jetty-openjpa</artifactId>
+   <artifactId>seam-persistence-tests-jetty</artifactId>
    <packaging>jar</packaging>
    <version>3.0.0-SNAPSHOT</version>
-   <name>Seam Persistence Openjpa Jetty Tests</name>
+   <name>Seam Persistence Jetty Tests</name>
 
    <prerequisites>
       <maven>3.0</maven>
@@ -28,10 +28,29 @@
       </dependency>
 
       <dependency>
-        <groupId>org.apache.openjpa</groupId>
-        <artifactId>openjpa-all</artifactId>
+         <groupId>org.hibernate</groupId>
+         <artifactId>hibernate-core</artifactId>
+         <scope>provided</scope>
       </dependency>
+      
+      <dependency>
+         <groupId>org.hibernate</groupId>
+         <artifactId>hibernate-entitymanager</artifactId>
+         <scope>provided</scope>
+      </dependency>      
 
+      <dependency>
+         <groupId>org.hibernate.javax.persistence</groupId>
+         <artifactId>hibernate-jpa-2.0-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.hibernate</groupId>
+         <artifactId>hibernate-search</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      
       <dependency>
          <groupId>hsqldb</groupId>
          <artifactId>hsqldb</artifactId>
@@ -111,6 +130,12 @@
       </dependency>
 
       <dependency>
+         <groupId>org.hibernate</groupId>
+         <artifactId>hibernate-search</artifactId>
+         <optional>true</optional>
+      </dependency>
+
+      <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
          <scope>test</scope>
@@ -180,8 +205,6 @@
                   </goals>
                   <configuration>
                      <skip>false</skip>
-                     <forkMode>pertest</forkMode>
-                     <argLine>-javaagent:${settings.localRepository}/org/apache/openjpa/openjpa-all/2.0.0/openjpa-all-2.0.0.jar=scanDevPath=true</argLine>
                   </configuration>
                </execution>
             </executions>

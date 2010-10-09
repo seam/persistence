@@ -28,9 +28,9 @@
    <modules>
       <module>api</module>
       <module>impl</module>
-      <module>tests-base</module>
-      <module>tests-jetty</module>
-      <module>tests-jetty-openjpa</module>
+      <module>tests/base</module>
+      <module>tests/jetty</module>
+      <module>tests/openjpa</module>
    </modules>
 
    <properties>
@@ -308,21 +308,21 @@
          <!-- all tests using managed containers -->
          <id>all</id>
          <modules>
-            <module>tests-jboss</module>
+            <module>tests/jboss</module>
          </modules>
       </profile>
       <profile>
          <!-- jboss remote profile-->
          <id>jbossas-remote-6</id>
          <modules>
-            <module>tests-jboss</module>
+            <module>tests/jboss</module>
          </modules>
       </profile>
       <profile>
          <!-- jboss managed profile-->
          <id>jbossas-managed-6</id>
          <modules>
-            <module>tests-jboss</module>
+            <module>tests/jboss</module>
          </modules>
       </profile>
    </profiles>
