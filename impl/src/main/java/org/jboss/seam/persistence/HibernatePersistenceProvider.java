@@ -176,7 +176,7 @@ public class HibernatePersistenceProvider extends DefaultPersistenceProvider
       {
          return super.getName(bean, entityManager);
       }
-      catch (TransientObjectException e)
+      catch (Exception e) // TODO: what should we actually do here
       {
          return super.getName(bean, entityManager);
       }

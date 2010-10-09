@@ -19,12 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.openjpa;
 
-public class HelloService
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.test.ManagedPersistenceContextCreatedEventTestBase;
+import org.jboss.seam.persistence.test.openjpa.util.JettyTestUtils;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.runner.RunWith;
+
+@RunWith(Arquillian.class)
+public class ManagedPersistenceContextCreatedEventTest extends ManagedPersistenceContextCreatedEventTestBase
 {
-   public String sayHello()
+   @Deployment
+   public static Archive<?> createTestArchive()
    {
-      return "Hello";
+      WebArchive war = JettyTestUtils.createTestArchive();
+      war.addWebResource("WEB-INF/beans.xml", "beans.xml");
+      war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
+      war.addClasses(getTestClasses());
+      return war;
    }
+
 }

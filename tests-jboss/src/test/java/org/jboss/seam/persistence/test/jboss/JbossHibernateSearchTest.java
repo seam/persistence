@@ -24,8 +24,8 @@ package org.jboss.seam.persistence.test.jboss;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.HibernateSearchTestBase;
-import org.jboss.seam.transactions.test.util.ArtifactNames;
-import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
+import org.jboss.seam.persistence.test.util.ArtifactNames;
+import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -49,7 +49,6 @@ public class JbossHibernateSearchTest extends HibernateSearchTestBase
       war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
       war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
-      war.addWebResource("META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider", "classes/META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider");
       return war;
    }
 

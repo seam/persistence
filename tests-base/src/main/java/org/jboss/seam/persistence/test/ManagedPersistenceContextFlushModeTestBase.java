@@ -38,9 +38,9 @@ import org.jboss.seam.persistence.FlushModeManager;
 import org.jboss.seam.persistence.FlushModeType;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
-import org.jboss.seam.transactions.test.util.HelloService;
-import org.jboss.seam.transactions.test.util.Hotel;
-import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
+import org.jboss.seam.persistence.test.util.HelloService;
+import org.jboss.seam.persistence.test.util.Hotel;
+import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
 import org.junit.Test;
 
 public class ManagedPersistenceContextFlushModeTestBase

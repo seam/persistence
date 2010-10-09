@@ -10,7 +10,7 @@
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <jta-data-source>java:/DefaultDS</jta-data-source>
       <mapping-file>META-INF/orm.xml</mapping-file>
-      <class>org.jboss.seam.transactions.test.util.Hotel</class>
+      <class>org.jboss.seam.persistence.test.util.Hotel</class>
       <exclude-unlisted-classes/>
       <properties>
          <!-- Properties for Hibernate (default provider for JBoss AS) -->

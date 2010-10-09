@@ -6,7 +6,7 @@
    <persistence-unit name="seamPersistencePu" transaction-type="RESOURCE_LOCAL">
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <mapping-file>META-INF/orm.xml</mapping-file>
-      <class>org.jboss.seam.transactions.test.util.Hotel</class>
+      <class>org.jboss.seam.persistence.test.util.Hotel</class>
       <exclude-unlisted-classes />
       <properties>
          <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />

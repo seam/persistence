@@ -32,12 +32,12 @@ import javax.transaction.SystemException;
 
 import junit.framework.Assert;
 
+import org.jboss.seam.persistence.test.util.HelloService;
+import org.jboss.seam.persistence.test.util.Hotel;
+import org.jboss.seam.persistence.test.util.ManagedPersistenceContextObserver;
+import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.seam.transactions.test.util.HelloService;
-import org.jboss.seam.transactions.test.util.Hotel;
-import org.jboss.seam.transactions.test.util.ManagedPersistenceContextObserver;
-import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
 import org.junit.Test;
 
 public class ManagedPersistenceContextCreatedEventTestBase

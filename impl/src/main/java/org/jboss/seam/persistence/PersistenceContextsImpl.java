@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 public class PersistenceContextsImpl implements Serializable, PersistenceContexts
 {
    private static final long serialVersionUID = -4897350516435283182L;
+
    private static final Logger log = LoggerFactory.getLogger(PersistenceContextsImpl.class);
+
    /**
     * persistences contexts are referenced by their qualifiers
     */

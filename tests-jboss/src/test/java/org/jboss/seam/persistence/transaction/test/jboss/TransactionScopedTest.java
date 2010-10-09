@@ -2,9 +2,9 @@ package org.jboss.seam.persistence.transaction.test.jboss;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.test.util.ArtifactNames;
+import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
 import org.jboss.seam.persistence.transactions.test.TransactionScopedTestBase;
-import org.jboss.seam.transactions.test.util.ArtifactNames;
-import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;

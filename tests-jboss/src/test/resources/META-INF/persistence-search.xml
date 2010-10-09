@@ -6,7 +6,7 @@
    <persistence-unit name="seamPersistencePu">
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <jta-data-source>java:/DefaultDS</jta-data-source>
-      <class>org.jboss.seam.transactions.test.util.IndexedHotel</class>
+      <class>org.jboss.seam.persistence.test.util.IndexedHotel</class>
       <exclude-unlisted-classes/>
       <properties>
          <!-- Properties for Hibernate (default provider for JBoss AS) -->

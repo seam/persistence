@@ -19,34 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.test.jboss;
+package org.jboss.seam.persistence.test.openjpa;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.test.ManagedPersistenceContextFlushModeTestBase;
-import org.jboss.seam.transactions.test.util.ArtifactNames;
-import org.jboss.seam.transactions.test.util.MavenArtifactResolver;
+import org.jboss.seam.persistence.test.ManagedPersistenceContextELTestBase;
+import org.jboss.seam.persistence.test.openjpa.util.JettyTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedPersistenceContextFlushModeTest extends ManagedPersistenceContextFlushModeTestBase
+public class ManagedPersistenceContextELTest extends ManagedPersistenceContextELTestBase
 {
    @Deployment
    public static Archive<?> createTestArchive()
    {
-      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
+      WebArchive war = JettyTestUtils.createTestArchive();
+      war.addWebResource("WEB-INF/beans.xml", "beans.xml");
+      war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
       war.addClasses(getTestClasses());
-      war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-      war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
-      war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
-      war.addWebResource("META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider", "classes/META-INF/services/org.jboss.seam.persistence.SeamPersistenceProvider");
       return war;
    }
+
 }

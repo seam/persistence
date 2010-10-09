@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.util;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -51,7 +51,7 @@ import org.jboss.weld.extensions.core.Veto;
 @Veto
 public class Hotel implements Serializable
 {
-   private Long id;
+   private int id;
    private String name;
    private String address;
    private String city;
@@ -105,12 +105,12 @@ public class Hotel implements Serializable
 
    @Id
    @GeneratedValue
-   public Long getId()
+   public int getId()
    {
       return id;
    }
 
-   public void setId(final Long id)
+   public void setId(int id)
    {
       this.id = id;
    }

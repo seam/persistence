@@ -24,10 +24,10 @@ package org.jboss.seam.persistence.transactions.test;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.jboss.seam.persistence.test.util.DontRollBackException;
+import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.persistence.transaction.TransactionPropagation;
 import org.jboss.seam.persistence.transaction.Transactional;
-import org.jboss.seam.transactions.test.util.DontRollBackException;
-import org.jboss.seam.transactions.test.util.Hotel;
 
 @Transactional(TransactionPropagation.REQUIRED)
 public class TransactionManagedBean

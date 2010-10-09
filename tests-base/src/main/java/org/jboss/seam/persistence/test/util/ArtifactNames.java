@@ -1,4 +1,4 @@
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.util;
 
 public class ArtifactNames
 {

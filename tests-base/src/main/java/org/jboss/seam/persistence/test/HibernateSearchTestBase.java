@@ -32,11 +32,11 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.hibernate.search.jpa.FullTextEntityManager;
+import org.jboss.seam.persistence.test.util.HelloService;
+import org.jboss.seam.persistence.test.util.IndexedHotel;
+import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.seam.transactions.test.util.HelloService;
-import org.jboss.seam.transactions.test.util.IndexedHotel;
-import org.jboss.seam.transactions.test.util.ManagedPersistenceContextProvider;
 import org.junit.Assert;
 import org.junit.Test;
 

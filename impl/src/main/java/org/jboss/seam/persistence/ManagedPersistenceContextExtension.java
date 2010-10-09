@@ -56,6 +56,7 @@ import org.jboss.weld.extensions.bean.ContextualLifecycle;
 import org.jboss.weld.extensions.literal.AnyLiteral;
 import org.jboss.weld.extensions.literal.ApplicationScopedLiteral;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.weld.extensions.reflection.Reflections;
 import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
 import org.jboss.weld.extensions.util.service.ServiceLoader;
 import org.slf4j.Logger;
@@ -80,6 +81,32 @@ public class ManagedPersistenceContextExtension implements Extension
 
    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event)
    {
+      // we manually add Hibernate first.
+      // we do not use the ServiceLoader approach for this, because it will blow
+      // up if Hibernate is not on the classpath
+      try
+      {
+         Class<?> hibernateProviderClass = Reflections.classForName("org.jboss.seam.persistence.HibernatePersistenceProvider", this.getClass().getClassLoader());
+         SeamPersistenceProvider provider = (SeamPersistenceProvider) hibernateProviderClass.newInstance();
+         persistenceProviders.add(provider);
+      }
+      catch (NoClassDefFoundError e)
+      {
+         log.debug("Hibernate not found on class path, HibernatePersistenceProvider not loaded.");
+      }
+      catch (ClassNotFoundException e)
+      {
+         log.debug("Hibernate not found on class path, HibernatePersistenceProvider not loaded.");
+      }
+      catch (InstantiationException e)
+      {
+         log.debug("InstantiationException creating HibernatePersistenceProvider: HibernatePersistenceProvider not loaded.");
+      }
+      catch (IllegalAccessException e)
+      {
+         log.error("IllegalAccessException creating HibernatePersistenceProvider: HibernatePersistenceProvider not loaded.");
+      }
+
       ServiceLoader<SeamPersistenceProvider> providers = ServiceLoader.load(SeamPersistenceProvider.class);
       for (SeamPersistenceProvider i : providers)
       {

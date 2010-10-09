@@ -26,8 +26,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.jboss.seam.transactions.test.util.DontRollBackException;
-import org.jboss.seam.transactions.test.util.Hotel;
+import org.jboss.seam.persistence.test.util.DontRollBackException;
+import org.jboss.seam.persistence.test.util.Hotel;
 
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TransactionAttributeManagedBean

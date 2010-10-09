@@ -19,20 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.util;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Default;
+import javax.persistence.FlushModeType;
 
-import org.jboss.seam.persistence.SeamManaged;
+import org.jboss.seam.persistence.SeamManagedPersistenceContextCreated;
 
-public class ManagedPersistenceContextProvider
+@ApplicationScoped
+public class ManagedPersistenceContextObserver
 {
-   @PersistenceUnit(unitName = "seamPersistencePu")
-   @RequestScoped
-   @Produces
-   @SeamManaged
-   EntityManagerFactory emf;
+   private boolean observerRun = false;
+
+   public void observe(@Observes @Default SeamManagedPersistenceContextCreated event)
+   {
+      observerRun = true;
+      event.getEntityManager().setFlushMode(FlushModeType.COMMIT);
+   }
+   
+   public boolean isObserverRun()
+   {
+      return observerRun;
+   }
 }

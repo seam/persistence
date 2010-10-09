@@ -19,15 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.transactions.test.util;
+package org.jboss.seam.persistence.test.util;
 
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-public class EntityManagerProvider
+public class HelloService
 {
-   @PersistenceContext(unitName = "seamPersistencePu")
-   @Produces
-   EntityManager em;
+   public String sayHello()
+   {
+      return "Hello";
+   }
 }
