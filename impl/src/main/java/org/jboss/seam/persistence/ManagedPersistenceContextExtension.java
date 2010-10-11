@@ -35,6 +35,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AnnotatedCallable;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.AnnotatedMethod;
@@ -58,6 +59,7 @@ import org.jboss.weld.extensions.literal.ApplicationScopedLiteral;
 import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.jboss.weld.extensions.reflection.Reflections;
 import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.weld.extensions.reflection.annotated.Annotateds;
 import org.jboss.weld.extensions.util.service.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -285,6 +287,19 @@ public class ManagedPersistenceContextExtension implements Extension
       builder.getTypes().add(Object.class);
       builder.beanLifecycle(lifecycle);
       builder.alternative(alternative);
+      StringBuilder id = new StringBuilder("SMPC-" + ManagedPersistenceContextExtension.class.getName() + "-");
+      if (member instanceof AnnotatedField<?>)
+      {
+         AnnotatedField<?> field = (AnnotatedField<?>) member;
+         id.append(Annotateds.createFieldId(field));
+      }
+      else
+      {
+         AnnotatedCallable<?> method = (AnnotatedCallable<?>) member;
+         id.append(Annotateds.createCallableId(method));
+      }
+      builder.id(id.toString());
+      builder.passivationCapable(true);
       builder.toString("Seam Managed Persistence Context with qualifiers [" + qualifiers + "] with configured by [" + member + "] on class [" + declaringClass + "]");
       beans.add(builder.create());
    }
