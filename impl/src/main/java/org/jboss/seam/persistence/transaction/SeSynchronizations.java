@@ -35,7 +35,6 @@ import org.jboss.weld.extensions.core.Veto;
  * is not fully aware of container managed transaction lifecycle, and is not
  * able to register Synchronizations with a container managed transaction.
  * 
- * This is an alternative, and as such must be enabled in beans.xml.
  * 
  * @author Gavin King
  * @author Stuart Douglas
