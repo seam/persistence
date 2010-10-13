@@ -79,6 +79,54 @@
     
    </section>
    
+   <section>
+      <title>Getting Started</title>
+      
+      <para>
+         To get started with Seam persistence you need to add the
+         <literal>seam-persistence.jar </literal> and the 
+         <literal>weld-extensions.jar</literal> to you deployment. If you are in
+         a java SE environment you will probably also require 
+         <literal>seam-xml.jar</literal> as well for configuration purposes. The
+         relevant maven configuration is as follows:
+      </para>
+<programlisting role="XML><![CDATA[<dependency>
+  <groupId>org.jboss.seam.persistence</groupId>
+  <artifactId>seam-persistence-api</artifactId>
+  <version>${seam.persistence.version}</version>
+</dependency>
+
+<dependency>
+  <groupId>org.jboss.seam.persistence</groupId>
+  <artifactId>seam-persistence-impl</artifactId>
+  <version>${seam.persistence.version}</version>
+</dependency>
+
+<dependency>
+  <groupId>org.jboss.weld</groupId>
+  <artifactId>weld-extensions</artifactId>
+  <version>${weld.extensions.version}</version>
+</dependency>
+
+<dependency>
+  <groupId>org.jboss.seam.xml</groupId>
+  <artifactId>seam-xml-config</artifactId>
+  <version>${seam.xml.version}</version>
+</dependency>  
+]]></programlisting>  
+      
+      <para>
+         You will also need to have a JPA provider on the classpath. If you are
+         using java EE this is taken care of for you. If not, we recommend hibernate.
+      </para>
+
+<programlisting role="XML><![CDATA[<dependency>
+  <groupId>org.hibernate</groupId>
+  <artifactId>hibernate-core</artifactId>
+  <version>3.5.1-Final</version>
+</dependency>]]></programlisting>      
+   </section>
+   
    <section id="persistence.transactions" >
       <title>Transaction Management</title>
       
@@ -92,9 +140,22 @@
       <section>
          <title>Configuration</title>
          <para>
-            If you are in an EE 6 environment then no configuration is necessary, 
-            simply drop the seam-persistence jar into your app and you are ready
-            to go.
+            In order to enable declarative transaction management for managed beans 
+            you need to list the transaction interceptor in beans.xml:
+         </para>
+         <programlisting role="XML"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+      http://java.sun.com/xml/ns/javaee 
+      http://docs.jboss.org/cdi/beans_1_0.xsd">
+   <interceptors>
+      <class>org.jboss.seam.persistence.transaction.TransactionInterceptor</class>
+   </interceptors>
+</beans>]]></programlisting>         
+         <para>
+            If you are in a Java EE 6 environment then you are good to go, 
+            no additional configuration is required. 
          </para>
          <para>
             If you are not in an EE environment you may need to configure some
