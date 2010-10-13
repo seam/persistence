@@ -90,7 +90,7 @@
          <literal>seam-xml.jar</literal> as well for configuration purposes. The
          relevant maven configuration is as follows:
       </para>
-<programlisting role="XML><![CDATA[<dependency>
+<programlisting role="XML"><![CDATA[<dependency>
   <groupId>org.jboss.seam.persistence</groupId>
   <artifactId>seam-persistence-api</artifactId>
   <version>${seam.persistence.version}</version>
@@ -120,7 +120,7 @@
          using java EE this is taken care of for you. If not, we recommend hibernate.
       </para>
 
-<programlisting role="XML><![CDATA[<dependency>
+<programlisting role="XML"><![CDATA[<dependency>
   <groupId>org.hibernate</groupId>
   <artifactId>hibernate-core</artifactId>
   <version>3.5.1-Final</version>
@@ -179,6 +179,7 @@
       </t:EntityTransaction>
       
 </beans>]]></programlisting>
+
          <para>
             Lets look at these individually.
          </para>
