@@ -75,8 +75,8 @@
 
 
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/xml/trunk/docs</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/xml/trunk/docs</developerConnection>
-      <url>http://fisheye.jboss.org/browse/seam/modules/xml/docs</url>
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/docs</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/docs</developerConnection>
+      <url>http://fisheye.jboss.org/browse/seam/modules/persistence/docs</url>
    </scm>
 </project>
