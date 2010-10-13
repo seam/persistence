@@ -36,7 +36,7 @@
    <properties>
       <seam.version>3.0.0.b01</seam.version>
       <jboss-javaee6-spec.version>1.0.0.Beta4</jboss-javaee6-spec.version>
-      <weld.extensions.version>1.0.0-SNAPSHOT</weld.extensions.version>
+      <weld.extensions.version>1.0.0.Beta1</weld.extensions.version>
       <hibernate.search.version>3.2.1.Final</hibernate.search.version>
       <arquillian.version>1.0.0.Alpha4</arquillian.version>
       <jboss.server.manager.version>1.0.3.GA</jboss.server.manager.version>
