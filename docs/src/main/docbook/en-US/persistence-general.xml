@@ -203,9 +203,9 @@
          
          <para>
             By default seam will attempt to look up <literal>java:comp/UserTransaction</literal> from JNDI 
-            (or alternatively retrieve it from the EJBContext if a container managed transaction is active).
-            Installing <code>EntityTransaction</code> tells seam to use the JPA <code>EntityTransaction</code>
-            instead. To use this you must have a 
+            (or alternatively retrieve it from the <code>EJBContext</code> if a container managed transaction 
+            is active). Installing <code>EntityTransaction</code> tells seam to use the JPA 
+            <code>EntityTransaction</code> instead. To use this you must have a 
             <link linkend="persistence.seam-managed-persistence-contexts">Seam Managed Persistence Context</link>
             installed with qualifier <code>@Default</code>. 
          </para>       
@@ -232,15 +232,20 @@
             <code>@TransactionAttribute</code> for this purpose, however it also provides 
             an alternative <code>@Transactional</code> annotation for environments where 
             the EJB API's are not available. An alternative to <code>@ApplicationException</code>, 
-            <code>@SeamApplicationException</code> is also provided. Unlike EJBs managed beans
+            <code>@SeamApplicationException</code> is also provided. Unlike EJBs, managed beans
             are not transactional by default, you can change this by adding the
             <code>@TransactionAttribute</code> to the bean class. 
          </para>
          
          <para>
-            If you are using seam managed transactions you do not need to worry about declarative
-            transaction management. Seam will automatically start a transaction for you at the 
-            start of the faces request, and commit it before the render response phase.
+            
+         </para>
+         
+         <para>
+            If you are using seam managed transactions as part of the seam-faces module you do not 
+            need to worry about declarative transaction management. Seam will automatically start 
+            a transaction for you at the start of the faces request, and commit it before the 
+            render response phase.
          </para>
          
          <warning>
@@ -251,6 +256,7 @@
                and <code>@ApplicationException</code>.
             </para>
          </warning>
+         
          <note>
             <para>
                <code>TransactionAttributeType.REQUIRES_NEW</code> and
@@ -258,6 +264,7 @@
                beans. This will be added before seam-persistence goes final.
             </para>
          </note>
+         
          <para>
             Lets have a look at some code. Annotations applied at a method level override annotations
             applied at the class level. 
@@ -276,7 +283,7 @@ class TransactionaBean
       ...
     }
     
-    /* This a transaction will not be started for this method, however it */
+    /* A transaction will not be started for this method, however it      */
     /* will not complain if there is an existing transaction active.      */
     @TransactionAttributeType(TransactionAttributeType.SUPPORTED)
     void doMoreWork()
@@ -322,7 +329,7 @@ class TransactionaBean
          (for JPA) or a <emphasis>managed session</emphasis> (for Hibernate) in your components.
          A Seam-managed persistence context is just a built-in Seam component that manages an
          instance of <literal>EntityManager</literal> or <literal>Session</literal> in the
-         conversation (or any other) context. You can inject it with <literal>@In</literal>.
+         conversation (or any other) context. You can inject it with <literal>@Inject</literal>.
       </para>
         
       <section>
@@ -342,6 +349,7 @@ EntityManagerFactory producerField;
             persistence context can be injected normally, and has the same scope and 
             qualifiers that are specified on the resource producer field.
          </para>
+         
          <para>
             This will work even in a SE environment where <code>@PersistenceUnit</code>
             injection is not normally supported. This is because the seam persistence 
@@ -385,10 +393,10 @@ EntityManagerFactory producerField;
          <para>
             Persistence contexts scoped to the conversation allows you to program optimistic 
             transactions that span multiple requests to the server without the need to use the 
-            <literal>merge()</literal> operation , without the need to re-load 
+            <code>merge()</code> operation , without the need to re-load 
             data at the beginning of each request, and without the need to wrestle with the 
-            <literal>LazyInitializationException</literal> or 
-            <literal>NonUniqueObjectException</literal>.
+            <code>LazyInitializationException</code> or 
+            <code>NonUniqueObjectException</code>.
          </para>
      
          <para>
