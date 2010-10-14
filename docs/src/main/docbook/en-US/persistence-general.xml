@@ -238,7 +238,7 @@
          </para>
          
          <para>
-            
+            TODO: Add section on exceptions and transaction rollback
          </para>
          
          <para>
@@ -484,6 +484,10 @@ EntityManagerFactory producerField;
              lets you use EL expressions in your query strings, safely and efficiently. For
              example, this:
          </para>
+         
+         <para>
+            TODO: We don't proxy the container managed PC yet.
+         </para>
      
          <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=#{user.username}")
    .getSingleResult();]]></programlisting>
@@ -521,8 +525,8 @@ EntityManagerFactory producerField;
          <programlisting role="JAVA">public void setupEntityManager(@Observes SeamManagedPersistenceContextCreated event) {
    Session session = (Session)event.getEntityManager().getDelegate();
    session.enableFilter("myfilter");     
-}         
-         </programlisting>         
+}</programlisting>
+ 
       </section>
     
    </section>
