@@ -2,7 +2,7 @@
    <parent>
       <artifactId>seam-persistence-parent</artifactId>
       <groupId>org.jboss.seam.persistence</groupId>
-      <version>3.0.0.Alpha1</version>
+      <version>3.0.0-SNAPSHOT</version>
       <relativePath>../../pom.xml</relativePath>
    </parent>
 
@@ -10,7 +10,7 @@
    <groupId>org.jboss.seam.persistence</groupId>
    <artifactId>seam-persistence-tests-jetty</artifactId>
    <packaging>jar</packaging>
-   <version>3.0.0.Alpha1</version>
+   <version>3.0.0-SNAPSHOT</version>
    <name>Seam Persistence Jetty Tests</name>
 
    <prerequisites>
@@ -211,9 +211,9 @@
       </plugins>
    </build>
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/tags/3.0.0.Alpha1/tests-weld-se</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/tags/3.0.0.Alpha1/tests-weld-se</developerConnection>
-      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/tags/3.0.0.Alpha1/tests-weld-se</url>
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/tests-weld-se</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/tests-weld-se</developerConnection>
+      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/trunk/tests-weld-se</url>
    </scm>
 
 </project>
