@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <parent>
       <artifactId>seam-persistence-parent</artifactId>
       <groupId>org.jboss.seam.persistence</groupId>
-      <version>3.0.0.Alpha1</version>
+      <version>3.0.0-SNAPSHOT</version>
       <relativePath>../../pom.xml</relativePath>
    </parent>
 
@@ -10,7 +11,7 @@
    <groupId>org.jboss.seam.persistence</groupId>
    <artifactId>seam-persistence-tests-jetty-openjpa</artifactId>
    <packaging>jar</packaging>
-   <version>3.0.0.Alpha1</version>
+   <version>3.0.0-SNAPSHOT</version>
    <name>Seam Persistence Openjpa Jetty Tests</name>
 
    <prerequisites>
@@ -188,9 +189,9 @@
       </plugins>
    </build>
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/tags/3.0.0.Alpha1/tests-weld-se</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/tags/3.0.0.Alpha1/tests-weld-se</developerConnection>
-      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/tags/3.0.0.Alpha1/tests-weld-se</url>
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/tests-weld-se</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/tests-weld-se</developerConnection>
+      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/trunk/tests-weld-se</url>
    </scm>
 
 </project>
