@@ -54,26 +54,6 @@
       </plugins>
    </build>
 
-   <profiles>
-      <profile>
-         <id>distribution</id>
-         <activation>
-            <property>
-               <name>release</name>
-            </property>
-         </activation>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-assembly-plugin</artifactId>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-   </profiles>
-
-
    <scm>
       <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/docs</connection>
       <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/docs</developerConnection>
