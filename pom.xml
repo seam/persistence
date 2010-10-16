@@ -335,9 +335,9 @@
    </developers>
    
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk</developerConnection>
-      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/trunk</url>
+      <connection>scm:git:git://github.com/seam/persistence.git</connection>
+      <developerConnection>scm:git:git@github.com:seam/persistence.git</developerConnection>
+      <url>http://github.com/seam/persistence</url>
    </scm>
 </project>
 

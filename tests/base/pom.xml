@@ -131,9 +131,9 @@
    </build>
 
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/tests-base</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/tests-base</developerConnection>
-      <url>http://fisheye.jboss.org/browse/Seam/modules/persistence/trunk/tests-base</url>
+      <connection>scm:git:git://github.com/seam/persistence.git</connection>
+      <developerConnection>scm:git:git@github.com:seam/persistence.git</developerConnection>
+      <url>http://github.com/seam/persistence</url>
    </scm>
 
 </project>

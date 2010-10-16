@@ -55,8 +55,8 @@
    </build>
 
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/persistence/trunk/docs</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/persistence/trunk/docs</developerConnection>
-      <url>http://fisheye.jboss.org/browse/seam/modules/persistence/docs</url>
+      <connection>scm:git:git://github.com/seam/persistence.git</connection>
+      <developerConnection>scm:git:git@github.com:seam/persistence.git</developerConnection>
+      <url>http://github.com/seam/persistence</url>
    </scm>
 </project>
