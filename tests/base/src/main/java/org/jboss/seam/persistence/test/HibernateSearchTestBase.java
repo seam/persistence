@@ -31,6 +31,7 @@ import javax.transaction.SystemException;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.util.Version;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.IndexedHotel;
@@ -77,7 +78,7 @@ public class HibernateSearchTestBase
 
       transaction.begin();
       String[] fields = new String[] { "name" };
-      MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, new StandardAnalyzer());
+      MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_30, fields, new StandardAnalyzer(Version.LUCENE_30));
       org.apache.lucene.search.Query query = parser.parse("Other");
 
       // wrap Lucene query in a javax.persistence.Query

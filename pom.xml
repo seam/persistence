@@ -36,7 +36,8 @@
       <seam.version>3.0.0.b01</seam.version>
       <jboss-javaee6-spec.version>1.0.0.Beta4</jboss-javaee6-spec.version>
       <weld.extensions.version>1.0.0.Beta1</weld.extensions.version>
-      <hibernate.search.version>3.2.1.Final</hibernate.search.version>
+      <hibernate.core.version>3.6.0.Final</hibernate.core.version>
+      <hibernate.search.version>3.3.0.Beta2</hibernate.search.version>
       <arquillian.version>1.0.0.Alpha4</arquillian.version>
       <jboss.server.manager.version>1.0.3.GA</jboss.server.manager.version>
       <jboss-as-client.version>6.0.0.20100721-M4</jboss-as-client.version>
@@ -100,6 +101,13 @@
             <artifactId>weld-extensions</artifactId>
             <version>${weld.extensions.version}</version>
             <scope>compile</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.core.version}</version>
+            <optional>true</optional>
          </dependency>
 
          <dependency>
