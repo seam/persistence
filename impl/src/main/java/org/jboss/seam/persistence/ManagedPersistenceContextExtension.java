@@ -131,9 +131,9 @@ public class ManagedPersistenceContextExtension implements Extension
    public <T> void processAnnotatedType(@Observes final ProcessAnnotatedType<T> event, BeanManager manager)
    {
       AnnotatedTypeBuilder<T> modifiedType = null;
-      boolean bootstrapped = false;
       for (AnnotatedField<? super T> field : event.getAnnotatedType().getFields())
       {
+         boolean bootstrapped = false;
          if (field.isAnnotationPresent(PersistenceUnit.class) && field.isAnnotationPresent(Produces.class) && !EnvironmentUtils.isEEEnvironment())
          {
             bootstrapped = true;
