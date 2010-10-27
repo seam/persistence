@@ -12,6 +12,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.proxy.HibernateProxy;
+import org.jboss.weld.extensions.core.Veto;
 import org.jboss.weld.extensions.reflection.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
+@Veto
 public class HibernatePersistenceProvider extends DefaultPersistenceProvider
 {
 

@@ -49,9 +49,9 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class HibernateManagedPersistenceContextBeanLifecycle implements ContextualLifecycle<Session>
+public class HibernateManagedSessionBeanLifecycle implements ContextualLifecycle<Session>
 {
-   private static final Logger log = LoggerFactory.getLogger(HibernateManagedPersistenceContextBeanLifecycle.class);
+   private static final Logger log = LoggerFactory.getLogger(HibernateManagedSessionBeanLifecycle.class);
 
    private final Class<?> proxyClass;
 
@@ -67,7 +67,7 @@ public class HibernateManagedPersistenceContextBeanLifecycle implements Contextu
 
    private SessionFactory sessionFactory;
 
-   public HibernateManagedPersistenceContextBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager)
+   public HibernateManagedSessionBeanLifecycle(Set<Annotation> qualifiers, ClassLoader loader, BeanManager manager)
    {
       this.manager = manager;
       Set<Class<?>> additionalinterfaces = persistenceProvider.getAdditionalSessionInterfaces();
@@ -108,7 +108,7 @@ public class HibernateManagedPersistenceContextBeanLifecycle implements Contextu
          SessionFactory sf = getSessionFactory();
          Session session = sf.openSession();
          session = (Session) persistenceProvider.proxyDelegate(session);
-         HibernateManagedPersistenceContextProxyHandler handler = new HibernateManagedPersistenceContextProxyHandler(session, manager, bean.getQualifiers(), getPersistenceContexts(), persistenceProvider);
+         HibernateManagedSessionProxyHandler handler = new HibernateManagedSessionProxyHandler(session, manager, bean.getQualifiers(), getPersistenceContexts(), persistenceProvider);
          Session proxy = (Session) proxyConstructor.newInstance(handler);
          ((ManagedPersistenceContext) proxy).changeFlushMode(getPersistenceContexts().getFlushMode());
          manager.fireEvent(new SeamManagedHibernateSessionCreated(proxy), qualifiers);

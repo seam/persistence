@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Proxy handler for the entity manager proxy that allows the use of EL in
+ * Proxy handler for a {@link EntityManager} proxy that allows the use of EL in
  * queries.
  * 
  * @author Stuart Douglas

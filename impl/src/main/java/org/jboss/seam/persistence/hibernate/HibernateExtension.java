@@ -19,25 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.transaction;
+package org.jboss.seam.persistence.hibernate;
 
-import javax.transaction.Synchronization;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
-/**
- * Interface for registering transaction synchronizations
- * 
- * @author Gavin King
- * 
- */
-public interface Synchronizations
+interface HibernateExtension
 {
-   public void afterTransactionBegin();
+   public abstract <T> void processAnnotatedType(ProcessAnnotatedType<T> event, BeanManager manager);
 
-   public void afterTransactionCompletion(boolean success);
+   public abstract void afterBeanDiscovery(AfterBeanDiscovery event);
 
-   public void beforeTransactionCommit();
-
-   public void registerSynchronization(Synchronization sync);
-
-   public boolean isAwareOfContainerTransactions();
 }

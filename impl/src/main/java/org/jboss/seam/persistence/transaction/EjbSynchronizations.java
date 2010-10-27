@@ -109,12 +109,7 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
       // noop, let JTA notify us
    }
 
-   public void afterTransactionCommit(boolean success)
-   {
-      // noop, let JTA notify us
-   }
-
-   public void afterTransactionRollback()
+   public void afterTransactionCompletion(boolean success)
    {
       // noop, let JTA notify us
    }

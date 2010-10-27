@@ -22,7 +22,6 @@
 package org.jboss.seam.persistence.transaction;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
@@ -33,32 +32,33 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.DefaultPersistenceProvider;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jboss.weld.extensions.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Support for the JPA EntityTransaction API.
+ * Support for the Hibernate transaction API.
  * 
- * Adapts JPA transaction management to a Seam UserTransaction interface.For use
- * in non-JTA-capable environments.
  * 
- * @author Gavin King
+ * @author Stuart Douglas
  * 
  */
 @RequestScoped
 @DefaultTransaction
 @Veto
-public class EntityTransaction extends AbstractUserTransaction
+public class HibernateTransaction extends AbstractUserTransaction implements Synchronization
 {
-   private static final Logger log = LoggerFactory.getLogger(EntityTransaction.class);
+   private static final Logger log = LoggerFactory.getLogger(HibernateTransaction.class);
 
    @Inject
-   private EntityManager entityManager;
+   private Session session;
 
-   @Inject
-   private Instance<DefaultPersistenceProvider> persistenceProvider;
+   private boolean rollbackOnly; // Hibernate Transaction doesn't have a
+                                 // "rollback only" state
+
+   private boolean synchronizationRegistered = false;
 
    @Inject
    public void init(Synchronizations sync)
@@ -66,13 +66,13 @@ public class EntityTransaction extends AbstractUserTransaction
       setSynchronizations(sync);
    }
 
-   public EntityTransaction()
+   public HibernateTransaction()
    {
    }
 
-   private javax.persistence.EntityTransaction getDelegate()
+   private Transaction getDelegate()
    {
-      return entityManager.getTransaction();
+      return session.getTransaction();
    }
 
    public void begin() throws NotSupportedException, SystemException
@@ -83,6 +83,11 @@ public class EntityTransaction extends AbstractUserTransaction
       {
          getDelegate().begin();
          getSynchronizations().afterTransactionBegin();
+         // use hibernate to manage the synchronizations
+         // that way even if the user commits the transaction
+         // themselves they will still be handled
+         getDelegate().registerSynchronization(this);
+         synchronizationRegistered = true;
       }
       catch (RuntimeException re)
       {
@@ -93,25 +98,36 @@ public class EntityTransaction extends AbstractUserTransaction
    public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
    {
       log.debug("committing JPA resource-local transaction");
-      javax.persistence.EntityTransaction delegate = getDelegate();
+      Transaction delegate = getDelegate();
       boolean success = false;
+      boolean tempSynchronizationRegistered = synchronizationRegistered;
       try
       {
-         if (delegate.getRollbackOnly())
+         if (delegate.isActive())
          {
-            delegate.rollback();
-            throw new RollbackException();
-         }
-         else
-         {
-            getSynchronizations().beforeTransactionCommit();
-            delegate.commit();
-            success = true;
+            if (!rollbackOnly)
+            {
+               if (!tempSynchronizationRegistered)
+               {
+                  // should only occur if the user started the transaction
+                  // directly through the session
+                  getSynchronizations().beforeTransactionCommit();
+               }
+               delegate.commit();
+               success = true;
+            }
+            else
+            {
+               rollback();
+            }
          }
       }
       finally
       {
-         getSynchronizations().afterTransactionCompletion(success);
+         if (!tempSynchronizationRegistered)
+         {
+            getSynchronizations().afterTransactionCompletion(success);
+         }
       }
    }
 
@@ -119,12 +135,11 @@ public class EntityTransaction extends AbstractUserTransaction
    {
       log.debug("rolling back JPA resource-local transaction");
       // TODO: translate exceptions that occur into the correct JTA exception
-      javax.persistence.EntityTransaction delegate = getDelegate();
-      try
-      {
-         delegate.rollback();
-      }
-      finally
+      Transaction delegate = getDelegate();
+      rollbackOnly = false;
+      boolean tempSynchronizationRegistered = synchronizationRegistered;
+      delegate.rollback();
+      if (!tempSynchronizationRegistered)
       {
          getSynchronizations().afterTransactionCompletion(false);
       }
@@ -133,14 +148,14 @@ public class EntityTransaction extends AbstractUserTransaction
    public void setRollbackOnly() throws IllegalStateException, SystemException
    {
       log.debug("marking JPA resource-local transaction for rollback");
-      getDelegate().setRollbackOnly();
+      rollbackOnly = true;
    }
 
    public int getStatus() throws SystemException
    {
       if (getDelegate().isActive())
       {
-         if (getDelegate().getRollbackOnly())
+         if (rollbackOnly)
          {
             return Status.STATUS_MARKED_ROLLBACK;
          }
@@ -164,13 +179,7 @@ public class EntityTransaction extends AbstractUserTransaction
       {
          log.debug("registering synchronization: " + sync);
       }
-      // try to register the synchronization directly with the
-      // persistence provider, but if this fails, just hold
-      // on to it myself
-      if (!persistenceProvider.get().registerSynchronization(sync, entityManager))
-      {
-         getSynchronizations().registerSynchronization(sync);
-      }
+      getDelegate().registerSynchronization(sync);
    }
 
    @Override
@@ -182,7 +191,20 @@ public class EntityTransaction extends AbstractUserTransaction
    @Override
    public void enlist(EntityManager entityManager)
    {
-      // no-op
+      throw new RuntimeException("You should not try and enlist an EntityManager in a HibernateTransaction, use EntityTransaction or JTA instead");
+   }
+
+   public void afterCompletion(int status)
+   {
+      boolean success = Status.STATUS_COMMITTED == status;
+      getSynchronizations().afterTransactionCompletion(success);
+      rollbackOnly = false;
+      synchronizationRegistered = false;
+   }
+
+   public void beforeCompletion()
+   {
+      getSynchronizations().beforeTransactionCommit();
    }
 
 }

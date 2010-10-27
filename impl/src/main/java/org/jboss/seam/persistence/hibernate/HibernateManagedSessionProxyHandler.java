@@ -36,14 +36,17 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
 import org.hibernate.FlushMode;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jboss.seam.persistence.FlushModeType;
+import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
-import org.jboss.seam.persistence.SeamPersistenceProvider;
+import org.jboss.seam.persistence.QueryParser;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
+import org.jboss.weld.extensions.el.Expressions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * @author Stuart Douglas
  * 
  */
-public class HibernateManagedPersistenceContextProxyHandler implements InvocationHandler, Serializable, Synchronization
+public class HibernateManagedSessionProxyHandler implements InvocationHandler, Serializable, Synchronization
 {
 
    private static final long serialVersionUID = -6539267789786229774L;
@@ -70,29 +73,28 @@ public class HibernateManagedPersistenceContextProxyHandler implements Invocatio
 
    private final Set<Annotation> qualifiers;
 
-   private final SeamPersistenceProvider provider;
+   private final HibernatePersistenceProvider provider;
 
    private boolean persistenceContextsTouched = false;
 
    private boolean closeOnTransactionCommit = false;
 
-   static final Logger log = LoggerFactory.getLogger(HibernateManagedPersistenceContextProxyHandler.class);
+   static final Logger log = LoggerFactory.getLogger(HibernateManagedSessionProxyHandler.class);
 
-   public HibernateManagedPersistenceContextProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, SeamPersistenceProvider provider)
+   private final Instance<Expressions> expressionsInstance;
+
+   public HibernateManagedSessionProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, HibernatePersistenceProvider provider)
    {
       this.qualifiers = qualifiers;
       this.provider = provider;
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
       this.persistenceContexts = persistenceContexts;
+      expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
    {
-      if (!synchronizationRegistered)
-      {
-         joinTransaction();
-      }
       touch((ManagedPersistenceContext) proxy);
       if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
       {
@@ -116,7 +118,44 @@ public class HibernateManagedPersistenceContextProxyHandler implements Invocatio
          closeAfterTransaction();
          return null;
       }
+      if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class))
+      {
+         return handleCreateQueryWithString(method, args);
+      }
+      if (!"setFlushMode".equals(method.getName()) && !"getTransaction".equals(method.getName()))
+      {
+         if (!synchronizationRegistered)
+         {
+            joinTransaction();
+         }
+      }
+
       return method.invoke(delegate, args);
+   }
+
+   protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable
+   {
+      if (args[0] == null)
+      {
+         return method.invoke(delegate, args);
+      }
+      String ejbql = (String) args[0];
+      if (ejbql.indexOf('#') > 0)
+      {
+         QueryParser qp = new QueryParser(expressionsInstance.get(), ejbql);
+         Object[] newArgs = args.clone();
+         newArgs[0] = qp.getEjbql();
+         Query query = (Query) method.invoke(delegate, newArgs);
+         for (int i = 0; i < qp.getParameterValues().size(); i++)
+         {
+            query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
+         }
+         return query;
+      }
+      else
+      {
+         return method.invoke(delegate, args);
+      }
    }
 
    private void joinTransaction() throws SystemException
@@ -132,9 +171,6 @@ public class HibernateManagedPersistenceContextProxyHandler implements Invocatio
          }
          catch (Exception e)
          {
-            // synchronizationRegistered =
-            // PersistenceProvider.instance().registerSynchronization(this,
-            // entityManager);
             throw new RuntimeException(e);
          }
       }

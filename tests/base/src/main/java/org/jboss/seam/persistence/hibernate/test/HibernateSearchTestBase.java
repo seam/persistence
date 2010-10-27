@@ -19,34 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.test;
+package org.jboss.seam.persistence.hibernate.test;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
-import org.jboss.arquillian.junit.Arquillian;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.util.Version;
+import org.hibernate.search.FullTextQuery;
+import org.hibernate.search.FullTextSession;
 import org.jboss.seam.persistence.test.util.HelloService;
-import org.jboss.seam.persistence.test.util.Hotel;
-import org.jboss.seam.persistence.test.util.HotelNameProducer;
-import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
+import org.jboss.seam.persistence.test.util.IndexedHotel;
+import org.jboss.seam.persistence.test.util.ManagedHibernateSessionProvider;
 import org.jboss.seam.persistence.transaction.DefaultTransaction;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class ManagedPersistenceContextELTestBase
+public class HibernateSearchTestBase
 {
-
    public static Class<?>[] getTestClasses()
    {
-      return new Class[] { ManagedPersistenceContextELTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HotelNameProducer.class, HelloService.class };
+      return new Class[] { IndexedHotel.class, ManagedHibernateSessionProvider.class, HelloService.class, HibernateSearchTestBase.class };
    }
 
    @Inject
@@ -54,29 +54,33 @@ public class ManagedPersistenceContextELTestBase
    SeamTransaction transaction;
 
    @Inject
-   EntityManager em;
+   FullTextSession session;
 
    @Test
-   public void testELInInquery() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void testSearchingForHotel() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException, ParseException
    {
       transaction.begin();
-      Hotel h = new Hotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
+      IndexedHotel h = new IndexedHotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+      session.persist(h);
+      session.flush();
       transaction.commit();
 
       transaction.begin();
-      h = new Hotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
+      h = new IndexedHotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
+      session.persist(h);
+      session.flush();
       transaction.commit();
 
       transaction.begin();
-      Hotel hilton = (Hotel) em.createQuery("select h from Hotel h where h.name=#{hotelName}").getSingleResult();
-      Assert.assertTrue(hilton.getName().equals("Hilton"));
-      Assert.assertTrue(hilton.getAddress().equals("Fake St"));
+      String[] fields = new String[] { "name" };
+      MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_30, fields, new StandardAnalyzer(Version.LUCENE_30));
+      org.apache.lucene.search.Query query = parser.parse("Other");
+
+      // wrap Lucene query in a javax.persistence.Query
+      FullTextQuery persistenceQuery = session.createFullTextQuery(query, IndexedHotel.class);
+      IndexedHotel hotel = (IndexedHotel) persistenceQuery.uniqueResult();
+      Assert.assertTrue(hotel.getName().equals("Other Hotel"));
       transaction.commit();
 
    }
-
 }

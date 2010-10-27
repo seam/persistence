@@ -1,4 +1,4 @@
-package org.jboss.seam.persistence.test;
+package org.jboss.seam.persistence.test.util;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;

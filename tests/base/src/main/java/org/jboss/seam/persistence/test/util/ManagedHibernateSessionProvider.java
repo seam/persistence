@@ -19,25 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.transaction;
+package org.jboss.seam.persistence.test.util;
 
-import javax.transaction.Synchronization;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
 
-/**
- * Interface for registering transaction synchronizations
- * 
- * @author Gavin King
- * 
- */
-public interface Synchronizations
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.jboss.seam.persistence.SeamManaged;
+
+public class ManagedHibernateSessionProvider
 {
-   public void afterTransactionBegin();
-
-   public void afterTransactionCompletion(boolean success);
-
-   public void beforeTransactionCommit();
-
-   public void registerSynchronization(Synchronization sync);
-
-   public boolean isAwareOfContainerTransactions();
+   @RequestScoped
+   @Produces
+   @SeamManaged
+   public SessionFactory createSessionFactory()
+   {
+      Configuration config = new Configuration();
+      config.configure();
+      return config.buildSessionFactory();
+   }
 }

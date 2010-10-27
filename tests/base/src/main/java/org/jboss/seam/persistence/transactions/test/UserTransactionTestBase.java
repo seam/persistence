@@ -30,6 +30,7 @@ import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
+import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
 import junit.framework.Assert;
@@ -83,6 +84,57 @@ public class UserTransactionTestBase
       Assert.assertTrue(hotels.size() == 1);
       transaction.rollback();
       em.clear();
+
+   }
+
+   @Test
+   public void synchronizationsTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   {
+      TransactionAware sync = new TransactionAware();
+      transaction.begin();
+      transaction.registerSynchronization(sync);
+      transaction.commit();
+      Assert.assertEquals(1, sync.getAfterCompletionCount());
+      Assert.assertEquals(1, sync.getBeforeCompletionCount());
+
+      transaction.begin();
+      transaction.registerSynchronization(sync);
+      transaction.commit();
+      Assert.assertEquals(2, sync.getAfterCompletionCount());
+      Assert.assertEquals(2, sync.getBeforeCompletionCount());
+
+   }
+
+   private static class TransactionAware implements Synchronization
+   {
+      int beforeCompletionCount = 0;
+      int afterCompletionCount = 0;
+
+      public void afterCompletion(int status)
+      {
+         afterCompletionCount++;
+      }
+
+      public void beforeCompletion()
+      {
+         beforeCompletionCount++;
+      }
+
+      public int getAfterCompletionCount()
+      {
+         return afterCompletionCount;
+      }
+
+      public int getBeforeCompletionCount()
+      {
+         return beforeCompletionCount;
+      }
+
+      public void clear()
+      {
+         beforeCompletionCount = 0;
+         afterCompletionCount = 0;
+      }
 
    }
 

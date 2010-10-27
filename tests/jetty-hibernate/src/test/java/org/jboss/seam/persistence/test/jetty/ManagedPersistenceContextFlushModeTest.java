@@ -35,7 +35,7 @@ public class ManagedPersistenceContextFlushModeTest extends ManagedPersistenceCo
    @Deployment
    public static Archive<?> createTestArchive()
    {
-      WebArchive war = JettyTestUtils.createTestArchive();
+      WebArchive war = JettyTestUtils.createJPATestArchive();
       war.addWebResource("WEB-INF/beans.xml", "beans.xml");
       war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
       war.addClasses(getTestClasses());

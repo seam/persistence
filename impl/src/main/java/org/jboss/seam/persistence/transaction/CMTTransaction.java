@@ -78,7 +78,7 @@ public class CMTTransaction extends AbstractUserTransaction
       }
       finally
       {
-         synchronizations.afterTransactionCommit(success);
+         synchronizations.afterTransactionCompletion(success);
       }
    }
 
@@ -91,7 +91,7 @@ public class CMTTransaction extends AbstractUserTransaction
       }
       finally
       {
-         getSynchronizations().afterTransactionRollback();
+         getSynchronizations().afterTransactionCompletion(false);
       }
    }
 

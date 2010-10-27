@@ -53,19 +53,11 @@ public class SeSynchronizations implements Synchronizations
       synchronizations.push(new SynchronizationRegistry(beanManager));
    }
 
-   public void afterTransactionCommit(boolean success)
+   public void afterTransactionCompletion(boolean success)
    {
       if (!synchronizations.isEmpty())
       {
          synchronizations.pop().afterTransactionCompletion(success);
-      }
-   }
-
-   public void afterTransactionRollback()
-   {
-      if (!synchronizations.isEmpty())
-      {
-         synchronizations.pop().afterTransactionCompletion(false);
       }
    }
 
