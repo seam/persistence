@@ -26,9 +26,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.HibernateSearchTestBase;
 import org.jboss.seam.persistence.test.util.ArtifactNames;
 import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
+import org.jboss.seam.persistence.transaction.test.util.JbossasTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
@@ -38,17 +37,12 @@ public class JbossHibernateSearchTest extends HibernateSearchTestBase
    @Deployment
    public static Archive<?> createTestArchive()
    {
-      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
+      WebArchive war = JbossasTestUtils.createTestArchive();
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.HIBERNATE_SEARCH));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
       war.addClasses(getTestClasses());
       war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
-      war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
-      war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
       return war;
    }
 

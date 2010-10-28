@@ -24,14 +24,11 @@ package org.jboss.seam.persistence.test.jboss;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.ManagedPersistenceContextTestBase;
-import org.jboss.seam.persistence.test.util.ArtifactNames;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;
-import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
 import org.jboss.seam.persistence.transaction.test.util.JNDIManagedPersistenceContextProvider;
+import org.jboss.seam.persistence.transaction.test.util.JbossasTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
@@ -41,14 +38,9 @@ public class JNDIManagedPersistenceContextTest extends ManagedPersistenceContext
    @Deployment
    public static Archive<?> createTestArchive()
    {
-      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
+      WebArchive war = JbossasTestUtils.createTestArchive();
       war.addClasses(new Class[] { ManagedPersistenceContextTestBase.class, Hotel.class, JNDIManagedPersistenceContextProvider.class, HelloService.class });
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-      war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
-      war.addWebResource("META-INF/services/javax.enterprise.inject.spi.Extension", "classes/META-INF/services/javax.enterprise.inject.spi.Extension");
       return war;
    }
 }

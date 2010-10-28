@@ -65,14 +65,14 @@ public class ManagedHibernateSessionFlushModeTestBase
    BeanManager bm;
 
    @Test
-   public void testPersistenceContextDefaultFlushMode() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void testHibernateSessionDefaultFlushMode() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
    {
       manager.setFlushModeType(FlushModeType.MANUAL);
       Assert.assertEquals(FlushMode.MANUAL, session.getFlushMode());
    }
 
    @Test
-   public void testChangedTouchedPersistenceContextFlushMode()
+   public void testChangedTouchedSessionFlushMode()
    {
       try
       {

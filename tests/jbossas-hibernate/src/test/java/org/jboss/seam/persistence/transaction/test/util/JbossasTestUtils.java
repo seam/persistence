@@ -19,37 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.persistence.transaction.test.jboss;
+package org.jboss.seam.persistence.transaction.test.util;
 
-import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.transaction.TransactionInterceptor;
-import org.jboss.seam.persistence.transaction.test.util.JbossasTestUtils;
-import org.jboss.seam.persistence.transactions.test.TransactionInterceptorTestBase;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.seam.persistence.test.util.ArtifactNames;
+import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.runner.RunWith;
 
 /**
- * Tests the @Transactional interceptor
  * 
- * TODO: refactor the tests to share a common superclass
- * 
- * @author stuart
+ * @author Stuart Douglas
  * 
  */
-@RunWith(Arquillian.class)
-public class TransactionInterceptorTest extends TransactionInterceptorTestBase
+public class JbossasTestUtils
 {
-   @Deployment
-   public static Archive<?> createTestArchive()
+   /**
+    * Creates a test archive with an empty beans.xml
+    * 
+    * @return
+    */
+   public static WebArchive createTestArchive()
    {
+      return createTestArchive(true);
+   }
 
-      WebArchive war = JbossasTestUtils.createTestArchive(false);
-      war.addClasses(getTestClasses());
-      war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-      war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
+   public static WebArchive createTestArchive(boolean includeEmptyBeansXml)
+   {
+      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.WELD_EXTENSIONS));
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
+      if (includeEmptyBeansXml)
+      {
+         war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+      }
       return war;
    }
 
