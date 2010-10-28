@@ -108,9 +108,16 @@ public class HibernateManagedSessionBeanLifecycle implements ContextualLifecycle
          SessionFactory sf = getSessionFactory();
          Session session = sf.openSession();
          session = (Session) persistenceProvider.proxyDelegate(session);
-         HibernateManagedSessionProxyHandler handler = new HibernateManagedSessionProxyHandler(session, manager, bean.getQualifiers(), getPersistenceContexts(), persistenceProvider);
+         HibernateManagedSessionProxyHandler handler = new HibernateManagedSessionProxyHandler(session, manager, bean.getQualifiers(), persistenceProvider, manager);
          Session proxy = (Session) proxyConstructor.newInstance(handler);
-         ((ManagedPersistenceContext) proxy).changeFlushMode(getPersistenceContexts().getFlushMode());
+         try
+         {
+            ((ManagedPersistenceContext) proxy).changeFlushMode(getPersistenceContexts().getFlushMode());
+         }
+         catch (ContextNotActiveException e)
+         {
+
+         }
          manager.fireEvent(new SeamManagedHibernateSessionCreated(proxy), qualifiers);
 
          return proxy;
@@ -151,7 +158,7 @@ public class HibernateManagedSessionBeanLifecycle implements ContextualLifecycle
    }
 
    /**
-    * lazily resolve the relevant EMF
+    * lazily resolve the relevant SessionFactory
     */
    protected SessionFactory getSessionFactory()
    {

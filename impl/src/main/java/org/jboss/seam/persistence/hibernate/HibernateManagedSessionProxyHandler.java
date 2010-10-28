@@ -29,7 +29,9 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
@@ -47,6 +49,7 @@ import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.weld.extensions.el.Expressions;
+import org.jboss.weld.extensions.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,9 +72,11 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
 
    private transient boolean synchronizationRegistered;
 
-   private final PersistenceContexts persistenceContexts;
+   private PersistenceContexts persistenceContexts;
 
    private final Set<Annotation> qualifiers;
+
+   protected final BeanManager manager;
 
    private final HibernatePersistenceProvider provider;
 
@@ -83,14 +88,14 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
 
    private final Instance<Expressions> expressionsInstance;
 
-   public HibernateManagedSessionProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, HibernatePersistenceProvider provider)
+   public HibernateManagedSessionProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, HibernatePersistenceProvider provider, BeanManager manager)
    {
       this.qualifiers = qualifiers;
       this.provider = provider;
       this.delegate = delegate;
       this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
-      this.persistenceContexts = persistenceContexts;
-      expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
+      this.expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
+      this.manager = manager;
    }
 
    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
@@ -218,7 +223,7 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
          {
             // we need to do this first to prevent an infinite loop
             persistenceContextsTouched = true;
-            persistenceContexts.touch(delegate);
+            getPersistenceContexts().touch(delegate);
          }
          catch (ContextNotActiveException e)
          {
@@ -240,6 +245,21 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
    public void beforeCompletion()
    {
 
+   }
+
+   private PersistenceContexts getPersistenceContexts()
+   {
+      if (persistenceContexts == null)
+      {
+         Bean<PersistenceContexts> bean = (Bean) manager.resolve(manager.getBeans(PersistenceContexts.class, DefaultLiteral.INSTANCE));
+         if (bean == null)
+         {
+            throw new RuntimeException("Could not find PersistenceContexts bean");
+         }
+         CreationalContext<PersistenceContexts> ctx = manager.createCreationalContext(bean);
+         persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
+      }
+      return persistenceContexts;
    }
 
 }
