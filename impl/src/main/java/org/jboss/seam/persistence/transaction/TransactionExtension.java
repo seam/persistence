@@ -21,13 +21,16 @@
  */
 package org.jboss.seam.persistence.transaction;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
 
 import org.jboss.seam.persistence.util.EjbApi;
 import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
@@ -54,6 +57,8 @@ public class TransactionExtension implements Extension
 
    private static final Logger log = LoggerFactory.getLogger(TransactionExtension.class);
 
+   private final Set<Throwable> exceptions = new HashSet<Throwable>();
+
    /**
     * Looks for @Transaction or @TransactionAttribute annotations and if they
     * are found adds the transaction intercepter binding
@@ -61,44 +66,57 @@ public class TransactionExtension implements Extension
     */
    public <X> void processAnnotatedType(@Observes ProcessAnnotatedType<X> event)
    {
-      boolean addInterceptor = false;
+      AnnotatedTypeBuilder<X> builder = null;
       AnnotatedType<X> type = event.getAnnotatedType();
+      boolean addedToClass = false;
       if (type.isAnnotationPresent(Transactional.class))
       {
-
-         addInterceptor = true;
+         builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+         builder.addToClass(TransactionInterceptorBindingLiteral.INSTANCE);
+         addedToClass = true;
       }
       else if (type.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
       {
          checkTransactionAttributeIsValue(type, type);
-         addInterceptor = true;
+         builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+         builder.addToClass(TransactionInterceptorBindingLiteral.INSTANCE);
+         addedToClass = true;
       }
-
-      for (AnnotatedMethod<? super X> m : type.getMethods())
+      if (!addedToClass)
       {
-         if (m.isAnnotationPresent(Transactional.class))
+         for (AnnotatedMethod<? super X> m : type.getMethods())
          {
-            addInterceptor = true;
-         }
-         else if (m.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
-         {
-            checkTransactionAttributeIsValue(type, m);
-            addInterceptor = true;
+            if (m.isAnnotationPresent(Transactional.class))
+            {
+               if (builder == null)
+               {
+                  builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+               }
+               builder.addToMethod(m, TransactionInterceptorBindingLiteral.INSTANCE);
+            }
+            else if (m.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
+            {
+               checkTransactionAttributeIsValue(type, m);
+               if (builder == null)
+               {
+                  builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+               }
+               builder.addToMethod(m, TransactionInterceptorBindingLiteral.INSTANCE);
+            }
          }
       }
-      if (addInterceptor)
+      if (builder != null)
       {
-         event.setAnnotatedType(addInterceptorBinding(type));
+         event.setAnnotatedType(builder.create());
       }
    }
 
-   public <X> AnnotatedType addInterceptorBinding(AnnotatedType<X> type)
+   private void afterBeanDiscover(@Observes AfterBeanDiscovery event)
    {
-      AnnotatedTypeBuilder<X> builder = new AnnotatedTypeBuilder<X>().readFromType(type);
-      builder.addToClass(new AnnotationLiteral<TransactionalInterceptorBinding>()
+      for (Throwable throwable : exceptions)
       {
-      });
-      return builder.create();
+         event.addDefinitionError(throwable);
+      }
    }
 
    private void checkTransactionAttributeIsValue(AnnotatedType type, Annotated element)
@@ -106,11 +124,11 @@ public class TransactionExtension implements Extension
       Object attribute = element.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE);
       if (attribute == EjbApi.REQUIRES_NEW)
       {
-         throw new RuntimeException("TransactionAttributeType.REQUIRED_NEW is not supported on Managed Beans that are not EJB's. Annotation was found on type " + type);
+         exceptions.add(new RuntimeException("TransactionAttributeType.REQUIRED_NEW is not supported on Managed Beans that are not EJB's. Annotation was found on type " + type));
       }
       if (attribute == EjbApi.NOT_SUPPORTED)
       {
-         throw new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not supported on Managed Beans that are not EJB's. Annotation was found on type " + type);
+         exceptions.add(new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not supported on Managed Beans that are not EJB's. Annotation was found on type " + type));
       }
    }
 }
