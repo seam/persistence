@@ -106,6 +106,10 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
          closeAfterTransaction();
          return null;
       }
+      if ("getTransaction".equals(method.getName()) && method.getParameterTypes().length == 0)
+      {
+         return super.invoke(proxy, method, args);
+      }
       // we do not join the transaction for setFlushMode calls, as this may
       // result in an infinite loop, as this is called during SMPC
       // initialisation
