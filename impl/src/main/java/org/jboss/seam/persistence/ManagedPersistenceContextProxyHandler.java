@@ -124,10 +124,10 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private void joinTransaction() throws SystemException
    {
-      synchronizationRegistered = true;
       SeamTransaction transaction = userTransactionInstance.get();
       if (transaction.isActive())
       {
+         synchronizationRegistered = true;
          transaction.enlist(delegate);
          try
          {
