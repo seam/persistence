@@ -15,8 +15,7 @@
    <name>Seam Persistence Reference Guide</name>
 
    <properties>
-      <pdf.name>persistence-reference.pdf</pdf.name>
-      <weld.docbook.version>1.1.1-Beta5</weld.docbook.version>
+      <pdf.name>${project.artifactId}.pdf</pdf.name>
    </properties>
 
    <build>
@@ -53,9 +52,23 @@
       </plugins>
    </build>
 
-   <scm>
-      <connection>scm:git:git://github.com/seam/persistence.git</connection>
-      <developerConnection>scm:git:git@github.com:seam/persistence.git</developerConnection>
-      <url>http://github.com/seam/persistence</url>
-   </scm>
+   <profiles>
+      <profile>
+         <id>distribution</id>
+         <activation>
+            <property>
+               <name>release</name>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-assembly-plugin</artifactId>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+
 </project>
