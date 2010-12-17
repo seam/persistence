@@ -107,6 +107,16 @@
          <groupId>org.jboss.weld</groupId>
          <artifactId>weld-extensions</artifactId>
          <scope>compile</scope>
+         <exclusions>
+            <exclusion>
+               <groupId>javax.el</groupId>
+               <artifactId>el-api</artifactId>
+            </exclusion>
+            <exclusion>
+               <groupId>javax.transaction</groupId>
+               <artifactId>jta</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
       
       <dependency>
