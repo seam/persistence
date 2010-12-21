@@ -85,7 +85,7 @@
       <para>
          To get started with Seam persistence you need to add the
          <literal>seam-persistence.jar </literal> and the 
-         <literal>weld-extensions.jar</literal> to you deployment. If you are in
+         <literal>seam-solder.jar</literal> to you deployment. If you are in
          a java SE environment you will probably also require 
          <literal>seam-xml.jar</literal> as well for configuration purposes. The
          relevant maven configuration is as follows:
@@ -103,9 +103,9 @@
 </dependency>
 
 <dependency>
-  <groupId>org.jboss.weld</groupId>
-  <artifactId>weld-extensions</artifactId>
-  <version>${weld.extensions.version}</version>
+  <groupId>org.jboss.seam.solder</groupId>
+  <artifactId>seam-solder</artifactId>
+  <version>${seam.solder.version}</version>
 </dependency>
 
 <dependency>
