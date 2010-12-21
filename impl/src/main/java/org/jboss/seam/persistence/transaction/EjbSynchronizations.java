@@ -35,7 +35,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
-import org.jboss.weld.extensions.bean.defaultbean.DefaultBean;
+import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

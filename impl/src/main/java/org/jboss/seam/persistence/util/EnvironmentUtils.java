@@ -21,13 +21,6 @@
  */
 package org.jboss.seam.persistence.util;
 
-import java.util.Hashtable;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides information about the runtime environment

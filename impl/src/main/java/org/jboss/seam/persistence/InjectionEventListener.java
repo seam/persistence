@@ -32,9 +32,9 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 
-import org.jboss.weld.extensions.beanManager.BeanManagerAware;
-import org.jboss.weld.extensions.reflection.Reflections;
-import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.seam.solder.beanManager.BeanManagerAware;
+import org.jboss.seam.solder.reflection.Reflections;
+import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

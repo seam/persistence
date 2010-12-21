@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.weld.extensions.bean.defaultbean.DefaultBean;
+import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 
 /**
  * Provides for programmatic configuration of the default flush mode.

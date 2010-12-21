@@ -31,25 +31,25 @@
          <artifactId>hibernate-core</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-entitymanager</artifactId>
          <scope>provided</scope>
-      </dependency>      
+      </dependency>
 
       <dependency>
          <groupId>org.hibernate.javax.persistence</groupId>
          <artifactId>hibernate-jpa-2.0-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-search</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>hsqldb</groupId>
          <artifactId>hsqldb</artifactId>
@@ -93,10 +93,10 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.seam.xml</groupId>
-         <artifactId>seam-xml-config</artifactId>
-         <scope>test</scope>
-      </dependency>      
+         <groupId>org.jboss.seam.config</groupId>
+         <artifactId>seam-config-xml</artifactId>
+         <version>${seam.xml.version}</version>
+      </dependency>
 
       <dependency>
          <groupId>org.slf4j</groupId>
@@ -123,8 +123,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.weld</groupId>
-         <artifactId>weld-extensions</artifactId>
+         <groupId>org.jboss.seam.solder</groupId>
+         <artifactId>seam-solder</artifactId>
          <scope>compile</scope>
       </dependency>
 

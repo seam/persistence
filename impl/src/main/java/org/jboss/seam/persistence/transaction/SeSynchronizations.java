@@ -28,7 +28,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
-import org.jboss.weld.extensions.core.Veto;
+import org.jboss.seam.solder.core.Veto;
 
 /**
  * This implementation does not have access to the JTA TransactionManager, so it

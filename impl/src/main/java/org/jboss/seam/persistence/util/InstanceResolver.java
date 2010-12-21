@@ -35,7 +35,8 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.solder.literal.DefaultLiteral;
+
 
 /**
  * Utillity class that can get an Instance<T> from the bean manager

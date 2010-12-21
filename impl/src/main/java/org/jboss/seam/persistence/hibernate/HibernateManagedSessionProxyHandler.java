@@ -48,8 +48,8 @@ import org.jboss.seam.persistence.QueryParser;
 import org.jboss.seam.persistence.transaction.SeamTransaction;
 import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
-import org.jboss.weld.extensions.el.Expressions;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.solder.el.Expressions;
+import org.jboss.seam.solder.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

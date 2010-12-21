@@ -51,16 +51,16 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 
 import org.jboss.seam.persistence.util.EnvironmentUtils;
-import org.jboss.weld.extensions.bean.BeanBuilder;
-import org.jboss.weld.extensions.bean.Beans;
-import org.jboss.weld.extensions.bean.ContextualLifecycle;
-import org.jboss.weld.extensions.literal.AnyLiteral;
-import org.jboss.weld.extensions.literal.ApplicationScopedLiteral;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
-import org.jboss.weld.extensions.reflection.Reflections;
-import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
-import org.jboss.weld.extensions.reflection.annotated.Annotateds;
-import org.jboss.weld.extensions.util.service.ServiceLoader;
+import org.jboss.seam.solder.bean.BeanBuilder;
+import org.jboss.seam.solder.bean.Beans;
+import org.jboss.seam.solder.bean.ContextualLifecycle;
+import org.jboss.seam.solder.literal.AnyLiteral;
+import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
+import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.seam.solder.reflection.Reflections;
+import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.seam.solder.reflection.annotated.Annotateds;
+import org.jboss.seam.solder.util.service.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

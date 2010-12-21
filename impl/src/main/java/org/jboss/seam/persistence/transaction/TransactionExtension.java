@@ -33,7 +33,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.jboss.seam.persistence.util.EjbApi;
-import org.jboss.weld.extensions.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

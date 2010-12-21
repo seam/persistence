@@ -38,8 +38,8 @@ import org.hibernate.SessionFactory;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
-import org.jboss.weld.extensions.bean.ContextualLifecycle;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.solder.bean.ContextualLifecycle;
+import org.jboss.seam.solder.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public class HibernateManagedSessionBeanLifecycle implements ContextualLifecycle
 
    private final Class<?> proxyClass;
 
-   private final Constructor<?> proxyConstructor;
+   private final Constructor<?> proxyConstructor; 
 
    private HibernatePersistenceProvider persistenceProvider = new HibernatePersistenceProvider();
 

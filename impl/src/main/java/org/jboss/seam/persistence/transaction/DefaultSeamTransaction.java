@@ -35,7 +35,7 @@ import javax.transaction.SystemException;
 
 import org.jboss.seam.persistence.util.EJBContextUtils;
 import org.jboss.seam.persistence.util.NamingUtils;
-import org.jboss.weld.extensions.bean.defaultbean.DefaultBean;
+import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 
 /**
  * 

@@ -38,8 +38,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.weld.extensions.bean.ContextualLifecycle;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.solder.bean.ContextualLifecycle;
+import org.jboss.seam.solder.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

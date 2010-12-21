@@ -48,8 +48,8 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
 import org.jboss.seam.persistence.util.EnvironmentUtils;
-import org.jboss.weld.extensions.literal.AnyLiteral;
-import org.jboss.weld.extensions.literal.DefaultLiteral;
+import org.jboss.seam.solder.literal.AnyLiteral;
+import org.jboss.seam.solder.literal.DefaultLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

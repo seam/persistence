@@ -12,8 +12,8 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.proxy.HibernateProxy;
-import org.jboss.weld.extensions.core.Veto;
-import org.jboss.weld.extensions.reflection.Reflections;
+import org.jboss.seam.solder.core.Veto;
+import org.jboss.seam.solder.reflection.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

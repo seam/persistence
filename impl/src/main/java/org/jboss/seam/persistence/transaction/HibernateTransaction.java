@@ -34,7 +34,7 @@ import javax.transaction.SystemException;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.jboss.weld.extensions.core.Veto;
+import org.jboss.seam.solder.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
