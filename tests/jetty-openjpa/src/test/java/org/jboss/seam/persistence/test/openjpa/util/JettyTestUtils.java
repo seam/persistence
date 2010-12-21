@@ -23,6 +23,8 @@ package org.jboss.seam.persistence.test.openjpa.util;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import javax.el.ExpressionFactory;
+import com.sun.el.ExpressionFactoryImpl;
 
 /**
  * 
@@ -37,6 +39,7 @@ public class JettyTestUtils
       war.addResource("META-INF/seam-beans.xml", "seam-beans.xml");
       war.addWebResource("WEB-INF/jetty-env.xml", "jetty-env.xml");
       war.addWebResource("WEB-INF/web.xml", "web.xml");
+      war.addServiceProvider(ExpressionFactory.class, ExpressionFactoryImpl.class);
       return war;
    }
 }

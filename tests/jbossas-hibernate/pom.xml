@@ -1,5 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
    <parent>
       <artifactId>seam-persistence-parent</artifactId>
       <groupId>org.jboss.seam.persistence</groupId>
@@ -7,12 +9,12 @@
       <relativePath>../../pom.xml</relativePath>
    </parent>
 
-   <modelVersion>4.0.0</modelVersion>
-   <groupId>org.jboss.seam.persistence</groupId>
-   <artifactId>seam-persistence-tests-jboss</artifactId>
+   <artifactId>seam-persistence-tests-jbossas</artifactId>
    <packaging>jar</packaging>
-   <version>3.0.0-SNAPSHOT</version>
-   <name>Seam Persistence Jboss Tests</name>
+
+   <name>Seam Persistence Tests: JBoss AS</name>
+   <!-- url required for JAR Manifest -->
+   <url>${project.parent.url}</url> 
 
    <properties>
       <jboss.home>${env.JBOSS_HOME}</jboss.home>
@@ -23,25 +25,17 @@
       <maven>3.0</maven>
    </prerequisites>
 
-
    <dependencies>
 
+      <!-- including whole API breaks tests -->
+      <!--
       <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <scope>test</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.hibernate</groupId>
-         <artifactId>hibernate-core</artifactId>
+         <groupId>org.jboss.spec</groupId>
+         <artifactId>jboss-javaee-6.0</artifactId>
+         <type>pom</type>
          <scope>provided</scope>
       </dependency>
+      -->
 
       <dependency>
          <groupId>org.hibernate.javax.persistence</groupId>
@@ -56,20 +50,26 @@
       </dependency>
 
       <dependency>
-         <groupId>javax.el</groupId>
-         <artifactId>el-api</artifactId>
-         <scope>provided</scope>
+        <groupId>org.jboss.spec.javax.el</groupId>
+        <artifactId>jboss-el-api_2.2_spec</artifactId>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
-         <groupId>javax.transaction</groupId>
-         <artifactId>jta</artifactId>
-         <scope>provided</scope>
+        <groupId>org.jboss.spec.javax.transaction</groupId>
+        <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
          <groupId>javax.enterprise</groupId>
          <artifactId>cdi-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.hibernate</groupId>
+         <artifactId>hibernate-core</artifactId>
          <scope>provided</scope>
       </dependency>
 
@@ -96,22 +96,20 @@
       </dependency>
 
       <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
          <groupId>org.jboss.weld</groupId>
          <artifactId>weld-core</artifactId>
          <scope>test</scope>
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.spec</groupId>
-         <artifactId>jboss-javaee-6.0</artifactId>
-         <type>pom</type>
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
          <groupId>org.jboss.seam.solder</groupId>
          <artifactId>seam-solder</artifactId>
-         <scope>compile</scope>
       </dependency>
 
       <dependency>
@@ -123,13 +121,11 @@
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
-         <scope>test</scope>
       </dependency>
 
       <dependency>
          <groupId>org.jboss.seam.persistence</groupId>
          <artifactId>seam-persistence-tests-base</artifactId>
-         <scope>test</scope>
       </dependency>
 
    </dependencies>
@@ -161,20 +157,17 @@
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-managed-6</artifactId>
-               <scope>test</scope>
             </dependency>
 
             <dependency>
                <groupId>org.jboss.jbossas</groupId>
                <artifactId>jboss-server-manager</artifactId>
-               <scope>test</scope>
             </dependency>
 
             <dependency>
                <groupId>org.jboss.jbossas</groupId>
                <artifactId>jboss-as-client</artifactId>
                <type>pom</type>
-               <scope>test</scope>
             </dependency>
 
          </dependencies>
@@ -237,14 +230,12 @@
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-remote-6</artifactId>
-               <scope>test</scope>
             </dependency>
             <!-- need for org.jnp.interfaces.NamingContextFactory -->
             <dependency>
                <groupId>org.jboss.jbossas</groupId>
                <artifactId>jboss-as-client</artifactId>
                <type>pom</type>
-               <scope>test</scope>
             </dependency>
          </dependencies>
          <build>
@@ -280,12 +271,4 @@
          </build>
       </profile>
    </profiles>
-
-   <scm>
-      <connection>scm:git:git://github.com/seam/persistence.git</connection>
-      <developerConnection>scm:git:git@github.com:seam/persistence.git</developerConnection>
-      <url>http://github.com/seam/persistence</url>
-   </scm>
-
 </project>
-

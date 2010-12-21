@@ -29,6 +29,7 @@
          <includes>
             <include>org.jboss.seam.persistence:seam-persistence-impl</include>
             <include>org.jboss.seam.persistence:seam-persistence-api</include>
+            <include>org.jboss.seam.persistence:seam-persistence</include>
          </includes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>

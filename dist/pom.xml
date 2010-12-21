@@ -22,13 +22,19 @@
 
       <dependency>
          <groupId>org.jboss.seam.persistence</groupId>
+         <artifactId>seam-persistence-api</artifactId>
+         <optional>true</optional>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.seam.persistence</groupId>
          <artifactId>seam-persistence-impl</artifactId>
          <optional>true</optional>
       </dependency>
 
       <dependency>
          <groupId>org.jboss.seam.persistence</groupId>
-         <artifactId>seam-persistence-api</artifactId>
+         <artifactId>seam-persistence</artifactId>
          <optional>true</optional>
       </dependency>
 
@@ -37,13 +43,6 @@
          <artifactId>seam-persistence-api</artifactId>
          <version>${project.version}</version>
          <classifier>sources</classifier>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.seam.persistence</groupId>
-         <artifactId>seam-persistence-api</artifactId>
-         <version>${project.version}</version>
-         <classifier>javadoc</classifier>
          <optional>true</optional>
       </dependency>
 
@@ -52,14 +51,14 @@
          <artifactId>seam-persistence-impl</artifactId>
          <version>${project.version}</version>
          <classifier>sources</classifier>
+         <optional>true</optional>
       </dependency>
 
       <dependency>
          <groupId>org.jboss.seam.persistence</groupId>
-         <artifactId>seam-persistence-impl</artifactId>
+         <artifactId>seam-persistence-api</artifactId>
          <version>${project.version}</version>
          <classifier>javadoc</classifier>
-         <optional>true</optional>
       </dependency>
 
       <dependency>
