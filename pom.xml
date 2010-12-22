@@ -35,7 +35,7 @@
 
    <properties>
       <seam.version>3.0.0.b04</seam.version>
-      <seam.config.version>3.0.0-SNAPSHOT</seam.config.version>
+      <seam.config.version>3.0.0.Beta2</seam.config.version>
    </properties>
 
    <dependencyManagement>
