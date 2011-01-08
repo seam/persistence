@@ -97,7 +97,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
       {
          return Collections.unmodifiableSet(qualifiers);
       }
-      if ("getPersistenceProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
+      if ("getProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
       {
          return provider;
       }
