@@ -37,7 +37,7 @@ import org.jboss.seam.persistence.util.EjbApi;
 
 /**
  * Implements transaction propagation rules for Seam JavaBean components.
- * 
+ *
  * @author Gavin King
  * @author Shane Bryzak
  * @author Stuart Douglas
@@ -57,7 +57,7 @@ public class TransactionInterceptor implements Serializable
    private class TransactionMetadata
    {
       private boolean annotationPresent;
-      TransactionPropagation propType;
+      private TransactionPropagation propType;
 
       public TransactionMetadata(AnnotatedElement element)
       {
@@ -165,7 +165,7 @@ public class TransactionInterceptor implements Serializable
          @Override
          protected boolean isNewTransactionRequired(boolean transactionActive)
          {
-            return isNewTransactionRequired(invocation.getMethod(), invocation.getTarget().getClass(), transactionActive);
+            return isNewTransactionRequired(invocation.getMethod(), invocation.getMethod().getDeclaringClass(), transactionActive);
          }
 
          private boolean isNewTransactionRequired(Method method, Class<?> beanClass, boolean transactionActive)
@@ -184,5 +184,4 @@ public class TransactionInterceptor implements Serializable
 
       }.workInTransaction(transaction.get());
    }
-
 }
