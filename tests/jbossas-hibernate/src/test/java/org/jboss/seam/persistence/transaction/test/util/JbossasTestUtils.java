@@ -47,8 +47,7 @@ public class JbossasTestUtils
    public static WebArchive createTestArchive(boolean includeEmptyBeansXml)
    {
       WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER_API));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER_IMPL));
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
       war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
       if (includeEmptyBeansXml)
