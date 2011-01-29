@@ -39,7 +39,7 @@ import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 @DefaultBean(FlushModeManager.class)
 public class FlushModeManagerImpl implements Serializable, FlushModeManager
 {
-   FlushModeType flushModeType = FlushModeType.AUTO;
+   private FlushModeType flushModeType = FlushModeType.AUTO;
 
    public FlushModeType getFlushModeType()
    {

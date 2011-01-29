@@ -21,17 +21,29 @@
  */
 package org.jboss.seam.persistence.test.jetty;
 
+import java.util.HashMap;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.ManagedPersistenceContextFlushModeTestBase;
 import org.jboss.seam.persistence.test.jetty.util.JettyTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.weld.context.bound.Bound;
+import org.jboss.weld.context.bound.BoundConversationContext;
+import org.jboss.weld.context.bound.MutableBoundRequest;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class ManagedPersistenceContextFlushModeTest extends ManagedPersistenceContextFlushModeTestBase
 {
+
+   @Inject
+   @Bound
+   private BoundConversationContext context;
+
    @Deployment
    public static Archive<?> createTestArchive()
    {
@@ -40,5 +52,14 @@ public class ManagedPersistenceContextFlushModeTest extends ManagedPersistenceCo
       war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
       war.addClasses(getTestClasses());
       return war;
+   }
+
+   @Override
+   public void testChangedTouchedPersistenceContextFlushMode()
+   {
+      context.associate(new MutableBoundRequest(new HashMap<String, Object>(), new HashMap<String, Object>()));
+      context.activate();
+      super.testChangedTouchedPersistenceContextFlushMode();
+      context.deactivate();
    }
 }

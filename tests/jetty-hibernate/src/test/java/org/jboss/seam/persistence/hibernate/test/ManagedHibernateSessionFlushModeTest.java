@@ -21,16 +21,27 @@
  */
 package org.jboss.seam.persistence.hibernate.test;
 
+import java.util.HashMap;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.jetty.util.JettyTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.weld.context.bound.Bound;
+import org.jboss.weld.context.bound.BoundConversationContext;
+import org.jboss.weld.context.bound.MutableBoundRequest;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class ManagedHibernateSessionFlushModeTest extends ManagedHibernateSessionFlushModeTestBase
 {
+   @Inject
+   @Bound
+   private BoundConversationContext context;
+
    @Deployment
    public static Archive<?> createTestArchive()
    {
@@ -39,5 +50,14 @@ public class ManagedHibernateSessionFlushModeTest extends ManagedHibernateSessio
       war.addWebResource("META-INF/hibernate-std.cfg.xml", "classes/hibernate.cfg.xml");
       war.addClasses(getTestClasses());
       return war;
+   }
+
+   @Override
+   public void testChangedTouchedSessionFlushMode()
+   {
+      context.associate(new MutableBoundRequest(new HashMap<String, Object>(), new HashMap<String, Object>()));
+      context.activate();
+      super.testChangedTouchedSessionFlushMode();
+      context.deactivate();
    }
 }

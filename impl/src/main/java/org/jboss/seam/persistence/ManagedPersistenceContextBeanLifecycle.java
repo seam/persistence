@@ -57,9 +57,9 @@ public class ManagedPersistenceContextBeanLifecycle implements ContextualLifecyc
 
    private final Constructor<?> proxyConstructor;
 
-   private SeamPersistenceProvider persistenceProvider;
+   private volatile SeamPersistenceProvider persistenceProvider;
 
-   private PersistenceContexts persistenceContexts;
+   private volatile PersistenceContexts persistenceContexts;
 
    protected final Annotation[] qualifiers;
 
@@ -164,13 +164,19 @@ public class ManagedPersistenceContextBeanLifecycle implements ContextualLifecyc
    {
       if (persistenceContexts == null)
       {
-         Bean<PersistenceContexts> bean = (Bean) manager.resolve(manager.getBeans(PersistenceContexts.class, DefaultLiteral.INSTANCE));
-         if (bean == null)
+         synchronized (this)
          {
-            throw new RuntimeException("Could not find PersistenceContexts bean");
+            if (persistenceContexts == null)
+            {
+               Bean<PersistenceContexts> bean = (Bean) manager.resolve(manager.getBeans(PersistenceContexts.class, DefaultLiteral.INSTANCE));
+               if (bean == null)
+               {
+                  throw new RuntimeException("Could not find PersistenceContexts bean");
+               }
+               CreationalContext<PersistenceContexts> ctx = manager.createCreationalContext(bean);
+               persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
+            }
          }
-         CreationalContext<PersistenceContexts> ctx = manager.createCreationalContext(bean);
-         persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
       }
       return persistenceContexts;
    }
@@ -179,12 +185,18 @@ public class ManagedPersistenceContextBeanLifecycle implements ContextualLifecyc
    {
       if (persistenceProvider == null)
       {
-         for (SeamPersistenceProvider i : persistenceProviders)
+         synchronized (this)
          {
-            if (i.isCorrectProvider(em))
+            if (persistenceProvider == null)
             {
-               persistenceProvider = i;
-               break;
+               for (SeamPersistenceProvider i : persistenceProviders)
+               {
+                  if (i.isCorrectProvider(em))
+                  {
+                     persistenceProvider = i;
+                     break;
+                  }
+               }
             }
          }
       }

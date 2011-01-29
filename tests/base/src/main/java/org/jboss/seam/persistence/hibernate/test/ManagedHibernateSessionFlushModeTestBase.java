@@ -23,11 +23,6 @@ package org.jboss.seam.persistence.hibernate.test;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 
 import junit.framework.Assert;
 
@@ -65,15 +60,10 @@ public class ManagedHibernateSessionFlushModeTestBase
    BeanManager bm;
 
    @Test
-   public void testHibernateSessionDefaultFlushMode() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
+   public void testChangedTouchedSessionFlushMode()
    {
       manager.setFlushModeType(FlushModeType.MANUAL);
       Assert.assertEquals(FlushMode.MANUAL, session.getFlushMode());
-   }
-
-   @Test
-   public void testChangedTouchedSessionFlushMode()
-   {
       try
       {
          session.setFlushMode(FlushMode.AUTO);

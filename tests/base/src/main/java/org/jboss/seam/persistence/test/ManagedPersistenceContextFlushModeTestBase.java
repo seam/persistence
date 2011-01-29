@@ -21,14 +21,8 @@
  */
 package org.jboss.seam.persistence.test;
 
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 
 import junit.framework.Assert;
 
@@ -36,7 +30,6 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.persistence.FlushModeManager;
 import org.jboss.seam.persistence.FlushModeType;
-import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;
@@ -51,30 +44,20 @@ public class ManagedPersistenceContextFlushModeTestBase
    }
 
    @Inject
-   FlushModeManager manager;
+   private FlushModeManager manager;
 
    @Inject
-   EntityManager em;
+   private EntityManager em;
 
    @Inject
-   ManagedPersistenceContext context;
-
-   @Inject
-   PersistenceContexts pc;
-
-   @Inject
-   BeanManager bm;
-
-   @Test
-   public void testPersistenceContextDefaultFlushMode() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      manager.setFlushModeType(FlushModeType.MANUAL);
-      Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
-   }
+   private PersistenceContexts pc;
 
    @Test
    public void testChangedTouchedPersistenceContextFlushMode()
    {
+      manager.setFlushModeType(FlushModeType.MANUAL);
+      // test default flush mode
+      Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
       try
       {
          em.setFlushMode(javax.persistence.FlushModeType.AUTO);
