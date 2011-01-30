@@ -4,13 +4,13 @@
    <parent>
       <groupId>org.jboss.seam.persistence</groupId>
       <artifactId>seam-persistence-parent</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
+      <version>3.0.0.Beta3</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
    <groupId>org.jboss.seam.persistence</groupId>
    <artifactId>seam-persistence-reference-guide</artifactId>
-   <version>3.0.0-SNAPSHOT</version>
+   <version>3.0.0.Beta3</version>
    <packaging>jdocbook</packaging>
    <name>Seam Persistence Reference Guide</name>
 
