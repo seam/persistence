@@ -270,5 +270,89 @@
             </plugins>
          </build>
       </profile>
+         
+      <profile>
+         <id>code-coverage</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-dependency-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>deploy-emma-jar</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                           <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                           <artifactItems>
+                              <artifactItem>
+                                 <groupId>emma</groupId>
+                                 <artifactId>emma</artifactId>
+                                 <version>${emma.version}</version>
+                                 <type>jar</type>
+                                 <overWrite>true</overWrite>
+                                 <outputDirectory>${env.JBOSS_HOME}/server/default/lib</outputDirectory>
+                              </artifactItem>
+                           </artifactItems>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.sonatype.maven.plugin</groupId>
+                  <artifactId>emma4it-maven-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>merge</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                           <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                           <searchPath>${project.parent.build.directory}/../</searchPath>
+                        </configuration>
+                     </execution>
+                     <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>report</goal>
+                        </goals>
+                        <configuration>
+                           <sourceSets>
+                              <sourceSet>
+                                 <directory>${project.parent.build.directory}/../impl/src/main/java</directory>
+                              </sourceSet>
+                           </sourceSets>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>retrieve-coverage-files</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
+                        <configuration>
+                           <tasks>
+                              <copy file="${env.JBOSS_HOME}/bin/coverage.ec"
+                                    todir="${basedir}"/>
+                              <copy file="${project.parent.build.directory}/../impl/target/coverage.em"
+                                    todir="${basedir}" />
+                           </tasks>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
    </profiles>
 </project>

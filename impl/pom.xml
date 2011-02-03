@@ -60,6 +60,56 @@
       
    </dependencies>
 
+   <profiles>
+      <profile>
+         <id>code-coverage</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>emma-maven-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>instrumentation</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                           <goal>instrument</goal>
+                        </goals>
+                        <configuration>
+                           <verbose>true</verbose>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>complete classpath for tests</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                           <goal>run</goal>
+                        </goals>
+                        <configuration>
+                           <tasks>
+                              <delete dir="${project.build.directory}/classes" />
+                              <mkdir dir="${project.build.directory}/classes" />
+                              <copy todir="${project.build.directory}/classes" overwrite="true">
+                                 <fileset dir="${project.build.directory}/generated-classes/emma/classes">
+                                    <include name="**/*"/>
+                                 </fileset>
+                              </copy>
+                           </tasks>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+   
    <build>
       <plugins>
          <!-- tests run in seperate modules -->
