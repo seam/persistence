@@ -49,7 +49,7 @@ public class TransactionManagerSynchronizations implements Synchronization, Sync
 {
    private static final Logger log = LoggerFactory.getLogger(TransactionManagerSynchronizations.class);
 
-   private final String[] JNDI_LOCATIONS = { "java:/TransactionManager", "java:appserver/TransactionManager", "java:pm/TransactionManager" };
+   private final String[] JNDI_LOCATIONS = { "java:/TransactionManager", "java:appserver/TransactionManager", "java:comp/TransactionManager", "java:pm/TransactionManager" };
 
    @Inject
    private BeanManager beanManager;
