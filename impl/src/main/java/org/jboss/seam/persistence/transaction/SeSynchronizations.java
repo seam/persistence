@@ -21,9 +21,7 @@
  */
 package org.jboss.seam.persistence.transaction;
 
-import java.util.Stack;
-
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
@@ -34,16 +32,16 @@ import org.jboss.seam.solder.core.Veto;
  * This implementation does not have access to the JTA TransactionManager, so it
  * is not fully aware of container managed transaction lifecycle, and is not
  * able to register Synchronizations with a container managed transaction.
- * 
- * 
+ *
+ *
  * @author Gavin King
  * @author Stuart Douglas
  */
-@RequestScoped
+@ApplicationScoped
 @Veto
 public class SeSynchronizations implements Synchronizations
 {
-   protected Stack<SynchronizationRegistry> synchronizations = new Stack<SynchronizationRegistry>();
+   protected ThreadLocalStack<SynchronizationRegistry> synchronizations = new ThreadLocalStack<SynchronizationRegistry>();
 
    @Inject
    private BeanManager beanManager;

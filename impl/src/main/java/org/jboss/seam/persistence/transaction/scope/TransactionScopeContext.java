@@ -101,8 +101,8 @@ public class TransactionScopeContext implements Context, Synchronization
       TransactionScopeData data = contextData.get();
       if (!data.isSyncronisationRegistered())
       {
-         userTransaction.registerSynchronization(this);
          data.setSyncronisationRegistered(true);
+         userTransaction.registerSynchronization(this);
       }
    }
 

@@ -21,10 +21,8 @@
  */
 package org.jboss.seam.persistence.transaction;
 
-import java.util.concurrent.LinkedBlockingDeque;
-
 import javax.ejb.Remove;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
@@ -43,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * {@link TransactionManager}
  * 
  */
-@RequestScoped
+@ApplicationScoped
 @DefaultBean(Synchronizations.class)
 public class TransactionManagerSynchronizations implements Synchronization, Synchronizations
 {
@@ -51,15 +49,19 @@ public class TransactionManagerSynchronizations implements Synchronization, Sync
 
    private final String[] JNDI_LOCATIONS = { "java:/TransactionManager", "java:appserver/TransactionManager", "java:comp/TransactionManager", "java:pm/TransactionManager" };
 
+   /**
+    * The location that the TM was found under JNDI. This is static, as it will
+    * not change between deployed apps on the same JVM
+    */
+   private static volatile String foundJndiLocation;
+
    @Inject
    private BeanManager beanManager;
 
 
-   protected LinkedBlockingDeque<SynchronizationRegistry> synchronizations = new LinkedBlockingDeque<SynchronizationRegistry>();
+   protected ThreadLocalStack<SynchronizationRegistry> synchronizations = new ThreadLocalStack<SynchronizationRegistry>();
 
-   protected LinkedBlockingDeque<Transaction> transactions = new LinkedBlockingDeque<Transaction>();
-
-   boolean syncronizationRegistered = false;
+   protected ThreadLocalStack<Transaction> transactions = new ThreadLocalStack<Transaction>();
 
    public void beforeCompletion()
    {
@@ -90,11 +92,9 @@ public class TransactionManagerSynchronizations implements Synchronization, Sync
          {
             transactions.push(transaction);
             synchronizations.push(new SynchronizationRegistry(beanManager));
-
+            transaction.registerSynchronization(this);
          }
          synchronizations.peek().registerSynchronization(sync);
-
-         getTransactionManager().getTransaction().registerSynchronization(this);
       }
       catch (Exception e)
       {
@@ -109,11 +109,24 @@ public class TransactionManagerSynchronizations implements Synchronization, Sync
 
    public TransactionManager getTransactionManager()
    {
+      if (foundJndiLocation != null)
+      {
+         try
+         {
+            return (TransactionManager) new InitialContext().lookup(foundJndiLocation);
+         }
+         catch (NamingException e)
+         {
+            log.trace("Could not find transaction manager under" + foundJndiLocation);
+         }
+      }
       for (String location : JNDI_LOCATIONS)
       {
          try
          {
-            return (TransactionManager) new InitialContext().lookup(location);
+            TransactionManager manager = (TransactionManager) new InitialContext().lookup(location);
+            foundJndiLocation = location;
+            return manager;
          }
          catch (NamingException e)
          {
