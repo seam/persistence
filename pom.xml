@@ -34,8 +34,7 @@
    </modules>
 
    <properties>
-      <seam.version>3.0.0.b07</seam.version>
-      <seam.config.version>3.0.0.Beta2</seam.config.version>
+      <seam.version>3.0.0.b09</seam.version>
       <emma.version>2.0.5312</emma.version>
    </properties>
 
@@ -77,12 +76,6 @@
             <artifactId>seam-persistence-tests-base</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.seam.config</groupId>
-            <artifactId>seam-config-xml</artifactId>
-            <version>${seam.config.version}</version>
          </dependency>
 
          <!-- Override CDI/Weld version until tests are upgraded -->
