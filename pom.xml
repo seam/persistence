@@ -9,7 +9,7 @@
 
    <artifactId>seam-persistence-parent</artifactId>
    <groupId>org.jboss.seam.persistence</groupId>
-   <version>3.0.0-SNAPSHOT</version>
+   <version>3.0.0.Beta4</version>
 
    <packaging>pom</packaging>
    <name>Seam Persistence Module</name>
@@ -218,8 +218,7 @@
                            </goals>
                            <configuration>
                               <tasks>
-                                 <copy file="${project.parent.build.directory}/../impl/target/coverage.em"
-                                       todir="${basedir}" />
+                                 <copy file="${project.parent.build.directory}/../impl/target/coverage.em" todir="${basedir}" />
                               </tasks>
                            </configuration>
                         </execution>

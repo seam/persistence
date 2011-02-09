@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.seam.persistence</groupId>
       <artifactId>seam-persistence-parent</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
+      <version>3.0.0.Beta4</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
@@ -97,7 +97,7 @@
                               <mkdir dir="${project.build.directory}/classes" />
                               <copy todir="${project.build.directory}/classes" overwrite="true">
                                  <fileset dir="${project.build.directory}/generated-classes/emma/classes">
-                                    <include name="**/*"/>
+                                    <include name="**/*" />
                                  </fileset>
                               </copy>
                            </tasks>
