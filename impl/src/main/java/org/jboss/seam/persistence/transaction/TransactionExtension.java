@@ -21,7 +21,10 @@
  */
 package org.jboss.seam.persistence.transaction;
 
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
@@ -29,6 +32,7 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
@@ -59,12 +63,14 @@ public class TransactionExtension implements Extension
 
    private final Set<Throwable> exceptions = new HashSet<Throwable>();
 
+   private final Map<Class<?>, Annotation> classLevelAnnotations = new HashMap<Class<?>, Annotation>();
+
    /**
     * Looks for @Transaction or @TransactionAttribute annotations and if they
     * are found adds the transaction intercepter binding
     * 
     */
-   public <X> void processAnnotatedType(@Observes ProcessAnnotatedType<X> event)
+   public <X> void processAnnotatedType(@Observes ProcessAnnotatedType<X> event, final BeanManager beanManager)
    {
       AnnotatedTypeBuilder<X> builder = null;
       AnnotatedType<X> type = event.getAnnotatedType();
@@ -74,6 +80,7 @@ public class TransactionExtension implements Extension
          builder = new AnnotatedTypeBuilder<X>().readFromType(type);
          builder.addToClass(TransactionInterceptorBindingLiteral.INSTANCE);
          addedToClass = true;
+         classLevelAnnotations.put(type.getJavaClass(), type.getAnnotation(Transactional.class));
       }
       else if (type.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
       {
@@ -81,6 +88,34 @@ public class TransactionExtension implements Extension
          builder = new AnnotatedTypeBuilder<X>().readFromType(type);
          builder.addToClass(TransactionInterceptorBindingLiteral.INSTANCE);
          addedToClass = true;
+         classLevelAnnotations.put(type.getJavaClass(), type.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE));
+      }
+      if (!addedToClass)
+      {
+         for (final Annotation annotation : type.getAnnotations())
+         {
+            if (beanManager.isStereotype(annotation.annotationType()))
+            {
+               for (Annotation stereotypeAnnotation : beanManager.getStereotypeDefinition(annotation.annotationType()))
+               {
+                  if (stereotypeAnnotation.annotationType().equals(Transactional.class))
+                  {
+                     builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+                     builder.addToClass(TransactionInterceptorBindingLiteral.INSTANCE);
+                     addedToClass = true;
+                     classLevelAnnotations.put(type.getJavaClass(), stereotypeAnnotation);
+                  }
+                  else if (stereotypeAnnotation.annotationType().equals(EjbApi.TRANSACTION_ATTRIBUTE) && !EjbApi.isEjb(event.getAnnotatedType()))
+                  {
+                     checkTransactionAttributeIsValue(type, type);
+                     builder = new AnnotatedTypeBuilder<X>().readFromType(type);
+                     builder.addToClass(TransactionInterceptorBindingLiteral.INSTANCE);
+                     addedToClass = true;
+                     classLevelAnnotations.put(type.getJavaClass(), stereotypeAnnotation);
+                  }
+               }
+            }
+         }
       }
       if (!addedToClass)
       {
@@ -111,6 +146,11 @@ public class TransactionExtension implements Extension
       }
    }
 
+   public Annotation getClassLevelTransactionAnnotation(Class<?> clazz)
+   {
+      return classLevelAnnotations.get(clazz);
+   }
+
    private void afterBeanDiscover(@Observes AfterBeanDiscovery event)
    {
       for (Throwable throwable : exceptions)
@@ -131,4 +171,5 @@ public class TransactionExtension implements Extension
          exceptions.add(new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not supported on Managed Beans that are not EJB's. Annotation was found on type " + type));
       }
    }
+
 }

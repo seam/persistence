@@ -22,6 +22,7 @@
 package org.jboss.seam.persistence.transaction;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -52,24 +53,31 @@ public class TransactionInterceptor implements Serializable
 
    @Inject
    @DefaultTransaction
-   Instance<SeamTransaction> transaction;
+   private Instance<SeamTransaction> transaction;
+
+   @Inject
+   private TransactionExtension transactionExtension;
 
    private class TransactionMetadata
    {
-      private boolean annotationPresent;
-      private TransactionPropagation propType;
+      private final boolean annotationPresent;
+      private final TransactionPropagation propType;
 
-      public TransactionMetadata(AnnotatedElement element)
+      public TransactionMetadata(Annotation annotation)
       {
-         annotationPresent = element.isAnnotationPresent(Transactional.class);
-         if (annotationPresent)
+         if (annotation == null)
          {
-            propType = element.getAnnotation(Transactional.class).value();
+            annotationPresent = false;
+            propType = null;
          }
-         else if (element.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE))
+         else if (annotation.annotationType() == Transactional.class)
          {
             annotationPresent = true;
-            Object annotation = element.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE);
+            propType = ((Transactional) annotation).value();
+         }
+         else if (annotation.annotationType() == EjbApi.TRANSACTION_ATTRIBUTE)
+         {
+            annotationPresent = true;
             try
             {
                Object value = annotation.getClass().getMethod("value").invoke(annotation);
@@ -92,11 +100,11 @@ public class TransactionInterceptor implements Serializable
                }
                else if (value == EjbApi.NOT_SUPPORTED)
                {
-                  throw new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not allowed on managed beans that are not EJB's. Element: " + element);
+                  throw new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not allowed on managed beans that are not EJB's.");
                }
                else if (value == EjbApi.REQUIRES_NEW)
                {
-                  throw new RuntimeException("TransactionAttributeType.REQUIRES_NEW is not allowed on managed beans that are not EJB's Element: " + element);
+                  throw new RuntimeException("TransactionAttributeType.REQUIRES_NEW is not allowed on managed beans that are not EJB's.");
                }
                else
                {
@@ -107,6 +115,11 @@ public class TransactionInterceptor implements Serializable
             {
                throw new RuntimeException(e);
             }
+         }
+         else
+         {
+            annotationPresent = false;
+            propType = null;
          }
       }
 
@@ -121,7 +134,7 @@ public class TransactionInterceptor implements Serializable
       }
    }
 
-   private TransactionMetadata lookupTransactionMetadata(AnnotatedElement element)
+   private TransactionMetadata lookupTransactionMetadata(Method element)
    {
       if (transactionMetadata == null)
       {
@@ -132,22 +145,46 @@ public class TransactionInterceptor implements Serializable
 
       if (metadata == null)
       {
-         metadata = loadMetadata(element);
+         synchronized (this)
+         {
+            if (element.isAnnotationPresent(Transactional.class))
+            {
+               metadata = new TransactionMetadata(element.getAnnotation(Transactional.class));
+            }
+            else if (element.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE))
+            {
+               metadata = new TransactionMetadata(element.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE));
+            }
+            else
+            {
+               metadata = new TransactionMetadata(null);
+            }
+            transactionMetadata.put(element, metadata);
+         }
       }
-
       return metadata;
    }
 
-   private synchronized TransactionMetadata loadMetadata(AnnotatedElement element)
+   private TransactionMetadata lookupTransactionMetadata(Class<?> element)
    {
-      if (!transactionMetadata.containsKey(element))
+      if (transactionMetadata == null)
       {
-         TransactionMetadata metadata = new TransactionMetadata(element);
-         transactionMetadata.put(element, metadata);
-         return metadata;
+         transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
       }
 
-      return transactionMetadata.get(element);
+      TransactionMetadata metadata = transactionMetadata.get(element);
+
+      if (metadata == null)
+      {
+         synchronized (this)
+         {
+            // we need access to cached stereotype information, so we load it
+            // from the transaction extension
+            metadata = new TransactionMetadata(transactionExtension.getClassLevelTransactionAnnotation(element));
+            transactionMetadata.put((AnnotatedElement) element, metadata);
+         }
+      }
+      return metadata;
    }
 
    @AroundInvoke
