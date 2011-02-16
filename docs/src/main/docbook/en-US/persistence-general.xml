@@ -181,7 +181,7 @@
 </beans>]]></programlisting>
 
          <para>
-            Lets look at these individually.
+            Let's look at these individually.
          </para>
          
          <programlisting role="XML"><![CDATA[<t:SeSynchronizations>
@@ -218,7 +218,7 @@
                application. Seam does not support installing multiple <code>EntityTransaction</code> beans, and
                the <code>EntityTransaction</code> interface does not support two phase commit, so unless you are
                careful you may have data consistency issues. If you need multiple persistence units in your 
-               application then we highly recommend using an EE 6 compatible server, such as Jboss 6. 
+               application then we highly recommend using an EE 6 compatible server, such as JBoss 6. 
             </para>
          </note>
       
