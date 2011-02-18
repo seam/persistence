@@ -210,8 +210,16 @@
             installed with qualifier <code>@Default</code>. 
          </para>       
          <para>
-            TODO: document how to use different qualifiers.
+            If your entity manager is installed with a different qualifier, then you need to use the following 
+            configuration (this assumes that <literal>my</literal> has been bound to the namespace that contains
+            the appropriate qualifier, see the Seam Config XML documentation for more details):
          </para>
+         <programlisting role="XML"><![CDATA[<t:EntityTransaction>
+   <s:modifies />
+   <t:entityManager>
+      <my:SomeQualifier/>
+   </tentityManager>         
+</t:EntityTransaction>]]></programlisting>  
          <note>
             <para>
                You should avoid <code>EntityTransaction</code> if you have more than one persistence unit in your
@@ -238,7 +246,8 @@
          </para>
          
          <para>
-            TODO: Add section on exceptions and transaction rollback
+            Unlike in Seam 2, transactions will not roll back whenever a non-application exception
+            propagates out of a bean, unless the bean has the transaction intercepter enabled.  
          </para>
          
          <para>
@@ -314,7 +323,7 @@ class TransactionaBean
 
    <section id="persistence.seam-managed-persistence-contexts">
       <title>Seam-managed persistence contexts</title>
-
+ 
       <para>
          If you're using Seam outside of a Java EE environment, you can't rely upon the
          container to manage the persistence context lifecycle for you. Even if you are
@@ -417,78 +426,17 @@ EntityManagerFactory producerField;
             <literal>FlushModeType</literal>s defined by the specification, and it is 
             our expectation that other vendors will soon provide a similar extension.
          </para>
-     
-         <para>
-            Seam lets you specify <literal>FlushModeType.MANUAL</literal> when beginning a
-            conversation. Currently, this works only when Hibernate is the underlying 
-            persistence provider, but we plan to support other equivalent vendor extensions.
-         </para>
-     
-         <para>
-            TODO: The next section needs to be updated to seam 3.
-         </para>
-     
-         <programlisting role="JAVA"><![CDATA[@Inject EntityManager em; //a Seam-managed persistence context
-   
-   @Begin(flushMode=MANUAL)
-   public void beginClaimWizard() {
-       claim = em.find(Claim.class, claimId);
-   }]]></programlisting>
-   
-         <para>
-            Now, the <literal>claim</literal> object remains managed by the persistence context
-            for the rest of the conversation. We can make changes to the claim:
-         </para>
-   
-         <programlisting role="JAVA"><![CDATA[public void addPartyToClaim() {
-       Party party = ....;
-       claim.addParty(party);
-   }]]></programlisting>
-   
-         <para>
-            But these changes will not be flushed to the database until we explicitly force
-            the flush to occur:
-         </para>
-   
-         <programlisting role="JAVA"><![CDATA[@End
-   public void commitClaim() {
-       em.flush();
-   }]]></programlisting>
-   
-         <para>
-            Of course, you could set the <literal>flushMode</literal> to <literal>MANUAL</literal>
-            from pages.xml, for example in a navigation rule:
-         </para>
-   
-         <programlisting role="XML"><![CDATA[<begin-conversation flush-mode="MANUAL" />]]></programlisting>
-         
-         <para>
-            You can set any Seam Managed Persistence Context to use manual flush
-            mode:
-         </para>
-         
-         <programlisting><![CDATA[<components xmlns="http://jboss.com/products/seam/components"
-            xmlns:core="http://jboss.com/products/seam/core">
-            <core:manager conversation-timeout="120000" default-flush-mode="manual" />
-         </components>]]></programlisting>
-         
       </section>
-   
-   
+      
       <section>
          <title>Using EL in EJB-QL/HQL</title>
          <para>
              Seam proxies the <literal>EntityManager</literal> or <literal>Session</literal>
-             object whenever you use a Seam-managed persistence context or inject a container
-             managed persistence context using <literal>@PersistenceContext</literal>. This
+             object whenever you use a Seam-managed persistence context. This
              lets you use EL expressions in your query strings, safely and efficiently. For
              example, this:
          </para>
          
-         <para>
-            TODO: We don't proxy the container managed PC yet.
-         </para>
-     
          <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=#{user.username}")
    .getSingleResult();]]></programlisting>
    
@@ -508,7 +456,11 @@ EntityManagerFactory producerField;
          <para>
             (It is inefficient and vulnerable to SQL injection attacks.)
          </para>
-           
+         
+         <warning>
+            <para>This only works with seam managed persistence contexts, not persistence contexts that are injected with
+            <code>@PersistenceContext</code>.</para>
+         </warning>  
       </section>
        
       <section>
