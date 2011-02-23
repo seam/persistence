@@ -6,17 +6,25 @@ Seam Persistence ${project.version}
 Contents of distribution
 ========================
 
-doc/
+ artifacts/
+ 
+   Provided libraries
 
-  API Docs and reference guide.
+ doc/
+
+   API Docs and reference guide.
   
-examples/
+ examples/
 
-  Seam Persistence Examples
+   Seam Persistence Examples
   
-lib/
+ lib/
 
-  Seam Persistence Jar files
+   Seam Persistence dependencies
+  
+ source/
+ 
+   Source code for this module
   
 Licensing
 =========
