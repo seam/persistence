@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.seam</groupId>
       <artifactId>seam-parent</artifactId>
-      <version>8</version>
+      <version>9</version>
    </parent>
 
    <artifactId>seam-persistence-parent</artifactId>
@@ -34,7 +34,7 @@
    </modules>
 
    <properties>
-      <seam.version>3.0.0.b09</seam.version>
+      <seam.version>3.0.0.CR1</seam.version>
       <emma.version>2.0.5312</emma.version>
    </properties>
 
