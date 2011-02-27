@@ -48,14 +48,41 @@
                      </artifacts>
                   </configuration>
                </execution>
+               
+               <execution>
+                 <id>attach-source</id>
+                 <phase>generate-sources</phase>
+                 <goals>
+                   <goal>add-source</goal>
+                 </goals>
+                 <configuration>
+                   <sources>
+                     <source>src/main/docbook/en-US</source>
+                   </sources>
+                 </configuration>
+               </execution>                 
             </executions>
          </plugin>
       </plugins>
    </build>
 
-   <scm>
-      <connection>scm:git:git://github.com/seam/persistence.git</connection>
-      <developerConnection>scm:git:git@github.com:seam/persistence.git</developerConnection>
-      <url>http://github.com/seam/persistence</url>
-   </scm>
+   <profiles>
+      <profile>
+         <id>distribution</id>
+         <activation>
+            <property>
+               <name>release</name>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-assembly-plugin</artifactId>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+
 </project>
