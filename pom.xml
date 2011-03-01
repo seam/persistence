@@ -31,6 +31,7 @@
       <module>tests/base</module>
       <module>tests/jetty-hibernate</module>
       <module>tests/jetty-openjpa</module>
+      <module>tests/jbossas-hibernate</module>
    </modules>
 
    <properties>
