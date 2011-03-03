@@ -275,7 +275,7 @@
          </note>
          
          <para>
-            Lets have a look at some code. Annotations applied at a method level override annotations
+            Let's have a look at some code. Annotations applied at a method level override annotations
             applied at the class level. 
          </para>
          <programlisting role="JAVA">@TransactionAttribute /*Defaults to TransactionAttributeType.REQUIRED */
