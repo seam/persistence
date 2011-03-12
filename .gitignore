@@ -6,3 +6,6 @@ target
 transaction.log
 tests/jetty-hibernate/data
 tests/jetty-hibernate/org.jboss.seam.persistence.test.util.IndexedHotel
+.idea
+*.iml
+*~
