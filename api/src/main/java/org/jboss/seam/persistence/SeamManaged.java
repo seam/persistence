@@ -47,12 +47,16 @@ import javax.persistence.EntityManagerFactory;
  * {@link Dependent}, as the specification does not allow resource producer
  * fields to have a scope other than Dependent
  * 
+ * <p/>
+ * This annotation is now deprecated in favor of {@link org.jboss.seam.solder.core.SeamManaged}
+ * 
  * @author Stuart Douglas
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD, ElementType.METHOD })
 @Documented
+@Deprecated
 public @interface SeamManaged
 {
 

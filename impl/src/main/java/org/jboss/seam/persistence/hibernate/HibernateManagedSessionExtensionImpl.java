@@ -37,7 +37,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
-import org.jboss.seam.persistence.SeamManaged;
 import org.jboss.seam.solder.bean.BeanBuilder;
 import org.jboss.seam.solder.core.Veto;
 import org.jboss.seam.solder.literal.AnyLiteral;
@@ -73,7 +72,8 @@ public class HibernateManagedSessionExtensionImpl implements HibernateExtension
       // method.
       for (AnnotatedMethod<? super T> method : event.getAnnotatedType().getMethods())
       {
-         if (method.isAnnotationPresent(SeamManaged.class) && method.isAnnotationPresent(Produces.class) && SessionFactory.class.isAssignableFrom(method.getJavaMember().getReturnType()))
+         if ((method.isAnnotationPresent(org.jboss.seam.persistence.SeamManaged.class) || method.isAnnotationPresent(org.jboss.seam.solder.core.SeamManaged.class)) 
+        		 && method.isAnnotationPresent(Produces.class) && SessionFactory.class.isAssignableFrom(method.getJavaMember().getReturnType()))
          {
             if (modifiedType == null)
             {

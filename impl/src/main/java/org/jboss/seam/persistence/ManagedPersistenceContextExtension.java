@@ -143,7 +143,8 @@ public class ManagedPersistenceContextExtension implements Extension
          }
          // look for a seam managed persistence unit declaration on EE resource
          // producer fields
-         if (field.isAnnotationPresent(SeamManaged.class) && (field.isAnnotationPresent(PersistenceUnit.class) || field.isAnnotationPresent(Resource.class)) && field.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(field.getJavaMember().getType()))
+         if ((field.isAnnotationPresent(org.jboss.seam.persistence.SeamManaged.class) || field.isAnnotationPresent(org.jboss.seam.solder.core.SeamManaged.class)) 
+        		 && (field.isAnnotationPresent(PersistenceUnit.class) || field.isAnnotationPresent(Resource.class)) && field.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(field.getJavaMember().getType()))
          {
             if (modifiedType == null)
             {
@@ -191,7 +192,8 @@ public class ManagedPersistenceContextExtension implements Extension
       // this allows for programatic config of the SMPC
       for (AnnotatedMethod<? super T> method : event.getAnnotatedType().getMethods())
       {
-         if (method.isAnnotationPresent(SeamManaged.class) && method.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(method.getJavaMember().getReturnType()))
+         if ((method.isAnnotationPresent(org.jboss.seam.persistence.SeamManaged.class) || method.isAnnotationPresent(org.jboss.seam.solder.core.SeamManaged.class))
+        		 && method.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(method.getJavaMember().getReturnType()))
          {
             if (modifiedType == null)
             {

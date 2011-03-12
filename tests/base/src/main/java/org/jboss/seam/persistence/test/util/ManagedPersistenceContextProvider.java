@@ -21,7 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-import org.jboss.seam.persistence.SeamManaged;
+import org.jboss.seam.solder.core.SeamManaged;
 
 public class ManagedPersistenceContextProvider
 {
