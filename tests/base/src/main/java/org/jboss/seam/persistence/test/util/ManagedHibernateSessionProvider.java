@@ -34,4 +34,4 @@ public class ManagedHibernateSessionProvider
       config.configure();
       return config.buildSessionFactory();
    }
-} 
+}

@@ -31,8 +31,8 @@ import junit.framework.Assert;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
-import org.jboss.seam.persistence.transaction.DefaultTransaction;
-import org.jboss.seam.persistence.transaction.SeamTransaction;
+import org.jboss.seam.transaction.DefaultTransaction;
+import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Test;
 
 public class ManagedPersistenceContextTestBase

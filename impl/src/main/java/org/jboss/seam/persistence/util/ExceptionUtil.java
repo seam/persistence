@@ -18,13 +18,13 @@ package org.jboss.seam.persistence.util;
 
 import java.lang.reflect.Method;
 
-import org.jboss.seam.persistence.transaction.SeamApplicationException;
+import org.jboss.seam.transaction.SeamApplicationException;
 
 /**
  * Utility class for dealing with application exceptions
- * 
+ *
  * @author Stuart Douglas
- * 
+ *
  */
 public class ExceptionUtil
 {

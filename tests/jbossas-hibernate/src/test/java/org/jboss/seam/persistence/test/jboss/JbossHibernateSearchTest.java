@@ -21,7 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.HibernateSearchTestBase;
 import org.jboss.seam.persistence.test.util.ArtifactNames;
 import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
-import org.jboss.seam.persistence.transaction.test.util.JbossasTestUtils;
+import org.jboss.seam.transaction.test.util.JbossasTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;

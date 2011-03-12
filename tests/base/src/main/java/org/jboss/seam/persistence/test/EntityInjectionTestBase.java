@@ -28,16 +28,16 @@ import javax.transaction.SystemException;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
-import org.jboss.seam.persistence.transaction.DefaultTransaction;
-import org.jboss.seam.persistence.transaction.SeamTransaction;
+import org.jboss.seam.transaction.DefaultTransaction;
+import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Tests that injection is working for JPA entities
- * 
+ *
  * @author Stuart Douglas
- * 
+ *
  */
 
 public class EntityInjectionTestBase

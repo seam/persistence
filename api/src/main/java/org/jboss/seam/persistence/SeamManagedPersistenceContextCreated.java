@@ -19,7 +19,7 @@ package org.jboss.seam.persistence;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import org.jboss.seam.persistence.transaction.SeamTransaction;
+import org.jboss.seam.transaction.SeamTransaction;
 
 /**
  * Event that is fired when the SMPC is created. This allows you to configure
@@ -31,10 +31,10 @@ import org.jboss.seam.persistence.transaction.SeamTransaction;
  * <p/>
  * NOTE: The entityManger property is the unproxied EntityManager, not the seam
  * proxy.
- * 
- * 
+ *
+ *
  * @author Stuart Douglas <stuart@baileyroberts.com.au>
- * 
+ *
  */
 public class SeamManagedPersistenceContextCreated
 {

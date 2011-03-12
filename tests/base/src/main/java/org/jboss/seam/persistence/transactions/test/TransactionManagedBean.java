@@ -21,8 +21,8 @@ import javax.persistence.EntityManager;
 
 import org.jboss.seam.persistence.test.util.DontRollBackException;
 import org.jboss.seam.persistence.test.util.Hotel;
-import org.jboss.seam.persistence.transaction.TransactionPropagation;
-import org.jboss.seam.persistence.transaction.Transactional;
+import org.jboss.seam.transaction.TransactionPropagation;
+import org.jboss.seam.transaction.Transactional;
 
 @Transactional(TransactionPropagation.REQUIRED)
 public class TransactionManagedBean

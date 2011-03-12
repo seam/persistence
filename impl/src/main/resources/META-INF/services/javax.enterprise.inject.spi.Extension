@@ -1,4 +1,4 @@
-org.jboss.seam.persistence.transaction.TransactionExtension
-org.jboss.seam.persistence.transaction.scope.TransactionScopeExtension
+org.jboss.seam.transaction.TransactionExtension
+org.jboss.seam.transaction.scope.TransactionScopeExtension
 org.jboss.seam.persistence.ManagedPersistenceContextExtension
 org.jboss.seam.persistence.hibernate.HibernateManagedSessionExtension

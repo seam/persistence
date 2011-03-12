@@ -30,8 +30,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
+import org.jboss.seam.transaction.SeamTransaction;
+import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
  * Proxy handler for the seam managed persistence context. This handler makes
  * sure that the EntityManager is enrolled in the current transaction before
  * passing the call through to the delegate
- * 
+ *
  * @author Stuart Douglas
- * 
+ *
  */
 public class ManagedPersistenceContextProxyHandler extends PersistenceContextProxyHandler implements InvocationHandler, Serializable, Synchronization
 {

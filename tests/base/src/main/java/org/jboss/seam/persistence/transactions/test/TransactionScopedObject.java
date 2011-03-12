@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence.transactions.test;
 
-import org.jboss.seam.persistence.transaction.TransactionScoped;
+import org.jboss.seam.transaction.TransactionScoped;
 
 @TransactionScoped
 public class TransactionScopedObject

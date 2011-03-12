@@ -23,8 +23,8 @@ import java.lang.annotation.Target;
 
 import javax.enterprise.inject.Stereotype;
 
-import org.jboss.seam.persistence.transaction.TransactionPropagation;
-import org.jboss.seam.persistence.transaction.Transactional;
+import org.jboss.seam.transaction.TransactionPropagation;
+import org.jboss.seam.transaction.Transactional;
 
 @Stereotype
 @Retention(RetentionPolicy.RUNTIME)

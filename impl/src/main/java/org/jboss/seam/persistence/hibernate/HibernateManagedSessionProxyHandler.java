@@ -40,8 +40,8 @@ import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.persistence.QueryParser;
-import org.jboss.seam.persistence.transaction.SeamTransaction;
-import org.jboss.seam.persistence.transaction.literal.DefaultTransactionLiteral;
+import org.jboss.seam.transaction.SeamTransaction;
+import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
 import org.jboss.seam.solder.literal.DefaultLiteral;
@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
  * Proxy handler for the seam managed Hibernate session. This handler makes sure
  * that the EntityManager is enrolled in the current transaction before passing
  * the call through to the delegate
- * 
+ *
  * @author Stuart Douglas
- * 
+ *
  */
 public class HibernateManagedSessionProxyHandler implements InvocationHandler, Serializable, Synchronization
 {
