@@ -16,9 +16,20 @@
  */
 package org.jboss.seam.persistence.hibernate;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.Set;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.jboss.seam.persistence.HibernatePersistenceProvider;
+import org.jboss.seam.persistence.ManagedPersistenceContext;
+import org.jboss.seam.solder.bean.BeanBuilder;
+import org.jboss.seam.solder.core.SeamManaged;
+import org.jboss.seam.solder.core.Veto;
+import org.jboss.seam.solder.literal.AnyLiteral;
+import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
+import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.seam.solder.reflection.annotated.Annotateds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
@@ -32,30 +43,18 @@ import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.jboss.seam.persistence.HibernatePersistenceProvider;
-import org.jboss.seam.persistence.ManagedPersistenceContext;
-import org.jboss.seam.persistence.SeamManaged;
-import org.jboss.seam.solder.bean.BeanBuilder;
-import org.jboss.seam.solder.core.Veto;
-import org.jboss.seam.solder.literal.AnyLiteral;
-import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
-import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
-import org.jboss.seam.solder.reflection.annotated.Annotateds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class performs the actual work for the Hibernate managed session. As
  * some CDI implemtations cannot handle NDFE when loading an extension the
  * actual extension has no dependencies on the Hibernate classes
- * 
- * 
+ *
+ *
  * @author Stuart Douglas
- * 
+ *
  */
 @Veto
 public class HibernateManagedSessionExtensionImpl implements HibernateExtension

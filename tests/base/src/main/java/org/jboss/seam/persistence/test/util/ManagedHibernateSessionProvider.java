@@ -16,12 +16,12 @@
  */
 package org.jboss.seam.persistence.test.util;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.jboss.seam.persistence.SeamManaged;
+import org.jboss.seam.solder.core.SeamManaged;
+
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
 
 public class ManagedHibernateSessionProvider
 {
@@ -34,4 +34,4 @@ public class ManagedHibernateSessionProvider
       config.configure();
       return config.buildSessionFactory();
    }
-}
+} 

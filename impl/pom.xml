@@ -13,7 +13,7 @@
 
    <name>Seam Persistence Implementation</name>
    <!-- url required for JAR Manifest -->
-   <url>${project.parent.url}</url> 
+   <url>${project.parent.url}</url>
 
    <prerequisites>
       <maven>3.0</maven>
@@ -48,7 +48,7 @@
          <artifactId>hibernate-core</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-search</artifactId>
@@ -62,7 +62,7 @@
          <artifactId>slf4j-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
    </dependencies>
 
    <profiles>
@@ -114,7 +114,7 @@
          </build>
       </profile>
    </profiles>
-   
+
    <build>
       <plugins>
          <!-- tests run in seperate modules -->

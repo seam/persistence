@@ -16,12 +16,20 @@
  */
 package org.jboss.seam.persistence;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.jboss.seam.persistence.util.EnvironmentUtils;
+import org.jboss.seam.solder.bean.BeanBuilder;
+import org.jboss.seam.solder.bean.Beans;
+import org.jboss.seam.solder.bean.ContextualLifecycle;
+import org.jboss.seam.solder.core.SeamManaged;
+import org.jboss.seam.solder.literal.AnyLiteral;
+import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
+import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.seam.solder.reflection.Reflections;
+import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.seam.solder.reflection.annotated.Annotateds;
+import org.jboss.seam.solder.util.service.ServiceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.Dependent;
@@ -44,28 +52,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
-
-import org.jboss.seam.persistence.util.EnvironmentUtils;
-import org.jboss.seam.solder.bean.BeanBuilder;
-import org.jboss.seam.solder.bean.Beans;
-import org.jboss.seam.solder.bean.ContextualLifecycle;
-import org.jboss.seam.solder.literal.AnyLiteral;
-import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
-import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.jboss.seam.solder.reflection.Reflections;
-import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
-import org.jboss.seam.solder.reflection.annotated.Annotateds;
-import org.jboss.seam.solder.util.service.ServiceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Extension the wraps producer methods/fields that produce an entity manager
  * factory to turn them into Seam Managed Persistence Contexts.
- * 
- * 
+ *
+ *
  * @author Stuart Douglas
- * 
+ *
  */
 public class ManagedPersistenceContextExtension implements Extension
 {
@@ -115,13 +115,13 @@ public class ManagedPersistenceContextExtension implements Extension
 
    /**
     * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
-    * producer field that is annotated {@link SeamManaged}. Then a corresponding
+    * producer field that is annotated {@link org.jboss.seam.solder.core.SeamManaged}. Then a corresponding
     * smpc bean is created and registered. Any scope declaration on the producer
     * are removed as this is not supported by the spec
-    * 
+    *
     * For non-ee environments this extension also bootstraps @PersistenceUnit
     * producer fields
-    * 
+    *
     */
    public <T> void processAnnotatedType(@Observes final ProcessAnnotatedType<T> event, BeanManager manager)
    {
