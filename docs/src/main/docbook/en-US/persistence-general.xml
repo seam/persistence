@@ -143,7 +143,7 @@
             In order to enable declarative transaction management for managed beans
             you need to list the transaction interceptor in beans.xml:
          </para>
-         <programlisting role="XML"><![CDATA[<![CDATA[<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+         <programlisting role="XML"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://java.sun.com/xml/ns/javaee"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="
@@ -152,7 +152,7 @@
    <interceptors>
       <class>org.jboss.seam.transaction.TransactionInterceptor</class>
    </interceptors>
-</beans>]]>]]>]]></programlisting>
+</beans>]]></programlisting>
          <para>
             If you are in a Java EE 6 environment then you are good to go,
             no additional configuration is required.
