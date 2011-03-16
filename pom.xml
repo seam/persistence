@@ -35,7 +35,7 @@
    </modules>
 
    <properties>
-      <seam.version>3.0.0.CR1</seam.version>
+      <seam.version>3.0.0.CR3</seam.version>
       <emma.version>2.0.5312</emma.version>
    </properties>
 
@@ -45,7 +45,6 @@
          <dependency>
             <groupId>org.jboss.seam.solder</groupId>
             <artifactId>seam-solder</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
          </dependency>
 
          <dependency>

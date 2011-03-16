@@ -19,8 +19,7 @@ package org.jboss.seam.transaction;
 import javax.transaction.Status;
 
 import org.jboss.seam.persistence.util.ExceptionUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 /**
  * Performs work in a JTA transaction.
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Work<T>
 {
-   private static final Logger log = LoggerFactory.getLogger(Work.class);
+   private static final Logger log = Logger.getLogger(Work.class);
 
    protected abstract T work() throws Exception;
 
