@@ -18,7 +18,7 @@ package org.jboss.seam.persistence.test.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.jboss.seam.solder.core.SeamManaged;
+import org.jboss.seam.solder.core.ExtensionManaged;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -27,7 +27,7 @@ public class ManagedHibernateSessionProvider
 {
    @RequestScoped
    @Produces
-   @SeamManaged
+   @ExtensionManaged
    public SessionFactory createSessionFactory()
    {
       Configuration config = new Configuration();

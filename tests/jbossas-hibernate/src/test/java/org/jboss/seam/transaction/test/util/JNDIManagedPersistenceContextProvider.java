@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.transaction.test.util;
 
-import org.jboss.seam.solder.core.SeamManaged;
+import org.jboss.seam.solder.core.ExtensionManaged;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
@@ -28,6 +28,6 @@ public class JNDIManagedPersistenceContextProvider
    @Resource(mappedName = "java:EntityManagerFactory")
    @RequestScoped
    @Produces
-   @SeamManaged
+   @ExtensionManaged
    EntityManagerFactory emf;
 }

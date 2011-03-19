@@ -20,7 +20,7 @@ import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.seam.solder.bean.BeanBuilder;
 import org.jboss.seam.solder.bean.Beans;
 import org.jboss.seam.solder.bean.ContextualLifecycle;
-import org.jboss.seam.solder.core.SeamManaged;
+import org.jboss.seam.solder.core.ExtensionManaged;
 import org.jboss.seam.solder.literal.AnyLiteral;
 import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
 import org.jboss.seam.solder.literal.DefaultLiteral;
@@ -143,7 +143,7 @@ public class ManagedPersistenceContextExtension implements Extension
          }
          // look for a seam managed persistence unit declaration on EE resource
          // producer fields
-         if (field.isAnnotationPresent(SeamManaged.class) && (field.isAnnotationPresent(PersistenceUnit.class) || field.isAnnotationPresent(Resource.class)) && field.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(field.getJavaMember().getType()))
+         if (field.isAnnotationPresent(ExtensionManaged.class) && (field.isAnnotationPresent(PersistenceUnit.class) || field.isAnnotationPresent(Resource.class)) && field.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(field.getJavaMember().getType()))
          {
             if (modifiedType == null)
             {
@@ -191,7 +191,7 @@ public class ManagedPersistenceContextExtension implements Extension
       // this allows for programatic config of the SMPC
       for (AnnotatedMethod<? super T> method : event.getAnnotatedType().getMethods())
       {
-         if (method.isAnnotationPresent(SeamManaged.class) && method.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(method.getJavaMember().getReturnType()))
+         if (method.isAnnotationPresent(ExtensionManaged.class) && method.isAnnotationPresent(Produces.class) && EntityManagerFactory.class.isAssignableFrom(method.getJavaMember().getReturnType()))
          {
             if (modifiedType == null)
             {

@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence.test.util;
 
-import org.jboss.seam.solder.core.SeamManaged;
+import org.jboss.seam.solder.core.ExtensionManaged;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -28,6 +28,6 @@ public class ManagedPersistenceContextProvider
    @PersistenceUnit(unitName = "seamPersistencePu")
    @RequestScoped
    @Produces
-   @SeamManaged
+   @ExtensionManaged
    EntityManagerFactory emf;
 }
