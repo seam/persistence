@@ -18,6 +18,7 @@ package org.jboss.seam.persistence.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.solder.bean.BeanBuilder;
@@ -28,8 +29,6 @@ import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
 import org.jboss.seam.solder.literal.DefaultLiteral;
 import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
 import org.jboss.seam.solder.reflection.annotated.Annotateds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
@@ -61,7 +60,7 @@ public class HibernateManagedSessionExtensionImpl implements HibernateExtension
 {
    Set<Bean<?>> beans = new HashSet<Bean<?>>();
 
-   private static final Logger log = LoggerFactory.getLogger(HibernateManagedSessionExtensionImpl.class);
+   private static final Logger log = Logger.getLogger(HibernateManagedSessionExtensionImpl.class);
 
    private static final HibernatePersistenceProvider persistenceProvider = new HibernatePersistenceProvider();
 

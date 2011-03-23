@@ -24,10 +24,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Proxy handler for a {@link EntityManager} proxy that allows the use of EL in
@@ -38,14 +37,13 @@ import org.slf4j.LoggerFactory;
  */
 public class PersistenceContextProxyHandler implements Serializable
 {
-
    private static final long serialVersionUID = -6539267789786229774L;
 
    private final EntityManager delegate;
 
    private final Instance<Expressions> expressionsInstance;
 
-   static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
+   static final Logger log = Logger.getLogger(PersistenceContextProxyHandler.class);
 
    public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
    {

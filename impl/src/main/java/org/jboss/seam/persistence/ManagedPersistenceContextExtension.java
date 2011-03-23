@@ -16,6 +16,7 @@
  */
 package org.jboss.seam.persistence;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.seam.solder.bean.BeanBuilder;
 import org.jboss.seam.solder.bean.Beans;
@@ -28,8 +29,6 @@ import org.jboss.seam.solder.reflection.Reflections;
 import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
 import org.jboss.seam.solder.reflection.annotated.Annotateds;
 import org.jboss.seam.solder.util.service.ServiceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.Dependent;
@@ -74,7 +73,7 @@ public class ManagedPersistenceContextExtension implements Extension
 
    List<SeamPersistenceProvider> persistenceProviders = new ArrayList<SeamPersistenceProvider>();
 
-   private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextExtension.class);
+   private static final Logger log = Logger.getLogger(ManagedPersistenceContextExtension.class);
 
    public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event)
    {

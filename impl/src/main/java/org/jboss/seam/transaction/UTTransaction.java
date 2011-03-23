@@ -23,9 +23,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.core.Veto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wraps JTA transaction management in a Seam UserTransaction interface.
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 @Veto
 public class UTTransaction extends AbstractUserTransaction
 {
-   private static final Logger log = LoggerFactory.getLogger(UTTransaction.class);
+   private static final Logger log = Logger.getLogger(UTTransaction.class);
 
    private final javax.transaction.UserTransaction delegate;
 

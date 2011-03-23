@@ -22,9 +22,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.reflection.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The portable extension for Seam Managed Hibernate Sessions. If hibernate is
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HibernateManagedSessionExtension implements Extension
 {
-   private static final Logger log = LoggerFactory.getLogger(HibernateManagedSessionExtension.class);
+   private static final Logger log = Logger.getLogger(HibernateManagedSessionExtension.class);
 
    private final boolean enabled;
 

@@ -35,6 +35,7 @@ import javax.transaction.SystemException;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.FlushModeType;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
@@ -45,8 +46,6 @@ import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
 import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Proxy handler for the seam managed Hibernate session. This handler makes sure
@@ -58,7 +57,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HibernateManagedSessionProxyHandler implements InvocationHandler, Serializable, Synchronization
 {
-
    private static final long serialVersionUID = -6539267789786229774L;
 
    private final Session delegate;
@@ -79,7 +77,7 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
 
    private boolean closeOnTransactionCommit = false;
 
-   static final Logger log = LoggerFactory.getLogger(HibernateManagedSessionProxyHandler.class);
+   static final Logger log = Logger.getLogger(HibernateManagedSessionProxyHandler.class);
 
    private final Instance<Expressions> expressionsInstance;
 

@@ -28,10 +28,9 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.proxy.HibernateProxy;
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.core.Veto;
 import org.jboss.seam.solder.reflection.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support for non-standardized features of Hibernate, when used as the JPA
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class HibernatePersistenceProvider extends DefaultPersistenceProvider
 {
 
-   private static Logger log = LoggerFactory.getLogger(HibernatePersistenceProvider.class);
+   private static Logger log = Logger.getLogger(HibernatePersistenceProvider.class);
    private static Class<?> FULL_TEXT_SESSION;
    private static Method FULL_TEXT_SESSION_CONSTRUCTOR;
    private static Method FULL_TEXT_ENTITYMANAGER_CONSTRUCTOR;

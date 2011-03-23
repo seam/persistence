@@ -30,11 +30,10 @@ import javax.persistence.EntityManager;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Proxy handler for the seam managed persistence context. This handler makes
@@ -65,7 +64,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
    private boolean closeOnTransactionCommit = false;
 
-   static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextProxyHandler.class);
+   static final Logger log = Logger.getLogger(ManagedPersistenceContextProxyHandler.class);
 
    public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, SeamPersistenceProvider provider)
    {

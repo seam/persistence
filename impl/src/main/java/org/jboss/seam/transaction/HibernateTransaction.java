@@ -29,9 +29,8 @@ import javax.transaction.SystemException;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.core.Veto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support for the Hibernate transaction API.
@@ -45,7 +44,7 @@ import org.slf4j.LoggerFactory;
 @Veto
 public class HibernateTransaction extends AbstractUserTransaction implements Synchronization
 {
-   private static final Logger log = LoggerFactory.getLogger(HibernateTransaction.class);
+   private static final Logger log = Logger.getLogger(HibernateTransaction.class);
 
    @Inject
    private Session session;

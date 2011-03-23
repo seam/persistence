@@ -42,11 +42,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.seam.solder.literal.AnyLiteral;
 import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support for managed persistence contexts in a Java SE environment or Servlet
@@ -71,7 +70,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SePersistenceContextExtension implements Extension
 {
-   private static final Logger log = LoggerFactory.getLogger(SePersistenceContextExtension.class);
+   private static final Logger log = Logger.getLogger(SePersistenceContextExtension.class);
 
    private Map<String, Bean<EntityManagerFactory>> emfBeans = new HashMap<String, Bean<EntityManagerFactory>>();
 

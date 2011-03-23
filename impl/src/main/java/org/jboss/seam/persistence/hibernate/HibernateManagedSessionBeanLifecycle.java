@@ -30,13 +30,12 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.solder.bean.ContextualLifecycle;
 import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * lifecycle for seam managed hibernate sessions
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HibernateManagedSessionBeanLifecycle implements ContextualLifecycle<Session>
 {
-   private static final Logger log = LoggerFactory.getLogger(HibernateManagedSessionBeanLifecycle.class);
+   private static final Logger log = Logger.getLogger(HibernateManagedSessionBeanLifecycle.class);
 
    private final Class<?> proxyClass;
 

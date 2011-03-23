@@ -28,10 +28,9 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.DefaultPersistenceProvider;
 import org.jboss.seam.solder.core.Veto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support for the JPA EntityTransaction API.
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
 @Veto
 public class EntityTransaction extends AbstractUserTransaction
 {
-   private static final Logger log = LoggerFactory.getLogger(EntityTransaction.class);
+   private static final Logger log = Logger.getLogger(EntityTransaction.class);
 
    @Inject
    private EntityManager entityManager;

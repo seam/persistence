@@ -31,10 +31,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.util.EjbApi;
 import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Extension than provides a {@link SeamTransaction} if no other UserTransaction
@@ -53,8 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TransactionExtension implements Extension
 {
-
-   private static final Logger log = LoggerFactory.getLogger(TransactionExtension.class);
+   private static final Logger log = Logger.getLogger(TransactionExtension.class);
 
    private final Set<Throwable> exceptions = new HashSet<Throwable>();
 

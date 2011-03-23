@@ -27,12 +27,11 @@ import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Synchronizations implementation that registers syncronizations with a JTA
+ * Synchronizations implementation that registers synchronizations with a JTA
  * {@link TransactionManager}
  *
  */
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 @DefaultBean(Synchronizations.class)
 public class TransactionManagerSynchronizations implements Synchronization, Synchronizations
 {
-   private static final Logger log = LoggerFactory.getLogger(TransactionManagerSynchronizations.class);
+   private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
 
    private final String[] JNDI_LOCATIONS = { "java:/TransactionManager", "java:appserver/TransactionManager", "java:comp/TransactionManager", "java:pm/TransactionManager" };
 

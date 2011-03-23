@@ -27,11 +27,10 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.beanManager.BeanManagerAware;
 import org.jboss.seam.solder.reflection.Reflections;
 import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Event listener that enables injection and initalizer methods for JPA entities
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class InjectionEventListener extends BeanManagerAware
 {
 
-   private final static Logger log = LoggerFactory.getLogger(InjectionEventListener.class);
+   private final static Logger log = Logger.getLogger(InjectionEventListener.class);
 
    private final Map<Class<?>, InjectionTarget<?>> injectionTargets = new ConcurrentHashMap<Class<?>, InjectionTarget<?>>();
 

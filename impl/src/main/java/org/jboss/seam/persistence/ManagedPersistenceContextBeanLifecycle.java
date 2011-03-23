@@ -33,10 +33,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.bean.ContextualLifecycle;
 import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * SMPC lifecycle for SMPC's configured via @SeamManaged
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ManagedPersistenceContextBeanLifecycle implements ContextualLifecycle<EntityManager>
 {
-   private static final Logger log = LoggerFactory.getLogger(ManagedPersistenceContextBeanLifecycle.class);
+   private static final Logger log = Logger.getLogger(ManagedPersistenceContextBeanLifecycle.class);
 
    private final Class<?> proxyClass;
 

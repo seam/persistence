@@ -28,8 +28,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 /**
  * Maintains the set of persistence contexts that have been touched in a
@@ -43,7 +42,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
 {
    private static final long serialVersionUID = -4897350516435283182L;
 
-   private static final Logger log = LoggerFactory.getLogger(PersistenceContextsImpl.class);
+   private static final Logger log = Logger.getLogger(PersistenceContextsImpl.class);
 
    /**
     * persistences contexts are referenced by their qualifiers
