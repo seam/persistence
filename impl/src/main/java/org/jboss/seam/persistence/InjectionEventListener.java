@@ -60,7 +60,7 @@ public class InjectionEventListener extends BeanManagerAware
          if (!injectionRequired(entity.getClass()))
          {
             injectionTargets.put(entity.getClass(), NULL_INJECTION_TARGET);
-            log.debug("Entity {} has no injection points so injection will not be enabled", entity.getClass());
+            log.debugv("Entity {} has no injection points so injection will not be enabled", entity.getClass());
          }
          else
          {
@@ -69,13 +69,13 @@ public class InjectionEventListener extends BeanManagerAware
             AnnotatedTypeBuilder<?> builder = new AnnotatedTypeBuilder().readFromType(entity.getClass());
             InjectionTarget<?> injectionTarget = getBeanManager().createInjectionTarget(builder.create());
             injectionTargets.put(entity.getClass(), injectionTarget);
-            log.info("Enabling injection into entity {}", entity.getClass());
+            log.infov("Enabling injection into entity {}", entity.getClass());
          }
       }
       InjectionTarget it = injectionTargets.get(entity.getClass());
       if (it != NULL_INJECTION_TARGET)
       {
-         log.debug("Running CDI injection for {}", entity.getClass());
+         log.debugv("Running CDI injection for {}", entity.getClass());
          it.inject(entity, new CreationalContextImpl());
       }
 
