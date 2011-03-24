@@ -79,13 +79,6 @@
             <scope>test</scope>
          </dependency>
 
-         <!-- Override CDI/Weld version until tests are upgraded -->
-         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>1.0-SP3</version>
-         </dependency>
-
          <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core</artifactId>
