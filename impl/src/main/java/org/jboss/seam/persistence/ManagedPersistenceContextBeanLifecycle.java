@@ -38,7 +38,7 @@ import org.jboss.seam.solder.bean.ContextualLifecycle;
 import org.jboss.seam.solder.literal.DefaultLiteral;
 
 /**
- * SMPC lifecycle for SMPC's configured via @SeamManaged
+ * SMPC lifecycle for SMPC's configured via @ExtensionManaged
  * 
  * @author Stuart Douglas
  * 

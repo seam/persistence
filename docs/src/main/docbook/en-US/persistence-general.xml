@@ -344,7 +344,7 @@ class TransactionaBean
       <section>
          <title>Using a Seam-managed persistence context with JPA</title>
 
-         <programlisting role="java">@SeamManaged
+         <programlisting role="java">@ExtensionManaged
 @Produces
 @PersistenceUnit
 @ConversationScoped
@@ -352,7 +352,7 @@ EntityManagerFactory producerField;
          </programlisting>
          <para>
             This is just an ordinary resource producer field as defined by the CDI
-            specification, however the presence of the <literal>@SeamManaged</literal>
+            specification, however the presence of the <literal>@ExtensionManaged</literal>
             annotation tells seam to create a seam managed persistence context from
             this <literal>EntityManagerFactory</literal>. This managed
             persistence context can be injected normally, and has the same scope and

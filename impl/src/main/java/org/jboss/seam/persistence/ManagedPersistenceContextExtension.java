@@ -114,7 +114,7 @@ public class ManagedPersistenceContextExtension implements Extension
 
    /**
     * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
-    * producer field that is annotated {@link org.jboss.seam.solder.core.SeamManaged}. Then a corresponding
+    * producer field that is annotated {@link org.jboss.seam.solder.core.ExtensionManaged}. Then a corresponding
     * smpc bean is created and registered. Any scope declaration on the producer
     * are removed as this is not supported by the spec
     *
