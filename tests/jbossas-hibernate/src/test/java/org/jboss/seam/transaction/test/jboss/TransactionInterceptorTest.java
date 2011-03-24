@@ -19,7 +19,7 @@ package org.jboss.seam.transaction.test.jboss;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.transaction.TransactionInterceptor;
-import org.jboss.seam.transaction.test.util.JbossasTestUtils;
+import org.jboss.seam.transaction.test.util.JBossASTestUtils;
 import org.jboss.seam.persistence.transactions.test.TransactionInterceptorTestBase;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -41,7 +41,7 @@ public class TransactionInterceptorTest extends TransactionInterceptorTestBase
    public static Archive<?> createTestArchive()
    {
 
-      WebArchive war = JbossasTestUtils.createTestArchive(false);
+      WebArchive war = JBossASTestUtils.createTestArchive(false);
       war.addClasses(getTestClasses());
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");

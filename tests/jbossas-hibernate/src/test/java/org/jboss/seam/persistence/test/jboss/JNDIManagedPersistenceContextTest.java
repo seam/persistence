@@ -22,7 +22,7 @@ import org.jboss.seam.persistence.test.ManagedPersistenceContextTestBase;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.transaction.test.util.JNDIManagedPersistenceContextProvider;
-import org.jboss.seam.transaction.test.util.JbossasTestUtils;
+import org.jboss.seam.transaction.test.util.JBossASTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ public class JNDIManagedPersistenceContextTest extends ManagedPersistenceContext
    @Deployment
    public static Archive<?> createTestArchive()
    {
-      WebArchive war = JbossasTestUtils.createTestArchive();
+      WebArchive war = JBossASTestUtils.createTestArchive();
       war.addClasses(new Class[] { ManagedPersistenceContextTestBase.class, Hotel.class, JNDIManagedPersistenceContextProvider.class, HelloService.class });
       war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
       return war;

@@ -14,41 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.transaction.test.util;
+package org.jboss.seam.persistence.test.jboss;
 
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.persistence.test.HibernateSearchTestBase;
 import org.jboss.seam.persistence.test.util.ArtifactNames;
 import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
+import org.jboss.seam.transaction.test.util.JBossASTestUtils;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.runner.RunWith;
 
-/**
- *
- * @author Stuart Douglas
- *
- */
-public class JbossasTestUtils
+@RunWith(Arquillian.class)
+public class JBossASHibernateSearchTest extends HibernateSearchTestBase
 {
-   /**
-    * Creates a test archive with an empty beans.xml
-    *
-    * @return
-    */
-   public static WebArchive createTestArchive()
+   @Deployment
+   public static Archive<?> createTestArchive()
    {
-      return createTestArchive(true);
-   }
-
-   public static WebArchive createTestArchive(boolean includeEmptyBeansXml)
-   {
-      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
-      if (includeEmptyBeansXml)
-      {
-         war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
-      }
+      WebArchive war = JBossASTestUtils.createTestArchive();
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.HIBERNATE_SEARCH));
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
+      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
+      war.addClasses(getTestClasses());
+      war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
       return war;
    }
 
