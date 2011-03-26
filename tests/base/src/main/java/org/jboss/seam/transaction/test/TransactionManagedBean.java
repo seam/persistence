@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.persistence.transactions.test;
+package org.jboss.seam.transaction.test;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -24,8 +24,8 @@ import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.transaction.TransactionPropagation;
 import org.jboss.seam.transaction.Transactional;
 
-@TransactionalStereotype
-public class StereotypeTransactionManagedBean
+@Transactional(TransactionPropagation.REQUIRED)
+public class TransactionManagedBean
 {
 
    @Inject

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.persistence.transactions.test;
+package org.jboss.seam.transaction.test;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
