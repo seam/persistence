@@ -270,7 +270,7 @@
             <para>
                <code>TransactionAttributeType.REQUIRES_NEW</code> and
                <code>TransactionAttributeType.NOT_SUPPORTED</code> are not yet supported on managed
-               beans. This will be added before seam-persistence goes final.
+               beans.
             </para>
          </note>
 
