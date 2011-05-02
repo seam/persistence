@@ -35,31 +35,28 @@ import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Test;
 
-public class ManagedPersistenceContextCreatedEventTestBase
-{
+public class ManagedPersistenceContextCreatedEventTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { ManagedPersistenceContextCreatedEventTestBase.class, ManagedPersistenceContextObserver.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{ManagedPersistenceContextCreatedEventTestBase.class, ManagedPersistenceContextObserver.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @Inject
-   EntityManager em;
+    @Inject
+    EntityManager em;
 
-   @Inject
-   ManagedPersistenceContextObserver observer;
+    @Inject
+    ManagedPersistenceContextObserver observer;
 
-   @Test
-   public void testSMPCCreationObserved() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      em.isOpen(); // need to make a call on the EM to force creation
+    @Test
+    public void testSMPCCreationObserved() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        em.isOpen(); // need to make a call on the EM to force creation
 
-      Assert.assertTrue(observer.isObserverRun());
-      Assert.assertEquals(FlushModeType.COMMIT, em.getFlushMode());
-   }
+        Assert.assertTrue(observer.isObserverRun());
+        Assert.assertEquals(FlushModeType.COMMIT, em.getFlushMode());
+    }
 
 }

@@ -19,56 +19,47 @@ package org.jboss.seam.transaction;
 /**
  * @author Dan Allen
  */
-public enum TransactionPropagation
-{
-   /**
-    * A transaction will be started if one is not currently active.
-    */
-   REQUIRED,
-   /**
-    * A transaction will not be started if there is not one currently active,
-    * however this method supports running inside an existing transaction
-    */
-   SUPPORTS,
-   /**
-    * Requires a transaction to be active. If no transaction is active an
-    * {@link IllegalStateException} is thrown
-    */
-   MANDATORY,
-   /**
-    * Requires no transaction to be active. If a transaction is active an
-    * {@link IllegalStateException} is thrown
-    */
-   NEVER;
+public enum TransactionPropagation {
+    /**
+     * A transaction will be started if one is not currently active.
+     */
+    REQUIRED,
+    /**
+     * A transaction will not be started if there is not one currently active,
+     * however this method supports running inside an existing transaction
+     */
+    SUPPORTS,
+    /**
+     * Requires a transaction to be active. If no transaction is active an
+     * {@link IllegalStateException} is thrown
+     */
+    MANDATORY,
+    /**
+     * Requires no transaction to be active. If a transaction is active an
+     * {@link IllegalStateException} is thrown
+     */
+    NEVER;
 
-   public boolean isNewTransactionRequired(boolean transactionActive)
-   {
-      switch (this)
-      {
-      case REQUIRED:
-         return !transactionActive;
-      case SUPPORTS:
-         return false;
-      case MANDATORY:
-         if (!transactionActive)
-         {
-            throw new IllegalStateException("No transaction active on call to MANDATORY method");
-         }
-         else
-         {
-            return false;
-         }
-      case NEVER:
-         if (transactionActive)
-         {
-            throw new IllegalStateException("Transaction active on call to NEVER method");
-         }
-         else
-         {
-            return false;
-         }
-      default:
-         throw new IllegalArgumentException();
-      }
-   }
+    public boolean isNewTransactionRequired(boolean transactionActive) {
+        switch (this) {
+            case REQUIRED:
+                return !transactionActive;
+            case SUPPORTS:
+                return false;
+            case MANDATORY:
+                if (!transactionActive) {
+                    throw new IllegalStateException("No transaction active on call to MANDATORY method");
+                } else {
+                    return false;
+                }
+            case NEVER:
+                if (transactionActive) {
+                    throw new IllegalStateException("Transaction active on call to NEVER method");
+                } else {
+                    return false;
+                }
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
 }

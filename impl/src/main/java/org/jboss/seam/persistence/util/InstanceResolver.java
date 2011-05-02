@@ -35,113 +35,93 @@ import org.jboss.seam.solder.literal.DefaultLiteral;
 
 /**
  * Utillity class that can get an Instance<T> from the bean manager
- * 
+ *
  * @author stuart
- * 
  */
-public class InstanceResolver
-{
-   private InstanceResolver()
-   {
+public class InstanceResolver {
+    private InstanceResolver() {
 
-   }
+    }
 
-   public static <T> Instance<T> getInstance(Class<T> type, BeanManager manager)
-   {
-      return getInstance(type, manager, DefaultLiteral.INSTANCE);
-   }
+    public static <T> Instance<T> getInstance(Class<T> type, BeanManager manager) {
+        return getInstance(type, manager, DefaultLiteral.INSTANCE);
+    }
 
-   public static <T> Instance<T> getInstance(Class<T> type, BeanManager manager, Annotation... qualifiers)
-   {
-      Type instanceType = new InstanceParamatizedTypeImpl<T>(type);
-      Bean<?> bean = manager.resolve(manager.getBeans(instanceType, qualifiers));
-      CreationalContext ctx = manager.createCreationalContext(bean);
-      return (Instance<T>) manager.getInjectableReference(new InstanceInjectionPoint<T>(type, qualifiers), ctx);
-   }
+    public static <T> Instance<T> getInstance(Class<T> type, BeanManager manager, Annotation... qualifiers) {
+        Type instanceType = new InstanceParamatizedTypeImpl<T>(type);
+        Bean<?> bean = manager.resolve(manager.getBeans(instanceType, qualifiers));
+        CreationalContext ctx = manager.createCreationalContext(bean);
+        return (Instance<T>) manager.getInjectableReference(new InstanceInjectionPoint<T>(type, qualifiers), ctx);
+    }
 
-   private static class InstanceParamatizedTypeImpl<T> implements ParameterizedType
-   {
-      private final Class<T> type;
+    private static class InstanceParamatizedTypeImpl<T> implements ParameterizedType {
+        private final Class<T> type;
 
-      public InstanceParamatizedTypeImpl(Class<T> type)
-      {
-         this.type = type;
-      }
+        public InstanceParamatizedTypeImpl(Class<T> type) {
+            this.type = type;
+        }
 
-      public Type[] getActualTypeArguments()
-      {
-         Type[] ret = new Type[1];
-         ret[0] = type;
-         return ret;
-      }
+        public Type[] getActualTypeArguments() {
+            Type[] ret = new Type[1];
+            ret[0] = type;
+            return ret;
+        }
 
-      public Type getOwnerType()
-      {
-         return null;
-      }
+        public Type getOwnerType() {
+            return null;
+        }
 
-      public Type getRawType()
-      {
-         return Instance.class;
-      }
+        public Type getRawType() {
+            return Instance.class;
+        }
 
-   }
+    }
 
-   /**
-    * TODO: this is not portable, needs to be a proper implementation as this
-    * could cause a NPE due to some methods returning null
-    */
-   private static class InstanceInjectionPoint<T> implements InjectionPoint
-   {
+    /**
+     * TODO: this is not portable, needs to be a proper implementation as this
+     * could cause a NPE due to some methods returning null
+     */
+    private static class InstanceInjectionPoint<T> implements InjectionPoint {
 
-      private final Class<T> type;
-      private final Set<Annotation> qualifiers;
+        private final Class<T> type;
+        private final Set<Annotation> qualifiers;
 
-      public InstanceInjectionPoint(Class<T> type, Annotation... quals)
-      {
-         this.type = type;
-         qualifiers = new HashSet<Annotation>();
-         for (Annotation a : quals)
-         {
-            qualifiers.add(a);
-         }
-      }
+        public InstanceInjectionPoint(Class<T> type, Annotation... quals) {
+            this.type = type;
+            qualifiers = new HashSet<Annotation>();
+            for (Annotation a : quals) {
+                qualifiers.add(a);
+            }
+        }
 
-      public Annotated getAnnotated()
-      {
-         return null;
-      }
+        public Annotated getAnnotated() {
+            return null;
+        }
 
-      public Bean<?> getBean()
-      {
-         return null;
-      }
+        public Bean<?> getBean() {
+            return null;
+        }
 
-      public Member getMember()
-      {
-         return null;
-      }
+        public Member getMember() {
+            return null;
+        }
 
-      public Set<Annotation> getQualifiers()
-      {
+        public Set<Annotation> getQualifiers() {
 
-         return qualifiers;
-      }
+            return qualifiers;
+        }
 
-      public Type getType()
-      {
-         return new InstanceParamatizedTypeImpl<T>(type);
-      }
+        public Type getType() {
+            return new InstanceParamatizedTypeImpl<T>(type);
+        }
 
-      public boolean isDelegate()
-      {
-         return false;
-      }
+        public boolean isDelegate() {
+            return false;
+        }
 
-      public boolean isTransient()
-      {
-         return false;
-      }
+        public boolean isTransient() {
+            return false;
+        }
 
-   }
+    }
 }

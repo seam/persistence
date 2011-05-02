@@ -32,21 +32,16 @@ import org.jboss.seam.transaction.SeamTransaction;
  * NOTE: The entityManger property is the unproxied EntityManager, not the seam
  * proxy.
  *
- *
  * @author Stuart Douglas <stuart@baileyroberts.com.au>
- *
  */
-public class SeamManagedPersistenceContextCreated
-{
-   private final EntityManager entityManager;
+public class SeamManagedPersistenceContextCreated {
+    private final EntityManager entityManager;
 
-   public SeamManagedPersistenceContextCreated(EntityManager entityManager)
-   {
-      this.entityManager = entityManager;
-   }
+    public SeamManagedPersistenceContextCreated(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
-   public EntityManager getEntityManager()
-   {
-      return entityManager;
-   }
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
 }

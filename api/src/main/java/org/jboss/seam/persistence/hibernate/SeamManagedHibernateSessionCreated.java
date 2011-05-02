@@ -21,22 +21,18 @@ import org.hibernate.Session;
 /**
  * event that is fired when the hibernate session is created. This allows you to
  * configure the session before it is used, e.g. by enabling filters
- * 
+ *
  * @author Stuart Douglas <stuart@baileyroberts.com.au>
- * 
  */
-public class SeamManagedHibernateSessionCreated
-{
-   private final Session session;
+public class SeamManagedHibernateSessionCreated {
+    private final Session session;
 
-   public SeamManagedHibernateSessionCreated(Session session)
-   {
-      this.session = session;
-   }
+    public SeamManagedHibernateSessionCreated(Session session) {
+        this.session = session;
+    }
 
-   public Session getSession()
-   {
-      return session;
-   }
+    public Session getSession() {
+        return session;
+    }
 
 }

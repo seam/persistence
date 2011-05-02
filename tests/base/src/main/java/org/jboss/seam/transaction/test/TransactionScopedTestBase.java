@@ -33,41 +33,38 @@ import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Test;
 
-public class TransactionScopedTestBase
-{
+public class TransactionScopedTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { TransactionScopedTestBase.class, Hotel.class, HelloService.class, TransactionScopedObject.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{TransactionScopedTestBase.class, Hotel.class, HelloService.class, TransactionScopedObject.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @PersistenceUnit
-   EntityManagerFactory emf;
+    @PersistenceUnit
+    EntityManagerFactory emf;
 
-   @Inject
-   TransactionScopedObject transactionScopedObject;
+    @Inject
+    TransactionScopedObject transactionScopedObject;
 
-   @Test
-   public void transactionScopeTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      transaction.begin();
-      transactionScopedObject.setValue(10);
-      Assert.assertTrue(transactionScopedObject.getValue() == 10);
-      transaction.commit();
+    @Test
+    public void transactionScopeTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        transaction.begin();
+        transactionScopedObject.setValue(10);
+        Assert.assertTrue(transactionScopedObject.getValue() == 10);
+        transaction.commit();
 
-      transaction.begin();
-      Assert.assertTrue(transactionScopedObject.getValue() == 0);
-      transactionScopedObject.setValue(20);
-      Assert.assertTrue(transactionScopedObject.getValue() == 20);
-      transaction.rollback();
+        transaction.begin();
+        Assert.assertTrue(transactionScopedObject.getValue() == 0);
+        transactionScopedObject.setValue(20);
+        Assert.assertTrue(transactionScopedObject.getValue() == 20);
+        transaction.rollback();
 
-      transaction.begin();
-      Assert.assertTrue(transactionScopedObject.getValue() == 0);
-      transaction.rollback();
-   }
+        transaction.begin();
+        Assert.assertTrue(transactionScopedObject.getValue() == 0);
+        transaction.rollback();
+    }
 
 }

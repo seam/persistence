@@ -28,20 +28,17 @@ import org.junit.runner.RunWith;
  * Tests that injection is working for JPA entities
  *
  * @author Stuart Douglas
- *
  */
 @RunWith(Arquillian.class)
-public class EntityInjectionTest extends EntityInjectionTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JBossASTestUtils.createTestArchive();
+public class EntityInjectionTest extends EntityInjectionTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JBossASTestUtils.createTestArchive();
 
-      war.addClasses(getTestClasses());
-      war.addWebResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");
-      war.addWebResource("META-INF/orm.xml", "classes/META-INF/orm.xml");
-      return war;
-   }
+        war.addClasses(getTestClasses());
+        war.addWebResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");
+        war.addWebResource("META-INF/orm.xml", "classes/META-INF/orm.xml");
+        return war;
+    }
 
 }

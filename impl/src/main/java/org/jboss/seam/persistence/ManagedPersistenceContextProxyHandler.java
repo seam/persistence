@@ -41,161 +41,129 @@ import org.jboss.seam.persistence.util.InstanceResolver;
  * passing the call through to the delegate
  *
  * @author Stuart Douglas
- *
  */
-public class ManagedPersistenceContextProxyHandler extends PersistenceContextProxyHandler implements InvocationHandler, Serializable, Synchronization
-{
+public class ManagedPersistenceContextProxyHandler extends PersistenceContextProxyHandler implements InvocationHandler, Serializable, Synchronization {
 
-   private static final long serialVersionUID = -6539267789786229774L;
+    private static final long serialVersionUID = -6539267789786229774L;
 
-   private final EntityManager delegate;
+    private final EntityManager delegate;
 
-   private final Instance<SeamTransaction> userTransactionInstance;
+    private final Instance<SeamTransaction> userTransactionInstance;
 
-   private transient boolean synchronizationRegistered;
+    private transient boolean synchronizationRegistered;
 
-   private final PersistenceContexts persistenceContexts;
+    private final PersistenceContexts persistenceContexts;
 
-   private final Set<Annotation> qualifiers;
+    private final Set<Annotation> qualifiers;
 
-   private final SeamPersistenceProvider provider;
+    private final SeamPersistenceProvider provider;
 
-   private boolean persistenceContextsTouched = false;
+    private boolean persistenceContextsTouched = false;
 
-   private boolean closeOnTransactionCommit = false;
+    private boolean closeOnTransactionCommit = false;
 
-   static final Logger log = Logger.getLogger(ManagedPersistenceContextProxyHandler.class);
+    static final Logger log = Logger.getLogger(ManagedPersistenceContextProxyHandler.class);
 
-   public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, SeamPersistenceProvider provider)
-   {
-      super(delegate, beanManager);
-      this.qualifiers = qualifiers;
-      this.provider = provider;
-      this.delegate = delegate;
-      this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
-      this.persistenceContexts = persistenceContexts;
-   }
+    public ManagedPersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager, Set<Annotation> qualifiers, PersistenceContexts persistenceContexts, SeamPersistenceProvider provider) {
+        super(delegate, beanManager);
+        this.qualifiers = qualifiers;
+        this.provider = provider;
+        this.delegate = delegate;
+        this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
+        this.persistenceContexts = persistenceContexts;
+    }
 
-   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-   {
-      if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
-      {
-         changeFushMode((FlushModeType) args[0]);
-         return null;
-      }
-      if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return EntityManager.class;
-      }
-      if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return Collections.unmodifiableSet(qualifiers);
-      }
-      if ("getProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return provider;
-      }
-      if ("closeAfterTransaction".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         closeAfterTransaction();
-         return null;
-      }
-      if ("getTransaction".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return super.invoke(proxy, method, args);
-      }
-      // we do not join the transaction for setFlushMode calls, as this may
-      // result in an infinite loop, as this is called during SMPC
-      // initialisation
-      if (!"setFlushMode".equals(method.getName()))
-      {
-         if (!synchronizationRegistered)
-         {
-            joinTransaction();
-         }
-      }
-
-      touch((ManagedPersistenceContext) proxy);
-
-      return super.invoke(proxy, method, args);
-   }
-
-   private void joinTransaction() throws SystemException
-   {
-      SeamTransaction transaction = userTransactionInstance.get();
-      if (transaction.isActive())
-      {
-         synchronizationRegistered = true;
-         transaction.enlist(delegate);
-         try
-         {
-            transaction.registerSynchronization(this);
-         }
-         catch (Exception e)
-         {
-            // synchronizationRegistered =
-            // PersistenceProvider.instance().registerSynchronization(this,
-            // entityManager);
-            synchronizationRegistered = false;
-            throw new RuntimeException(e);
-         }
-      }
-   }
-
-   private void closeAfterTransaction() throws SystemException
-   {
-      SeamTransaction transaction = userTransactionInstance.get();
-      if (transaction.isActive())
-      {
-         closeOnTransactionCommit = true;
-      }
-      else
-      {
-         if (delegate.isOpen())
-         {
-            delegate.close();
-         }
-      }
-   }
-
-   private void changeFushMode(FlushModeType flushModeType)
-   {
-      provider.setFlushMode(delegate, flushModeType);
-   }
-
-   void touch(ManagedPersistenceContext delegate)
-   {
-      if (!persistenceContextsTouched)
-      {
-         try
-         {
-            // we need to do this first to prevent an infinite loop
-            persistenceContextsTouched = true;
-            if (persistenceContexts != null)
-            {
-               persistenceContexts.touch(delegate);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class)) {
+            changeFushMode((FlushModeType) args[0]);
+            return null;
+        }
+        if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return EntityManager.class;
+        }
+        if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return Collections.unmodifiableSet(qualifiers);
+        }
+        if ("getProvider".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return provider;
+        }
+        if ("closeAfterTransaction".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            closeAfterTransaction();
+            return null;
+        }
+        if ("getTransaction".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return super.invoke(proxy, method, args);
+        }
+        // we do not join the transaction for setFlushMode calls, as this may
+        // result in an infinite loop, as this is called during SMPC
+        // initialisation
+        if (!"setFlushMode".equals(method.getName())) {
+            if (!synchronizationRegistered) {
+                joinTransaction();
             }
-         }
-         catch (ContextNotActiveException e)
-         {
-            persistenceContextsTouched = false;
-            log.debug("Not touching pc " + this + "as conversation scope not active");
-         }
-      }
-   }
+        }
 
-   public void afterCompletion(int status)
-   {
-      synchronizationRegistered = false;
-      if (closeOnTransactionCommit && delegate.isOpen())
-      {
-         delegate.close();
-      }
-   }
+        touch((ManagedPersistenceContext) proxy);
 
-   public void beforeCompletion()
-   {
+        return super.invoke(proxy, method, args);
+    }
 
-   }
+    private void joinTransaction() throws SystemException {
+        SeamTransaction transaction = userTransactionInstance.get();
+        if (transaction.isActive()) {
+            synchronizationRegistered = true;
+            transaction.enlist(delegate);
+            try {
+                transaction.registerSynchronization(this);
+            } catch (Exception e) {
+                // synchronizationRegistered =
+                // PersistenceProvider.instance().registerSynchronization(this,
+                // entityManager);
+                synchronizationRegistered = false;
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void closeAfterTransaction() throws SystemException {
+        SeamTransaction transaction = userTransactionInstance.get();
+        if (transaction.isActive()) {
+            closeOnTransactionCommit = true;
+        } else {
+            if (delegate.isOpen()) {
+                delegate.close();
+            }
+        }
+    }
+
+    private void changeFushMode(FlushModeType flushModeType) {
+        provider.setFlushMode(delegate, flushModeType);
+    }
+
+    void touch(ManagedPersistenceContext delegate) {
+        if (!persistenceContextsTouched) {
+            try {
+                // we need to do this first to prevent an infinite loop
+                persistenceContextsTouched = true;
+                if (persistenceContexts != null) {
+                    persistenceContexts.touch(delegate);
+                }
+            } catch (ContextNotActiveException e) {
+                persistenceContextsTouched = false;
+                log.debug("Not touching pc " + this + "as conversation scope not active");
+            }
+        }
+    }
+
+    public void afterCompletion(int status) {
+        synchronizationRegistered = false;
+        if (closeOnTransactionCommit && delegate.isOpen()) {
+            delegate.close();
+        }
+    }
+
+    public void beforeCompletion() {
+
+    }
 
 }

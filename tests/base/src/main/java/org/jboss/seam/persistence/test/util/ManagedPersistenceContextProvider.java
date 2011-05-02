@@ -23,11 +23,10 @@ import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-public class ManagedPersistenceContextProvider
-{
-   @PersistenceUnit(unitName = "seamPersistencePu")
-   @RequestScoped
-   @Produces
-   @ExtensionManaged
-   EntityManagerFactory emf;
+public class ManagedPersistenceContextProvider {
+    @PersistenceUnit(unitName = "seamPersistencePu")
+    @RequestScoped
+    @Produces
+    @ExtensionManaged
+    EntityManagerFactory emf;
 }

@@ -39,98 +39,88 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class UserTransactionTestBase
-{
+public class UserTransactionTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { UserTransactionTestBase.class, Hotel.class, HelloService.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{UserTransactionTestBase.class, Hotel.class, HelloService.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @PersistenceContext
-   EntityManager em;
+    @PersistenceContext
+    EntityManager em;
 
-   @Test
-   public void userTransactionTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      transaction.begin();
-      em.joinTransaction();
-      Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
-      transaction.commit();
-      em.clear();
+    @Test
+    public void userTransactionTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        transaction.begin();
+        em.joinTransaction();
+        Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        em.persist(h);
+        em.flush();
+        transaction.commit();
+        em.clear();
 
-      transaction.begin();
-      em.joinTransaction();
-      h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
-      transaction.rollback();
-      em.clear();
+        transaction.begin();
+        em.joinTransaction();
+        h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        em.persist(h);
+        em.flush();
+        transaction.rollback();
+        em.clear();
 
-      transaction.begin();
-      em.joinTransaction();
-      List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
-      Assert.assertTrue(hotels.size() == 1);
-      transaction.rollback();
-      em.clear();
+        transaction.begin();
+        em.joinTransaction();
+        List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
+        Assert.assertTrue(hotels.size() == 1);
+        transaction.rollback();
+        em.clear();
 
-   }
+    }
 
-   @Test
-   public void synchronizationsTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      TransactionAware sync = new TransactionAware();
-      transaction.begin();
-      transaction.registerSynchronization(sync);
-      transaction.commit();
-      Assert.assertEquals(1, sync.getAfterCompletionCount());
-      Assert.assertEquals(1, sync.getBeforeCompletionCount());
+    @Test
+    public void synchronizationsTest() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        TransactionAware sync = new TransactionAware();
+        transaction.begin();
+        transaction.registerSynchronization(sync);
+        transaction.commit();
+        Assert.assertEquals(1, sync.getAfterCompletionCount());
+        Assert.assertEquals(1, sync.getBeforeCompletionCount());
 
-      transaction.begin();
-      transaction.registerSynchronization(sync);
-      transaction.commit();
-      Assert.assertEquals(2, sync.getAfterCompletionCount());
-      Assert.assertEquals(2, sync.getBeforeCompletionCount());
+        transaction.begin();
+        transaction.registerSynchronization(sync);
+        transaction.commit();
+        Assert.assertEquals(2, sync.getAfterCompletionCount());
+        Assert.assertEquals(2, sync.getBeforeCompletionCount());
 
-   }
+    }
 
-   private static class TransactionAware implements Synchronization
-   {
-      int beforeCompletionCount = 0;
-      int afterCompletionCount = 0;
+    private static class TransactionAware implements Synchronization {
+        int beforeCompletionCount = 0;
+        int afterCompletionCount = 0;
 
-      public void afterCompletion(int status)
-      {
-         afterCompletionCount++;
-      }
+        public void afterCompletion(int status) {
+            afterCompletionCount++;
+        }
 
-      public void beforeCompletion()
-      {
-         beforeCompletionCount++;
-      }
+        public void beforeCompletion() {
+            beforeCompletionCount++;
+        }
 
-      public int getAfterCompletionCount()
-      {
-         return afterCompletionCount;
-      }
+        public int getAfterCompletionCount() {
+            return afterCompletionCount;
+        }
 
-      public int getBeforeCompletionCount()
-      {
-         return beforeCompletionCount;
-      }
+        public int getBeforeCompletionCount() {
+            return beforeCompletionCount;
+        }
 
-      public void clear()
-      {
-         beforeCompletionCount = 0;
-         afterCompletionCount = 0;
-      }
+        public void clear() {
+            beforeCompletionCount = 0;
+            afterCompletionCount = 0;
+        }
 
-   }
+    }
 
 }

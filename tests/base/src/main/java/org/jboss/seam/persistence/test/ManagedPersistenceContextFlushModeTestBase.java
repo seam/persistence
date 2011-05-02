@@ -31,37 +31,31 @@ import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.persistence.test.util.ManagedPersistenceContextProvider;
 import org.junit.Test;
 
-public class ManagedPersistenceContextFlushModeTestBase
-{
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { ManagedPersistenceContextFlushModeTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class };
-   }
+public class ManagedPersistenceContextFlushModeTestBase {
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{ManagedPersistenceContextFlushModeTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class};
+    }
 
-   @Inject
-   private FlushModeManager manager;
+    @Inject
+    private FlushModeManager manager;
 
-   @Inject
-   private EntityManager em;
+    @Inject
+    private EntityManager em;
 
-   @Inject
-   private PersistenceContexts pc;
+    @Inject
+    private PersistenceContexts pc;
 
-   @Test
-   public void testChangedTouchedPersistenceContextFlushMode()
-   {
-      manager.setFlushModeType(FlushModeType.MANUAL);
-      // test default flush mode
-      Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
-      try
-      {
-         em.setFlushMode(javax.persistence.FlushModeType.AUTO);
-         pc.changeFlushMode(FlushModeType.MANUAL);
-         Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
-      }
-      finally
-      {
-         em.setFlushMode(javax.persistence.FlushModeType.AUTO);
-      }
-   }
+    @Test
+    public void testChangedTouchedPersistenceContextFlushMode() {
+        manager.setFlushModeType(FlushModeType.MANUAL);
+        // test default flush mode
+        Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
+        try {
+            em.setFlushMode(javax.persistence.FlushModeType.AUTO);
+            pc.changeFlushMode(FlushModeType.MANUAL);
+            Assert.assertEquals(FlushMode.MANUAL, ((Session) em.getDelegate()).getFlushMode());
+        } finally {
+            em.setFlushMode(javax.persistence.FlushModeType.AUTO);
+        }
+    }
 }

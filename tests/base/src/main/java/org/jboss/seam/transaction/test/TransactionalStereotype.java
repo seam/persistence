@@ -30,7 +30,6 @@ import org.jboss.seam.transaction.Transactional;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Transactional(TransactionPropagation.REQUIRED)
-public @interface TransactionalStereotype
-{
+public @interface TransactionalStereotype {
 
 }

@@ -20,12 +20,10 @@ import javax.enterprise.util.AnnotationLiteral;
 
 import org.jboss.seam.transaction.DefaultTransaction;
 
-public class DefaultTransactionLiteral extends AnnotationLiteral<DefaultTransaction> implements DefaultTransaction
-{
-   private DefaultTransactionLiteral()
-   {
-   }
+public class DefaultTransactionLiteral extends AnnotationLiteral<DefaultTransaction> implements DefaultTransaction {
+    private DefaultTransactionLiteral() {
+    }
 
-   public static final DefaultTransactionLiteral INSTANCE = new DefaultTransactionLiteral();
+    public static final DefaultTransactionLiteral INSTANCE = new DefaultTransactionLiteral();
 
 }

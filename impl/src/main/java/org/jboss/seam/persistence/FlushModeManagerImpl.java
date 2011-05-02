@@ -24,26 +24,22 @@ import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 
 /**
  * Provides for programmatic configuration of the default flush mode.
- * 
+ * <p/>
  * TODO: implement this
- * 
+ *
  * @author Stuart Douglas
- * 
  */
 @ApplicationScoped
 @DefaultBean(FlushModeManager.class)
-public class FlushModeManagerImpl implements Serializable, FlushModeManager
-{
-   private FlushModeType flushModeType = FlushModeType.AUTO;
+public class FlushModeManagerImpl implements Serializable, FlushModeManager {
+    private FlushModeType flushModeType = FlushModeType.AUTO;
 
-   public FlushModeType getFlushModeType()
-   {
-      return flushModeType;
-   }
+    public FlushModeType getFlushModeType() {
+        return flushModeType;
+    }
 
-   public void setFlushModeType(FlushModeType flushModeType)
-   {
-      this.flushModeType = flushModeType;
-   }
+    public void setFlushModeType(FlushModeType flushModeType) {
+        this.flushModeType = flushModeType;
+    }
 
 }

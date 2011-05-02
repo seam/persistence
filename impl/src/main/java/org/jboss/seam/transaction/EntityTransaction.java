@@ -34,149 +34,117 @@ import org.jboss.seam.solder.core.Veto;
 
 /**
  * Support for the JPA EntityTransaction API.
- *
+ * <p/>
  * Adapts JPA transaction management to a Seam UserTransaction interface.For use
  * in non-JTA-capable environments.
  *
  * @author Gavin King
- *
  */
 @RequestScoped
 @DefaultTransaction
 @Veto
-public class EntityTransaction extends AbstractUserTransaction
-{
-   private static final Logger log = Logger.getLogger(EntityTransaction.class);
+public class EntityTransaction extends AbstractUserTransaction {
+    private static final Logger log = Logger.getLogger(EntityTransaction.class);
 
-   @Inject
-   private EntityManager entityManager;
+    @Inject
+    private EntityManager entityManager;
 
-   @Inject
-   private Instance<DefaultPersistenceProvider> persistenceProvider;
+    @Inject
+    private Instance<DefaultPersistenceProvider> persistenceProvider;
 
-   @Inject
-   public void init(Synchronizations sync)
-   {
-      setSynchronizations(sync);
-   }
+    @Inject
+    public void init(Synchronizations sync) {
+        setSynchronizations(sync);
+    }
 
-   public EntityTransaction()
-   {
-   }
+    public EntityTransaction() {
+    }
 
-   private javax.persistence.EntityTransaction getDelegate()
-   {
-      return entityManager.getTransaction();
-   }
+    private javax.persistence.EntityTransaction getDelegate() {
+        return entityManager.getTransaction();
+    }
 
-   public void begin() throws NotSupportedException, SystemException
-   {
-      log.debug("beginning JPA resource-local transaction");
-      // TODO: translate exceptions that occur into the correct JTA exception
-      try
-      {
-         getDelegate().begin();
-         getSynchronizations().afterTransactionBegin();
-      }
-      catch (RuntimeException re)
-      {
-         throw re;
-      }
-   }
+    public void begin() throws NotSupportedException, SystemException {
+        log.debug("beginning JPA resource-local transaction");
+        // TODO: translate exceptions that occur into the correct JTA exception
+        try {
+            getDelegate().begin();
+            getSynchronizations().afterTransactionBegin();
+        } catch (RuntimeException re) {
+            throw re;
+        }
+    }
 
-   public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
-   {
-      log.debug("committing JPA resource-local transaction");
-      javax.persistence.EntityTransaction delegate = getDelegate();
-      boolean success = false;
-      try
-      {
-         if (delegate.getRollbackOnly())
-         {
+    public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
+        log.debug("committing JPA resource-local transaction");
+        javax.persistence.EntityTransaction delegate = getDelegate();
+        boolean success = false;
+        try {
+            if (delegate.getRollbackOnly()) {
+                delegate.rollback();
+                throw new RollbackException();
+            } else {
+                getSynchronizations().beforeTransactionCommit();
+                delegate.commit();
+                success = true;
+            }
+        } finally {
+            getSynchronizations().afterTransactionCompletion(success);
+        }
+    }
+
+    public void rollback() throws IllegalStateException, SecurityException, SystemException {
+        log.debug("rolling back JPA resource-local transaction");
+        // TODO: translate exceptions that occur into the correct JTA exception
+        javax.persistence.EntityTransaction delegate = getDelegate();
+        try {
             delegate.rollback();
-            throw new RollbackException();
-         }
-         else
-         {
-            getSynchronizations().beforeTransactionCommit();
-            delegate.commit();
-            success = true;
-         }
-      }
-      finally
-      {
-         getSynchronizations().afterTransactionCompletion(success);
-      }
-   }
+        } finally {
+            getSynchronizations().afterTransactionCompletion(false);
+        }
+    }
 
-   public void rollback() throws IllegalStateException, SecurityException, SystemException
-   {
-      log.debug("rolling back JPA resource-local transaction");
-      // TODO: translate exceptions that occur into the correct JTA exception
-      javax.persistence.EntityTransaction delegate = getDelegate();
-      try
-      {
-         delegate.rollback();
-      }
-      finally
-      {
-         getSynchronizations().afterTransactionCompletion(false);
-      }
-   }
+    public void setRollbackOnly() throws IllegalStateException, SystemException {
+        log.debug("marking JPA resource-local transaction for rollback");
+        getDelegate().setRollbackOnly();
+    }
 
-   public void setRollbackOnly() throws IllegalStateException, SystemException
-   {
-      log.debug("marking JPA resource-local transaction for rollback");
-      getDelegate().setRollbackOnly();
-   }
+    public int getStatus() throws SystemException {
+        if (getDelegate().isActive()) {
+            if (getDelegate().getRollbackOnly()) {
+                return Status.STATUS_MARKED_ROLLBACK;
+            }
+            return Status.STATUS_ACTIVE;
+        } else {
+            return Status.STATUS_NO_TRANSACTION;
+        }
+    }
 
-   public int getStatus() throws SystemException
-   {
-      if (getDelegate().isActive())
-      {
-         if (getDelegate().getRollbackOnly())
-         {
-            return Status.STATUS_MARKED_ROLLBACK;
-         }
-         return Status.STATUS_ACTIVE;
-      }
-      else
-      {
-         return Status.STATUS_NO_TRANSACTION;
-      }
-   }
+    public void setTransactionTimeout(int timeout) throws SystemException {
+        throw new UnsupportedOperationException();
+    }
 
-   public void setTransactionTimeout(int timeout) throws SystemException
-   {
-      throw new UnsupportedOperationException();
-   }
+    @Override
+    public void registerSynchronization(Synchronization sync) {
+        if (log.isDebugEnabled()) {
+            log.debug("registering synchronization: " + sync);
+        }
+        // try to register the synchronization directly with the
+        // persistence provider, but if this fails, just hold
+        // on to it myself
+        if (!persistenceProvider.get().registerSynchronization(sync, entityManager)) {
+            getSynchronizations().registerSynchronization(sync);
+        }
+    }
 
-   @Override
-   public void registerSynchronization(Synchronization sync)
-   {
-      if (log.isDebugEnabled())
-      {
-         log.debug("registering synchronization: " + sync);
-      }
-      // try to register the synchronization directly with the
-      // persistence provider, but if this fails, just hold
-      // on to it myself
-      if (!persistenceProvider.get().registerSynchronization(sync, entityManager))
-      {
-         getSynchronizations().registerSynchronization(sync);
-      }
-   }
+    @Override
+    public boolean isConversationContextRequired() {
+        return true;
+    }
 
-   @Override
-   public boolean isConversationContextRequired()
-   {
-      return true;
-   }
-
-   @Override
-   public void enlist(EntityManager entityManager)
-   {
-      // no-op
-   }
+    @Override
+    public void enlist(EntityManager entityManager) {
+        // no-op
+    }
 
 }

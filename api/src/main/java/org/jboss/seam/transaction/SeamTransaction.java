@@ -24,30 +24,27 @@ import javax.transaction.SystemException;
  * Extends the standard UserTransaction interface with a couple of helpful
  * methods.
  *
- *
  * @author Gavin King
- *
  */
-public interface SeamTransaction extends javax.transaction.UserTransaction
-{
+public interface SeamTransaction extends javax.transaction.UserTransaction {
 
-   public boolean isActive() throws SystemException;
+    public boolean isActive() throws SystemException;
 
-   public boolean isActiveOrMarkedRollback() throws SystemException;
+    public boolean isActiveOrMarkedRollback() throws SystemException;
 
-   public boolean isRolledBackOrMarkedRollback() throws SystemException;
+    public boolean isRolledBackOrMarkedRollback() throws SystemException;
 
-   public boolean isMarkedRollback() throws SystemException;
+    public boolean isMarkedRollback() throws SystemException;
 
-   public boolean isNoTransaction() throws SystemException;
+    public boolean isNoTransaction() throws SystemException;
 
-   public boolean isRolledBack() throws SystemException;
+    public boolean isRolledBack() throws SystemException;
 
-   public boolean isCommitted() throws SystemException;
+    public boolean isCommitted() throws SystemException;
 
-   public boolean isConversationContextRequired();
+    public boolean isConversationContextRequired();
 
-   public abstract void registerSynchronization(Synchronization sync);
+    public abstract void registerSynchronization(Synchronization sync);
 
-   public void enlist(EntityManager entityManager) throws SystemException;
+    public void enlist(EntityManager entityManager) throws SystemException;
 }

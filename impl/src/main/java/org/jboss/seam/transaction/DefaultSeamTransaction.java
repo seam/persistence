@@ -33,162 +33,122 @@ import org.jboss.seam.persistence.util.NamingUtils;
 import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 
 /**
- *
  * Supports injection of a Seam UserTransaction object that wraps the current
  * JTA transaction or EJB container managed transaction.
  *
  * @author Stuart Douglas
- *
  */
 @DefaultBean(SeamTransaction.class)
 @DefaultTransaction
-public class DefaultSeamTransaction implements SeamTransaction
-{
-   @Inject
-   private Synchronizations synchronizations;
+public class DefaultSeamTransaction implements SeamTransaction {
+    @Inject
+    private Synchronizations synchronizations;
 
-   public void enlist(EntityManager entityManager) throws SystemException
-   {
-      getSeamTransaction().enlist(entityManager);
-   }
+    public void enlist(EntityManager entityManager) throws SystemException {
+        getSeamTransaction().enlist(entityManager);
+    }
 
-   public boolean isActive() throws SystemException
-   {
-      return getSeamTransaction().isActive();
-   }
+    public boolean isActive() throws SystemException {
+        return getSeamTransaction().isActive();
+    }
 
-   public boolean isActiveOrMarkedRollback() throws SystemException
-   {
-      return getSeamTransaction().isActiveOrMarkedRollback();
-   }
+    public boolean isActiveOrMarkedRollback() throws SystemException {
+        return getSeamTransaction().isActiveOrMarkedRollback();
+    }
 
-   public boolean isCommitted() throws SystemException
-   {
-      return getSeamTransaction().isCommitted();
-   }
+    public boolean isCommitted() throws SystemException {
+        return getSeamTransaction().isCommitted();
+    }
 
-   public boolean isConversationContextRequired()
-   {
-      return getSeamTransaction().isConversationContextRequired();
-   }
+    public boolean isConversationContextRequired() {
+        return getSeamTransaction().isConversationContextRequired();
+    }
 
-   public boolean isMarkedRollback() throws SystemException
-   {
-      return getSeamTransaction().isMarkedRollback();
-   }
+    public boolean isMarkedRollback() throws SystemException {
+        return getSeamTransaction().isMarkedRollback();
+    }
 
-   public boolean isNoTransaction() throws SystemException
-   {
-      return getSeamTransaction().isNoTransaction();
-   }
+    public boolean isNoTransaction() throws SystemException {
+        return getSeamTransaction().isNoTransaction();
+    }
 
-   public boolean isRolledBack() throws SystemException
-   {
-      return getSeamTransaction().isRolledBack();
-   }
+    public boolean isRolledBack() throws SystemException {
+        return getSeamTransaction().isRolledBack();
+    }
 
-   public boolean isRolledBackOrMarkedRollback() throws SystemException
-   {
-      return getSeamTransaction().isRolledBackOrMarkedRollback();
-   }
+    public boolean isRolledBackOrMarkedRollback() throws SystemException {
+        return getSeamTransaction().isRolledBackOrMarkedRollback();
+    }
 
-   public void registerSynchronization(Synchronization sync)
-   {
-      getSeamTransaction().registerSynchronization(sync);
-   }
+    public void registerSynchronization(Synchronization sync) {
+        getSeamTransaction().registerSynchronization(sync);
+    }
 
-   public void begin() throws NotSupportedException, SystemException
-   {
-      getSeamTransaction().begin();
-   }
+    public void begin() throws NotSupportedException, SystemException {
+        getSeamTransaction().begin();
+    }
 
-   public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
-   {
-      getSeamTransaction().commit();
-   }
+    public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
+        getSeamTransaction().commit();
+    }
 
-   public int getStatus() throws SystemException
-   {
-      return getSeamTransaction().getStatus();
-   }
+    public int getStatus() throws SystemException {
+        return getSeamTransaction().getStatus();
+    }
 
-   public void rollback() throws IllegalStateException, SecurityException, SystemException
-   {
-      getSeamTransaction().rollback();
-   }
+    public void rollback() throws IllegalStateException, SecurityException, SystemException {
+        getSeamTransaction().rollback();
+    }
 
-   public void setRollbackOnly() throws IllegalStateException, SystemException
-   {
-      getSeamTransaction().setRollbackOnly();
-   }
+    public void setRollbackOnly() throws IllegalStateException, SystemException {
+        getSeamTransaction().setRollbackOnly();
+    }
 
-   public void setTransactionTimeout(int seconds) throws SystemException
-   {
-      getSeamTransaction().setTransactionTimeout(seconds);
-   }
+    public void setTransactionTimeout(int seconds) throws SystemException {
+        getSeamTransaction().setTransactionTimeout(seconds);
+    }
 
-   protected SeamTransaction getSeamTransaction()
-   {
-      try
-      {
-         return createUTTransaction();
-      }
-      catch (NameNotFoundException nnfe)
-      {
-         try
-         {
-            return createCMTTransaction();
-         }
-         catch (NameNotFoundException nnfe2)
-         {
-            return createNoTransaction();
-         }
-         catch (NamingException e)
-         {
+    protected SeamTransaction getSeamTransaction() {
+        try {
+            return createUTTransaction();
+        } catch (NameNotFoundException nnfe) {
+            try {
+                return createCMTTransaction();
+            } catch (NameNotFoundException nnfe2) {
+                return createNoTransaction();
+            } catch (NamingException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (NamingException e) {
             throw new RuntimeException(e);
-         }
-      }
-      catch (NamingException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
+        }
+    }
 
-   protected SeamTransaction createNoTransaction()
-   {
-      return new NoTransaction();
-   }
+    protected SeamTransaction createNoTransaction() {
+        return new NoTransaction();
+    }
 
-   protected SeamTransaction createCMTTransaction() throws NamingException
-   {
-      return new CMTTransaction(EJBContextUtils.getEJBContext(), synchronizations);
-   }
+    protected SeamTransaction createCMTTransaction() throws NamingException {
+        return new CMTTransaction(EJBContextUtils.getEJBContext(), synchronizations);
+    }
 
-   protected SeamTransaction createUTTransaction() throws NamingException
-   {
-      return new UTTransaction(getUserTransaction(), synchronizations);
-   }
+    protected SeamTransaction createUTTransaction() throws NamingException {
+        return new UTTransaction(getUserTransaction(), synchronizations);
+    }
 
-   protected javax.transaction.UserTransaction getUserTransaction() throws NamingException
-   {
-      InitialContext context = NamingUtils.getInitialContext();
-      try
-      {
-         return (javax.transaction.UserTransaction) context.lookup("java:comp/UserTransaction");
-      }
-      catch (NameNotFoundException nnfe)
-      {
-         try
-         {
-            // Embedded JBoss has no java:comp/UserTransaction
-            javax.transaction.UserTransaction ut = (javax.transaction.UserTransaction) context.lookup("UserTransaction");
-            ut.getStatus(); // for glassfish, which can return an unusable UT
-            return ut;
-         }
-         catch (Exception e)
-         {
-            throw nnfe;
-         }
-      }
-   }
+    protected javax.transaction.UserTransaction getUserTransaction() throws NamingException {
+        InitialContext context = NamingUtils.getInitialContext();
+        try {
+            return (javax.transaction.UserTransaction) context.lookup("java:comp/UserTransaction");
+        } catch (NameNotFoundException nnfe) {
+            try {
+                // Embedded JBoss has no java:comp/UserTransaction
+                javax.transaction.UserTransaction ut = (javax.transaction.UserTransaction) context.lookup("UserTransaction");
+                ut.getStatus(); // for glassfish, which can return an unusable UT
+                return ut;
+            } catch (Exception e) {
+                throw nnfe;
+            }
+        }
+    }
 }

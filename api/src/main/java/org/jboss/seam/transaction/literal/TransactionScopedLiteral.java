@@ -20,12 +20,10 @@ import javax.enterprise.util.AnnotationLiteral;
 
 import org.jboss.seam.transaction.TransactionScoped;
 
-public class TransactionScopedLiteral extends AnnotationLiteral<TransactionScoped> implements TransactionScoped
-{
-   private TransactionScopedLiteral()
-   {
-   }
+public class TransactionScopedLiteral extends AnnotationLiteral<TransactionScoped> implements TransactionScoped {
+    private TransactionScopedLiteral() {
+    }
 
-   public static TransactionScopedLiteral INSTANCE = new TransactionScopedLiteral();
+    public static TransactionScopedLiteral INSTANCE = new TransactionScopedLiteral();
 
 }

@@ -28,13 +28,11 @@ import javax.enterprise.context.NormalScope;
  * CDI Scope that spans the current transaction
  *
  * @author Stuart Douglas
- *
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @NormalScope(passivating = false)
-public @interface TransactionScoped
-{
+public @interface TransactionScoped {
 
 }

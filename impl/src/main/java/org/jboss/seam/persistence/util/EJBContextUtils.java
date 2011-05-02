@@ -23,34 +23,25 @@ import javax.naming.NamingException;
 
 /**
  * utility class to look up the EJBContext
- * 
- * 
  */
-public class EJBContextUtils
-{
-   public static String ejbContextName = "java:comp.ejb3/EJBContext";
-   public static final String STANDARD_EJB_CONTEXT_NAME = "java:comp/EJBContext";
+public class EJBContextUtils {
+    public static String ejbContextName = "java:comp.ejb3/EJBContext";
+    public static final String STANDARD_EJB_CONTEXT_NAME = "java:comp/EJBContext";
 
-   public static EJBContext getEJBContext() throws NamingException
-   {
-      try
-      {
-         return (EJBContext) NamingUtils.getInitialContext().lookup(ejbContextName);
-      }
-      catch (NameNotFoundException nnfe)
-      {
-         return (EJBContext) NamingUtils.getInitialContext().lookup(STANDARD_EJB_CONTEXT_NAME);
-      }
-   }
+    public static EJBContext getEJBContext() throws NamingException {
+        try {
+            return (EJBContext) NamingUtils.getInitialContext().lookup(ejbContextName);
+        } catch (NameNotFoundException nnfe) {
+            return (EJBContext) NamingUtils.getInitialContext().lookup(STANDARD_EJB_CONTEXT_NAME);
+        }
+    }
 
-   protected static String getEjbContextName()
-   {
-      return ejbContextName;
-   }
+    protected static String getEjbContextName() {
+        return ejbContextName;
+    }
 
-   protected static void setEjbContextName(String ejbContextName)
-   {
-      EJBContextUtils.ejbContextName = ejbContextName;
-   }
+    protected static void setEjbContextName(String ejbContextName) {
+        EJBContextUtils.ejbContextName = ejbContextName;
+    }
 
 }

@@ -53,206 +53,165 @@ import org.jboss.seam.solder.literal.DefaultLiteral;
  * the call through to the delegate
  *
  * @author Stuart Douglas
- *
  */
-public class HibernateManagedSessionProxyHandler implements InvocationHandler, Serializable, Synchronization
-{
-   private static final long serialVersionUID = -6539267789786229774L;
+public class HibernateManagedSessionProxyHandler implements InvocationHandler, Serializable, Synchronization {
+    private static final long serialVersionUID = -6539267789786229774L;
 
-   private final Session delegate;
+    private final Session delegate;
 
-   private final Instance<SeamTransaction> userTransactionInstance;
+    private final Instance<SeamTransaction> userTransactionInstance;
 
-   private transient boolean synchronizationRegistered;
+    private transient boolean synchronizationRegistered;
 
-   private PersistenceContexts persistenceContexts;
+    private PersistenceContexts persistenceContexts;
 
-   private final Set<Annotation> qualifiers;
+    private final Set<Annotation> qualifiers;
 
-   protected final BeanManager manager;
+    protected final BeanManager manager;
 
-   private final HibernatePersistenceProvider provider;
+    private final HibernatePersistenceProvider provider;
 
-   private boolean persistenceContextsTouched = false;
+    private boolean persistenceContextsTouched = false;
 
-   private boolean closeOnTransactionCommit = false;
+    private boolean closeOnTransactionCommit = false;
 
-   static final Logger log = Logger.getLogger(HibernateManagedSessionProxyHandler.class);
+    static final Logger log = Logger.getLogger(HibernateManagedSessionProxyHandler.class);
 
-   private final Instance<Expressions> expressionsInstance;
+    private final Instance<Expressions> expressionsInstance;
 
-   public HibernateManagedSessionProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, HibernatePersistenceProvider provider, BeanManager manager)
-   {
-      this.qualifiers = qualifiers;
-      this.provider = provider;
-      this.delegate = delegate;
-      this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
-      this.expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
-      this.manager = manager;
-   }
+    public HibernateManagedSessionProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, HibernatePersistenceProvider provider, BeanManager manager) {
+        this.qualifiers = qualifiers;
+        this.provider = provider;
+        this.delegate = delegate;
+        this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
+        this.expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
+        this.manager = manager;
+    }
 
-   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-   {
-      touch((ManagedPersistenceContext) proxy);
-      if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class))
-      {
-         changeFushMode((FlushModeType) args[0]);
-         return null;
-      }
-      if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return EntityManager.class;
-      }
-      if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return Collections.unmodifiableSet(qualifiers);
-      }
-      if ("getProvider".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         return provider;
-      }
-      if ("closeAfterTransaction".equals(method.getName()) && method.getParameterTypes().length == 0)
-      {
-         closeAfterTransaction();
-         return null;
-      }
-      if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class))
-      {
-         return handleCreateQueryWithString(method, args);
-      }
-      if (!"setFlushMode".equals(method.getName()) && !"getTransaction".equals(method.getName()))
-      {
-         if (!synchronizationRegistered)
-         {
-            joinTransaction();
-         }
-      }
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        touch((ManagedPersistenceContext) proxy);
+        if ("changeFlushMode".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(FlushModeType.class)) {
+            changeFushMode((FlushModeType) args[0]);
+            return null;
+        }
+        if ("getBeanType".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return EntityManager.class;
+        }
+        if ("getQualifiers".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return Collections.unmodifiableSet(qualifiers);
+        }
+        if ("getProvider".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            return provider;
+        }
+        if ("closeAfterTransaction".equals(method.getName()) && method.getParameterTypes().length == 0) {
+            closeAfterTransaction();
+            return null;
+        }
+        if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class)) {
+            return handleCreateQueryWithString(method, args);
+        }
+        if (!"setFlushMode".equals(method.getName()) && !"getTransaction".equals(method.getName())) {
+            if (!synchronizationRegistered) {
+                joinTransaction();
+            }
+        }
 
-      return method.invoke(delegate, args);
-   }
+        return method.invoke(delegate, args);
+    }
 
-   protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable
-   {
-      if (args[0] == null)
-      {
-         return method.invoke(delegate, args);
-      }
-      String ejbql = (String) args[0];
-      if (ejbql.indexOf('#') > 0)
-      {
-         QueryParser qp = new QueryParser(expressionsInstance.get(), ejbql);
-         Object[] newArgs = args.clone();
-         newArgs[0] = qp.getEjbql();
-         Query query = (Query) method.invoke(delegate, newArgs);
-         for (int i = 0; i < qp.getParameterValues().size(); i++)
-         {
-            query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
-         }
-         return query;
-      }
-      else
-      {
-         return method.invoke(delegate, args);
-      }
-   }
+    protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable {
+        if (args[0] == null) {
+            return method.invoke(delegate, args);
+        }
+        String ejbql = (String) args[0];
+        if (ejbql.indexOf('#') > 0) {
+            QueryParser qp = new QueryParser(expressionsInstance.get(), ejbql);
+            Object[] newArgs = args.clone();
+            newArgs[0] = qp.getEjbql();
+            Query query = (Query) method.invoke(delegate, newArgs);
+            for (int i = 0; i < qp.getParameterValues().size(); i++) {
+                query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
+            }
+            return query;
+        } else {
+            return method.invoke(delegate, args);
+        }
+    }
 
-   private void joinTransaction() throws SystemException
-   {
-      SeamTransaction transaction = userTransactionInstance.get();
-      if (transaction.isActive())
-      {
-         delegate.isOpen();
-         try
-         {
-            transaction.registerSynchronization(this);
-            synchronizationRegistered = true;
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(e);
-         }
-      }
-   }
+    private void joinTransaction() throws SystemException {
+        SeamTransaction transaction = userTransactionInstance.get();
+        if (transaction.isActive()) {
+            delegate.isOpen();
+            try {
+                transaction.registerSynchronization(this);
+                synchronizationRegistered = true;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
-   private void closeAfterTransaction() throws SystemException
-   {
-      SeamTransaction transaction = userTransactionInstance.get();
-      if (transaction.isActive())
-      {
-         closeOnTransactionCommit = true;
-      }
-      else
-      {
-         if (delegate.isOpen())
-         {
+    private void closeAfterTransaction() throws SystemException {
+        SeamTransaction transaction = userTransactionInstance.get();
+        if (transaction.isActive()) {
+            closeOnTransactionCommit = true;
+        } else {
+            if (delegate.isOpen()) {
+                delegate.close();
+            }
+        }
+    }
+
+    private void changeFushMode(FlushModeType flushModeType) {
+        switch (flushModeType) {
+            case AUTO:
+                delegate.setFlushMode(FlushMode.AUTO);
+                break;
+            case MANUAL:
+                delegate.setFlushMode(FlushMode.MANUAL);
+                break;
+            case COMMIT:
+                delegate.setFlushMode(FlushMode.COMMIT);
+                break;
+            default:
+                throw new RuntimeException("Unkown flush mode: " + flushModeType);
+        }
+    }
+
+    void touch(ManagedPersistenceContext delegate) {
+        if (!persistenceContextsTouched) {
+            try {
+                // we need to do this first to prevent an infinite loop
+                persistenceContextsTouched = true;
+                getPersistenceContexts().touch(delegate);
+            } catch (ContextNotActiveException e) {
+                persistenceContextsTouched = false;
+                log.debug("Not touching pc " + this + "as conversation scope not active");
+            }
+        }
+    }
+
+    public void afterCompletion(int status) {
+        synchronizationRegistered = false;
+        if (closeOnTransactionCommit && delegate.isOpen()) {
             delegate.close();
-         }
-      }
-   }
+        }
+    }
 
-   private void changeFushMode(FlushModeType flushModeType)
-   {
-      switch (flushModeType)
-      {
-      case AUTO:
-         delegate.setFlushMode(FlushMode.AUTO);
-         break;
-      case MANUAL:
-         delegate.setFlushMode(FlushMode.MANUAL);
-         break;
-      case COMMIT:
-         delegate.setFlushMode(FlushMode.COMMIT);
-         break;
-      default:
-         throw new RuntimeException("Unkown flush mode: " + flushModeType);
-      }
-   }
+    public void beforeCompletion() {
 
-   void touch(ManagedPersistenceContext delegate)
-   {
-      if (!persistenceContextsTouched)
-      {
-         try
-         {
-            // we need to do this first to prevent an infinite loop
-            persistenceContextsTouched = true;
-            getPersistenceContexts().touch(delegate);
-         }
-         catch (ContextNotActiveException e)
-         {
-            persistenceContextsTouched = false;
-            log.debug("Not touching pc " + this + "as conversation scope not active");
-         }
-      }
-   }
+    }
 
-   public void afterCompletion(int status)
-   {
-      synchronizationRegistered = false;
-      if (closeOnTransactionCommit && delegate.isOpen())
-      {
-         delegate.close();
-      }
-   }
-
-   public void beforeCompletion()
-   {
-
-   }
-
-   private PersistenceContexts getPersistenceContexts()
-   {
-      if (persistenceContexts == null)
-      {
-         Bean<PersistenceContexts> bean = (Bean) manager.resolve(manager.getBeans(PersistenceContexts.class, DefaultLiteral.INSTANCE));
-         if (bean == null)
-         {
-            throw new RuntimeException("Could not find PersistenceContexts bean");
-         }
-         CreationalContext<PersistenceContexts> ctx = manager.createCreationalContext(bean);
-         persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
-      }
-      return persistenceContexts;
-   }
+    private PersistenceContexts getPersistenceContexts() {
+        if (persistenceContexts == null) {
+            Bean<PersistenceContexts> bean = (Bean) manager.resolve(manager.getBeans(PersistenceContexts.class, DefaultLiteral.INSTANCE));
+            if (bean == null) {
+                throw new RuntimeException("Could not find PersistenceContexts bean");
+            }
+            CreationalContext<PersistenceContexts> ctx = manager.createCreationalContext(bean);
+            persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
+        }
+        return persistenceContexts;
+    }
 
 }

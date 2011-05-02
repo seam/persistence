@@ -22,10 +22,8 @@ import javax.ejb.Local;
  * Local interface for EjbTransaction
  *
  * @author Gavin King
- *
  */
 @Local
-public interface LocalEjbSynchronizations extends Synchronizations
-{
-   public void destroy();
+public interface LocalEjbSynchronizations extends Synchronizations {
+    public void destroy();
 }

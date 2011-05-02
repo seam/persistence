@@ -19,34 +19,23 @@ package org.jboss.seam.persistence.util;
 
 /**
  * Provides information about the runtime environment
- * 
+ *
  * @author Stuart Douglas
- * 
  */
-public final class EnvironmentUtils
-{
-  public static boolean isEEEnvironment()
-  {
-     boolean eeEnv = true;
-     try
-     {
-        if (Thread.currentThread().getContextClassLoader() != null)
-        {
-           Thread.currentThread().getContextClassLoader().loadClass("javax.ejb.Stateless");
+public final class EnvironmentUtils {
+    public static boolean isEEEnvironment() {
+        boolean eeEnv = true;
+        try {
+            if (Thread.currentThread().getContextClassLoader() != null) {
+                Thread.currentThread().getContextClassLoader().loadClass("javax.ejb.Stateless");
+            } else {
+                Class.forName("javax.ejb.Stateless");
+            }
+        } catch (ClassNotFoundException e) {
+            eeEnv = false;
+        } catch (NoClassDefFoundError e) {
+            eeEnv = false;
         }
-        else
-        {
-           Class.forName("javax.ejb.Stateless");
-        }
-     }
-     catch (ClassNotFoundException e)
-     {
-        eeEnv = false;
-     }
-     catch (NoClassDefFoundError e)
-     {
-        eeEnv = false;
-     }
-     return eeEnv;
-  }
+        return eeEnv;
+    }
 }

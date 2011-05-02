@@ -41,7 +41,7 @@ import org.jboss.seam.solder.core.Veto;
  * <p>
  * <strong>Hotel</strong> is the model/entity class that represents a hotel.
  * </p>
- * 
+ *
  * @author Gavin King
  * @author Dan Allen
  */
@@ -49,183 +49,156 @@ import org.jboss.seam.solder.core.Veto;
 @Table(name = "hotel")
 @Indexed
 @Veto
-public class IndexedHotel implements Serializable
-{
-   private Long id;
-   private String name;
-   private String address;
-   private String city;
-   private String state;
-   private String zip;
-   private String country;
-   private Integer stars;
-   private BigDecimal price;
+public class IndexedHotel implements Serializable {
+    private Long id;
+    private String name;
+    private String address;
+    private String city;
+    private String state;
+    private String zip;
+    private String country;
+    private Integer stars;
+    private BigDecimal price;
 
-   @Inject
-   private HelloService helloService;
+    @Inject
+    private HelloService helloService;
 
-   private boolean initalizerCalled = false;
+    private boolean initalizerCalled = false;
 
-   public IndexedHotel()
-   {
-   }
+    public IndexedHotel() {
+    }
 
-   @Inject
-   public void create()
-   {
-      initalizerCalled = true;
-   }
+    @Inject
+    public void create() {
+        initalizerCalled = true;
+    }
 
-   public String sayHello()
-   {
-      return helloService.sayHello();
-   }
+    public String sayHello() {
+        return helloService.sayHello();
+    }
 
-   public IndexedHotel(final String name, final String address, final String city, final String state, final String zip, final String country)
-   {
-      this.name = name;
-      this.address = address;
-      this.city = city;
-      this.state = state;
-      this.zip = zip;
-      this.country = country;
-   }
+    public IndexedHotel(final String name, final String address, final String city, final String state, final String zip, final String country) {
+        this.name = name;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.country = country;
+    }
 
-   public IndexedHotel(final int price, final int stars, final String name, final String address, final String city, final String state, final String zip, final String country)
-   {
-      this.price = new BigDecimal(price);
-      this.stars = stars;
-      this.name = name;
-      this.address = address;
-      this.city = city;
-      this.state = state;
-      this.zip = zip;
-      this.country = country;
-   }
+    public IndexedHotel(final int price, final int stars, final String name, final String address, final String city, final String state, final String zip, final String country) {
+        this.price = new BigDecimal(price);
+        this.stars = stars;
+        this.name = name;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.country = country;
+    }
 
-   @Id
-   @GeneratedValue
-   public Long getId()
-   {
-      return id;
-   }
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return id;
+    }
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-   @Size(max = 50)
-   @NotNull
-   @Field(index = Index.TOKENIZED, store = Store.NO)
-   public String getName()
-   {
-      return name;
-   }
+    @Size(max = 50)
+    @NotNull
+    @Field(index = Index.TOKENIZED, store = Store.NO)
+    public String getName() {
+        return name;
+    }
 
-   public void setName(final String name)
-   {
-      this.name = name;
-   }
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-   @Size(max = 100)
-   @NotNull
-   public String getAddress()
-   {
-      return address;
-   }
+    @Size(max = 100)
+    @NotNull
+    public String getAddress() {
+        return address;
+    }
 
-   public void setAddress(final String address)
-   {
-      this.address = address;
-   }
+    public void setAddress(final String address) {
+        this.address = address;
+    }
 
-   @Size(max = 40)
-   @NotNull
-   public String getCity()
-   {
-      return city;
-   }
+    @Size(max = 40)
+    @NotNull
+    public String getCity() {
+        return city;
+    }
 
-   public void setCity(final String city)
-   {
-      this.city = city;
-   }
+    public void setCity(final String city) {
+        this.city = city;
+    }
 
-   @Size(min = 3, max = 6)
-   @NotNull
-   public String getZip()
-   {
-      return zip;
-   }
+    @Size(min = 3, max = 6)
+    @NotNull
+    public String getZip() {
+        return zip;
+    }
 
-   public void setZip(final String zip)
-   {
-      this.zip = zip;
-   }
+    public void setZip(final String zip) {
+        this.zip = zip;
+    }
 
-   @Size(min = 2, max = 10)
-   public String getState()
-   {
-      return state;
-   }
+    @Size(min = 2, max = 10)
+    public String getState() {
+        return state;
+    }
 
-   public void setState(final String state)
-   {
-      this.state = state;
-   }
+    public void setState(final String state) {
+        this.state = state;
+    }
 
-   @Size(min = 2, max = 40)
-   @NotNull
-   public String getCountry()
-   {
-      return country;
-   }
+    @Size(min = 2, max = 40)
+    @NotNull
+    public String getCountry() {
+        return country;
+    }
 
-   public void setCountry(final String country)
-   {
-      this.country = country;
-   }
+    public void setCountry(final String country) {
+        this.country = country;
+    }
 
-   @Min(1)
-   @Max(5)
-   public Integer getStars()
-   {
-      return stars;
-   }
+    @Min(1)
+    @Max(5)
+    public Integer getStars() {
+        return stars;
+    }
 
-   public void setStars(final Integer stars)
-   {
-      this.stars = stars;
-   }
+    public void setStars(final Integer stars) {
+        this.stars = stars;
+    }
 
-   @Column(precision = 6, scale = 2)
-   public BigDecimal getPrice()
-   {
-      return price;
-   }
+    @Column(precision = 6, scale = 2)
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-   public void setPrice(final BigDecimal price)
-   {
-      this.price = price;
-   }
+    public void setPrice(final BigDecimal price) {
+        this.price = price;
+    }
 
-   @Transient
-   public String getLocation()
-   {
-      return city + ", " + state + ", " + country;
-   }
+    @Transient
+    public String getLocation() {
+        return city + ", " + state + ", " + country;
+    }
 
-   @Override
-   public String toString()
-   {
-      return "Hotel(" + name + "," + address + "," + city + "," + zip + ")";
-   }
+    @Override
+    public String toString() {
+        return "Hotel(" + name + "," + address + "," + city + "," + zip + ")";
+    }
 
-   @Transient
-   public boolean isInitalizerCalled()
-   {
-      return initalizerCalled;
-   }
+    @Transient
+    public boolean isInitalizerCalled() {
+        return initalizerCalled;
+    }
 
 }

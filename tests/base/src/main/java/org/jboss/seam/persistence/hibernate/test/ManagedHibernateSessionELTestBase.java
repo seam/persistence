@@ -36,42 +36,39 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedHibernateSessionELTestBase
-{
+public class ManagedHibernateSessionELTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { ManagedHibernateSessionELTestBase.class, Hotel.class, ManagedHibernateSessionProvider.class, HotelNameProducer.class, HelloService.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{ManagedHibernateSessionELTestBase.class, Hotel.class, ManagedHibernateSessionProvider.class, HotelNameProducer.class, HelloService.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @Inject
-   Session session;
+    @Inject
+    Session session;
 
-   @Test
-   public void testELInInquery() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      transaction.begin();
-      Hotel h = new Hotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      session.persist(h);
-      session.flush();
-      transaction.commit();
+    @Test
+    public void testELInInquery() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        transaction.begin();
+        Hotel h = new Hotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        session.persist(h);
+        session.flush();
+        transaction.commit();
 
-      transaction.begin();
-      h = new Hotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
-      session.persist(h);
-      session.flush();
-      transaction.commit();
+        transaction.begin();
+        h = new Hotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
+        session.persist(h);
+        session.flush();
+        transaction.commit();
 
-      transaction.begin();
-      Hotel hilton = (Hotel) session.createQuery("select h from Hotel h where h.name=#{hotelName}").uniqueResult();
-      Assert.assertTrue(hilton.getName().equals("Hilton"));
-      Assert.assertTrue(hilton.getAddress().equals("Fake St"));
-      transaction.commit();
+        transaction.begin();
+        Hotel hilton = (Hotel) session.createQuery("select h from Hotel h where h.name=#{hotelName}").uniqueResult();
+        Assert.assertTrue(hilton.getName().equals("Hilton"));
+        Assert.assertTrue(hilton.getAddress().equals("Fake St"));
+        transaction.commit();
 
-   }
+    }
 
 }

@@ -2,95 +2,101 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
 <chapter id="persistence">
-  <title>Seam Persistence Reference</title>
+    <title>Seam Persistence Reference</title>
 
-   <para>
-      Seam provides extensive support for the two most popular persistence
-      architectures for Java: Hibernate3, and the Java Persistence API
-      introduced with EJB 3.0. Seam's unique state-management architecture
-      allows the most sophisticated ORM integration of any web application
-      framework.
-   </para>
+    <para>
+        Seam provides extensive support for the two most popular persistence
+        architectures for Java: Hibernate3, and the Java Persistence API
+        introduced with EJB 3.0. Seam's unique state-management architecture
+        allows the most sophisticated ORM integration of any web application
+        framework.
+    </para>
 
-   <section>
-      <title>Introduction</title>
+    <section>
+        <title>Introduction</title>
 
-      <para>
-         Seam grew out of the frustration of the Hibernate team with the
-         statelessness typical of the previous generation of Java application
-         architectures. The state management architecture of Seam was originally
-         designed to solve problems relating to persistence &#8212; in particular
-         problems associated with <emphasis>optimistic transaction processing</emphasis>.
-         Scalable online applications always use optimistic transactions. An atomic
-         (database/JTA) level transaction should not span a user interaction unless
-         the application is designed to support only a very small number of concurrent
-         clients. But almost all interesting work involves first displaying data
-         to a user, and then, slightly later, updating the same data. So Hibernate was
-         designed to support the idea of a persistence context which spanned an
-         optimistic transaction.
-      </para>
+        <para>
+            Seam grew out of the frustration of the Hibernate team with the
+            statelessness typical of the previous generation of Java application
+            architectures. The state management architecture of Seam was originally
+            designed to solve problems relating to persistence &#8212; in particular
+            problems associated with<emphasis>optimistic transaction processing</emphasis>.
+            Scalable online applications always use optimistic transactions. An atomic
+            (database/JTA) level transaction should not span a user interaction unless
+            the application is designed to support only a very small number of concurrent
+            clients. But almost all interesting work involves first displaying data
+            to a user, and then, slightly later, updating the same data. So Hibernate was
+            designed to support the idea of a persistence context which spanned an
+            optimistic transaction.
+        </para>
 
-      <para>
-           Unfortunately, the so-called "stateless" architectures that preceded Seam and
-           EJB 3.0 had no construct for representing an optimistic transaction. So, instead,
-           these architectures provided persistence contexts scoped to the atomic
-           transaction. Of course, this resulted in many problems for users, and is the
-           cause of the number one user complaint about Hibernate: the dreaded
-           <literal>LazyInitializationException</literal>. What we need is a construct
-           for representing an optimistic transaction in the application tier.
-      </para>
+        <para>
+            Unfortunately, the so-called "stateless" architectures that preceded Seam and
+            EJB 3.0 had no construct for representing an optimistic transaction. So, instead,
+            these architectures provided persistence contexts scoped to the atomic
+            transaction. Of course, this resulted in many problems for users, and is the
+            cause of the number one user complaint about Hibernate: the dreaded
+            <literal>LazyInitializationException</literal>. What we need is a construct
+            for representing an optimistic transaction in the application tier.
+        </para>
 
-      <para>
-         EJB 3.0 recognizes this problem, and introduces the idea of a stateful
-         component (a stateful session bean) with an <emphasis>extended persistence
-         context</emphasis> scoped to the lifetime of the component. This is a
-         partial solution to the problem (and is a useful construct in and of
-         itself) however there are two problems:
-      </para>
+        <para>
+            EJB 3.0 recognizes this problem, and introduces the idea of a stateful
+            component (a stateful session bean) with an
+            <emphasis>extended persistence
+                context
+            </emphasis>
+            scoped to the lifetime of the component. This is a
+            partial solution to the problem (and is a useful construct in and of
+            itself) however there are two problems:
+        </para>
 
-      <itemizedlist>
-          <listitem>
-              <para>
-                  The lifecycle of the stateful session bean must be managed manually
-                  via code in the web tier (it turns out that this is a subtle problem
-                  and much more difficult in practice than it sounds).
-              </para>
-          </listitem>
-          <listitem>
-              <para>
-                  Propagation of the persistence context between stateful components
-                  in the same optimistic transaction is possible, but tricky.
-              </para>
-          </listitem>
-      </itemizedlist>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    The lifecycle of the stateful session bean must be managed manually
+                    via code in the web tier (it turns out that this is a subtle problem
+                    and much more difficult in practice than it sounds).
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Propagation of the persistence context between stateful components
+                    in the same optimistic transaction is possible, but tricky.
+                </para>
+            </listitem>
+        </itemizedlist>
 
-      <para>
-          Seam solves the first problem by providing conversations, and stateful
-          session bean components scoped to the conversation. (Most conversations
-          actually represent optimistic transactions in the data layer.) This is
-          sufficient for many simple applications (such as the Seam booking
-          demo) where persistence context propagation is not needed. For more
-          complex applications, with many loosly-interacting components in each
-          conversation, propagation of the persistence context across components
-          becomes an important issue. So Seam extends the persistence context
-          management model of EJB 3.0, to provide conversation-scoped extended
-          persistence contexts.
-      </para>
+        <para>
+            Seam solves the first problem by providing conversations, and stateful
+            session bean components scoped to the conversation. (Most conversations
+            actually represent optimistic transactions in the data layer.) This is
+            sufficient for many simple applications (such as the Seam booking
+            demo) where persistence context propagation is not needed. For more
+            complex applications, with many loosly-interacting components in each
+            conversation, propagation of the persistence context across components
+            becomes an important issue. So Seam extends the persistence context
+            management model of EJB 3.0, to provide conversation-scoped extended
+            persistence contexts.
+        </para>
 
-   </section>
+    </section>
 
-   <section>
-      <title>Getting Started</title>
+    <section>
+        <title>Getting Started</title>
 
-      <para>
-         To get started with Seam persistence you need to add the
-         <literal>seam-persistence.jar </literal> and the
-         <literal>seam-solder.jar</literal> to you deployment. If you are in
-         a java SE environment you will probably also require
-         <literal>seam-xml.jar</literal> as well for configuration purposes. The
-         relevant maven configuration is as follows:
-      </para>
-<programlisting role="XML"><![CDATA[<dependency>
+        <para>
+            To get started with Seam persistence you need to add the
+            <literal>seam-persistence.jar</literal>
+            and the
+            <literal>seam-solder.jar</literal>
+            to you deployment. If you are in
+            a java SE environment you will probably also require
+            <literal>seam-xml.jar</literal>
+            as well for configuration purposes. The
+            relevant maven configuration is as follows:
+        </para>
+        <programlisting role="XML"><![CDATA[<dependency>
   <groupId>org.jboss.seam.persistence</groupId>
   <artifactId>seam-persistence-api</artifactId>
   <version>${seam.persistence.version}</version>
@@ -115,35 +121,36 @@
 </dependency>
 ]]></programlisting>
 
-      <para>
-         You will also need to have a JPA provider on the classpath. If you are
-         using java EE this is taken care of for you. If not, we recommend hibernate.
-      </para>
+        <para>
+            You will also need to have a JPA provider on the classpath. If you are
+            using java EE this is taken care of for you. If not, we recommend hibernate.
+        </para>
 
-<programlisting role="XML"><![CDATA[<dependency>
+        <programlisting role="XML"><![CDATA[<dependency>
   <groupId>org.hibernate</groupId>
   <artifactId>hibernate-core</artifactId>
   <version>3.5.1-Final</version>
 </dependency>]]></programlisting>
-   </section>
+    </section>
 
-   <section id="persistence.transactions" >
-      <title>Transaction Management</title>
+    <section id="persistence.transactions">
+        <title>Transaction Management</title>
 
-      <para>
-         Unlike EJB session beans CDI beans are not transactional by default. Seam
-         brings declarative transaction management to CDI beans by enabling them to
-         use <code>@TransactionAttribute</code>. Seam also provides the
-         <code>@Transactional</code> annotation, for environments where java EE
-         APIs are not present.
-      </para>
-      <section>
-         <title>Configuration</title>
-         <para>
-            In order to enable declarative transaction management for managed beans
-            you need to list the transaction interceptor in beans.xml:
-         </para>
-         <programlisting role="XML"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+        <para>
+            Unlike EJB session beans CDI beans are not transactional by default. Seam
+            brings declarative transaction management to CDI beans by enabling them to
+            use<code>@TransactionAttribute</code>. Seam also provides the
+            <code>@Transactional</code>
+            annotation, for environments where java EE
+            APIs are not present.
+        </para>
+        <section>
+            <title>Configuration</title>
+            <para>
+                In order to enable declarative transaction management for managed beans
+                you need to list the transaction interceptor in beans.xml:
+            </para>
+            <programlisting role="XML"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://java.sun.com/xml/ns/javaee"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="
@@ -153,16 +160,16 @@
       <class>org.jboss.seam.transaction.TransactionInterceptor</class>
    </interceptors>
 </beans>]]></programlisting>
-         <para>
-            If you are in a Java EE 6 environment then you are good to go,
-            no additional configuration is required.
-         </para>
-         <para>
-            If you are not in an EE environment you may need to configure some
-            things with seam-xml. You may need the following entries in your
-            beans.xml file:
-         </para>
-         <programlisting role="XML"><![CDATA[<beans xmlns="http://java.sun.com/xml/ns/javaee"
+            <para>
+                If you are in a Java EE 6 environment then you are good to go,
+                no additional configuration is required.
+            </para>
+            <para>
+                If you are not in an EE environment you may need to configure some
+                things with seam-xml. You may need the following entries in your
+                beans.xml file:
+            </para>
+            <programlisting role="XML"><![CDATA[<beans xmlns="http://java.sun.com/xml/ns/javaee"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xmlns:s="urn:java:ee"
    xmlns:t="urn:java:org.jboss.seam.transaction"
@@ -180,307 +187,364 @@
 
 </beans>]]></programlisting>
 
-         <para>
-            Let's look at these individually.
-         </para>
+            <para>
+                Let's look at these individually.
+            </para>
 
-         <programlisting role="XML"><![CDATA[<t:SeSynchronizations>
+            <programlisting role="XML"><![CDATA[<t:SeSynchronizations>
   <s:modifies/>
 </t:SeSynchronizations>]]></programlisting>
 
-         <para>
-            Seam will attempt to use JTA synchronizations if possible. If not then you need to install the
-            <code>SeSynchronzations</code> bean to allow seam to handle synchronizations manually.
-            Synchronizations allow seam to respond to transaction events such as
-            <literal>beforeCompletion()</literal> and <literal>afterCompletion()</literal>, and are needed
-            for the proper operation of the
-            <link linkend="persistence.seam-managed-persistence-contexts">Seam Managed Persistence Context</link>.
-         </para>
+            <para>
+                Seam will attempt to use JTA synchronizations if possible. If not then you need to install the
+                <code>SeSynchronzations</code>
+                bean to allow seam to handle synchronizations manually.
+                Synchronizations allow seam to respond to transaction events such as
+                <literal>beforeCompletion()</literal>
+                and<literal>afterCompletion()</literal>, and are needed
+                for the proper operation of the
+                <link linkend="persistence.seam-managed-persistence-contexts">Seam Managed Persistence Context</link>.
+            </para>
 
-         <programlisting role="XML"><![CDATA[<t:EntityTransaction>
+            <programlisting role="XML"><![CDATA[<t:EntityTransaction>
    <s:modifies />
 </t:EntityTransaction>]]></programlisting>
 
-         <para>
-            By default seam will attempt to look up <literal>java:comp/UserTransaction</literal> from JNDI
-            (or alternatively retrieve it from the <code>EJBContext</code> if a container managed transaction
-            is active). Installing <code>EntityTransaction</code> tells seam to use the JPA
-            <code>EntityTransaction</code> instead. To use this you must have a
-            <link linkend="persistence.seam-managed-persistence-contexts">Seam Managed Persistence Context</link>
-            installed with qualifier <code>@Default</code>.
-         </para>
-         <para>
-            If your entity manager is installed with a different qualifier, then you need to use the following
-            configuration (this assumes that <literal>my</literal> has been bound to the namespace that contains
-            the appropriate qualifier, see the Seam Config XML documentation for more details):
-         </para>
-         <programlisting role="XML"><![CDATA[<t:EntityTransaction>
+            <para>
+                By default seam will attempt to look up
+                <literal>java:comp/UserTransaction</literal>
+                from JNDI
+                (or alternatively retrieve it from the
+                <code>EJBContext</code>
+                if a container managed transaction
+                is active). Installing
+                <code>EntityTransaction</code>
+                tells seam to use the JPA
+                <code>EntityTransaction</code>
+                instead. To use this you must have a
+                <link linkend="persistence.seam-managed-persistence-contexts">Seam Managed Persistence Context</link>
+                installed with qualifier<code>@Default</code>.
+            </para>
+            <para>
+                If your entity manager is installed with a different qualifier, then you need to use the following
+                configuration (this assumes that
+                <literal>my</literal>
+                has been bound to the namespace that contains
+                the appropriate qualifier, see the Seam Config XML documentation for more details):
+            </para>
+            <programlisting role="XML"><![CDATA[<t:EntityTransaction>
    <s:modifies />
    <t:entityManager>
       <my:SomeQualifier/>
    </tentityManager>
 </t:EntityTransaction>]]></programlisting>
-         <note>
+            <note>
+                <para>
+                    You should avoid
+                    <code>EntityTransaction</code>
+                    if you have more than one persistence unit in your
+                    application. Seam does not support installing multiple
+                    <code>EntityTransaction</code>
+                    beans, and
+                    the
+                    <code>EntityTransaction</code>
+                    interface does not support two phase commit, so unless you are
+                    careful you may have data consistency issues. If you need multiple persistence units in your
+                    application then we highly recommend using an EE 6 compatible server, such as JBoss 6.
+                </para>
+            </note>
+
+        </section>
+
+        <section>
+            <title>Declarative Transaction Management</title>
+
             <para>
-               You should avoid <code>EntityTransaction</code> if you have more than one persistence unit in your
-               application. Seam does not support installing multiple <code>EntityTransaction</code> beans, and
-               the <code>EntityTransaction</code> interface does not support two phase commit, so unless you are
-               careful you may have data consistency issues. If you need multiple persistence units in your
-               application then we highly recommend using an EE 6 compatible server, such as JBoss 6.
+                Seam adds declarative transaction support to managed beans. Seam re-uses the EJB
+                <code>@TransactionAttribute</code>
+                for this purpose, however it also provides
+                an alternative
+                <code>@Transactional</code>
+                annotation for environments where
+                the EJB API's are not available. An alternative to<code>@ApplicationException</code>,
+                <code>@SeamApplicationException</code>
+                is also provided. Unlike EJBs, managed beans
+                are not transactional by default, you can change this by adding the
+                <code>@TransactionAttribute</code>
+                to the bean class.
             </para>
-         </note>
 
-      </section>
-
-      <section>
-         <title>Declarative Transaction Management</title>
-
-         <para>
-            Seam adds declarative transaction support to managed beans. Seam re-uses the EJB
-            <code>@TransactionAttribute</code> for this purpose, however it also provides
-            an alternative <code>@Transactional</code> annotation for environments where
-            the EJB API's are not available. An alternative to <code>@ApplicationException</code>,
-            <code>@SeamApplicationException</code> is also provided. Unlike EJBs, managed beans
-            are not transactional by default, you can change this by adding the
-            <code>@TransactionAttribute</code> to the bean class.
-         </para>
-
-         <para>
-            Unlike in Seam 2, transactions will not roll back whenever a non-application exception
-            propagates out of a bean, unless the bean has the transaction intercepter enabled.
-         </para>
-
-         <para>
-            If you are using seam managed transactions as part of the seam-faces module you do not
-            need to worry about declarative transaction management. Seam will automatically start
-            a transaction for you at the start of the faces request, and commit it before the
-            render response phase.
-         </para>
-
-         <warning>
             <para>
-               <code>@SeamApplicationException</code> will not control transaction rollback
-               when using EJB container managed transactions. If you are in an EE environment
-               then you should always use the EJB API's, namely <code>@TransactionAttribute</code>
-               and <code>@ApplicationException</code>.
+                Unlike in Seam 2, transactions will not roll back whenever a non-application exception
+                propagates out of a bean, unless the bean has the transaction intercepter enabled.
             </para>
-         </warning>
 
-         <note>
             <para>
-               <code>TransactionAttributeType.REQUIRES_NEW</code> and
-               <code>TransactionAttributeType.NOT_SUPPORTED</code> are not yet supported on managed
-               beans.
+                If you are using seam managed transactions as part of the seam-faces module you do not
+                need to worry about declarative transaction management. Seam will automatically start
+                a transaction for you at the start of the faces request, and commit it before the
+                render response phase.
             </para>
-         </note>
 
-         <para>
-            Let's have a look at some code. Annotations applied at a method level override annotations
-            applied at the class level.
-         </para>
-         <programlisting role="JAVA">@TransactionAttribute /*Defaults to TransactionAttributeType.REQUIRED */
-class TransactionaBean
-{
+            <warning>
+                <para>
+                    <code>@SeamApplicationException</code>
+                    will not control transaction rollback
+                    when using EJB container managed transactions. If you are in an EE environment
+                    then you should always use the EJB API's, namely
+                    <code>@TransactionAttribute</code>
+                    and<code>@ApplicationException</code>.
+                </para>
+            </warning>
 
-   /* This is a transactional method, when this method is called a transaction
-    * will be started if one does not already exist.
-    * This behavior is inherited from the @TransactionAttribute annotation on
-    * the class.
-    */
-    void doWork()
-    {
-      ...
-    }
+            <note>
+                <para>
+                    <code>TransactionAttributeType.REQUIRES_NEW</code>
+                    and
+                    <code>TransactionAttributeType.NOT_SUPPORTED</code>
+                    are not yet supported on managed
+                    beans.
+                </para>
+            </note>
 
-    /* A transaction will not be started for this method, however it      */
-    /* will not complain if there is an existing transaction active.      */
-    @TransactionAttributeType(TransactionAttributeType.SUPPORTED)
-    void doMoreWork()
-    {
-      ...
-    }
-
-    /* This method will throw an exception if there is no transaction active when */
-    /* it is invoked.                                                             */
-
-    @TransactionAttributeType(TransactionAttributeType.MANDATORY)
-    void doEvenMoreWork()
-    {
-      ...
-    }
-
-    /* This method will throw an exception if there is a transaction active when */
-    /* it is invoked.                                                            */
-    @TransactionAttributeType(TransactionAttributeType.NOT_SUPPORTED)
-    void doOtherWork()
-    {
-      ...
-    }
-}         </programlisting>
-      </section>
-
-   </section>
-
-   <section id="persistence.seam-managed-persistence-contexts">
-      <title>Seam-managed persistence contexts</title>
-
-      <para>
-         If you're using Seam outside of a Java EE environment, you can't rely upon the
-         container to manage the persistence context lifecycle for you. Even if you are
-         in an EE environment, you might have a complex application with many loosely
-         coupled components that collaborate together in the scope of a single conversation,
-         and in this case you might find that propagation of the persistence context between
-         component is tricky and error-prone.
-      </para>
-
-      <para>
-         In either case, you'll need to use a <emphasis>managed persistence context</emphasis>
-         (for JPA) or a <emphasis>managed session</emphasis> (for Hibernate) in your components.
-         A Seam-managed persistence context is just a built-in Seam component that manages an
-         instance of <literal>EntityManager</literal> or <literal>Session</literal> in the
-         conversation (or any other) context. You can inject it with <literal>@Inject</literal>.
-      </para>
-
-      <section>
-         <title>Using a Seam-managed persistence context with JPA</title>
-
-         <programlisting role="java">@ExtensionManaged
-@Produces
-@PersistenceUnit
-@ConversationScoped
-EntityManagerFactory producerField;
-         </programlisting>
-         <para>
-            This is just an ordinary resource producer field as defined by the CDI
-            specification, however the presence of the <literal>@ExtensionManaged</literal>
-            annotation tells seam to create a seam managed persistence context from
-            this <literal>EntityManagerFactory</literal>. This managed
-            persistence context can be injected normally, and has the same scope and
-            qualifiers that are specified on the resource producer field.
-         </para>
-
-         <para>
-            This will work even in a SE environment where <code>@PersistenceUnit</code>
-            injection is not normally supported. This is because the seam persistence
-            extensions will bootstrap the <code>EntityManagerFactory</code> for you.
-         </para>
-
-         <para>
-            Now we can have our <literal>EntityManager</literal> injected using:
-         </para>
-
-         <programlisting role="JAVA"><![CDATA[@Inject EntityManager entityManager;]]></programlisting>
-
-         <note>
             <para>
-               The more eagle eyed among you may have noticed that the resource producer
-               field appears to be conversation scoped, which the CDI specification does
-               not require containers to support. This is actually not the case, as the
-               @ConversationScoped annotation is removed by the seam persistence portable
-               extension. It only specifies the scope of the created SMPC, not the
-               EntityManagerFactory.
+                Let's have a look at some code. Annotations applied at a method level override annotations
+                applied at the class level.
             </para>
-         </note>
+            <programlisting role="JAVA">@TransactionAttribute /*Defaults to TransactionAttributeType.REQUIRED */
+                class TransactionaBean
+                {
 
-         <warning>
+                /* This is a transactional method, when this method is called a transaction
+                * will be started if one does not already exist.
+                * This behavior is inherited from the @TransactionAttribute annotation on
+                * the class.
+                */
+                void doWork()
+                {
+                ...
+                }
+
+                /* A transaction will not be started for this method, however it */
+                /* will not complain if there is an existing transaction active. */
+                @TransactionAttributeType(TransactionAttributeType.SUPPORTED)
+                void doMoreWork()
+                {
+                ...
+                }
+
+                /* This method will throw an exception if there is no transaction active when */
+                /* it is invoked. */
+
+                @TransactionAttributeType(TransactionAttributeType.MANDATORY)
+                void doEvenMoreWork()
+                {
+                ...
+                }
+
+                /* This method will throw an exception if there is a transaction active when */
+                /* it is invoked. */
+                @TransactionAttributeType(TransactionAttributeType.NOT_SUPPORTED)
+                void doOtherWork()
+                {
+                ...
+                }
+                }
+            </programlisting>
+        </section>
+
+    </section>
+
+    <section id="persistence.seam-managed-persistence-contexts">
+        <title>Seam-managed persistence contexts</title>
+
+        <para>
+            If you're using Seam outside of a Java EE environment, you can't rely upon the
+            container to manage the persistence context lifecycle for you. Even if you are
+            in an EE environment, you might have a complex application with many loosely
+            coupled components that collaborate together in the scope of a single conversation,
+            and in this case you might find that propagation of the persistence context between
+            component is tricky and error-prone.
+        </para>
+
+        <para>
+            In either case, you'll need to use a
+            <emphasis>managed persistence context</emphasis>
+            (for JPA) or a
+            <emphasis>managed session</emphasis>
+            (for Hibernate) in your components.
+            A Seam-managed persistence context is just a built-in Seam component that manages an
+            instance of
+            <literal>EntityManager</literal>
+            or
+            <literal>Session</literal>
+            in the
+            conversation (or any other) context. You can inject it with<literal>@Inject</literal>.
+        </para>
+
+        <section>
+            <title>Using a Seam-managed persistence context with JPA</title>
+
+            <programlisting role="java">@ExtensionManaged
+                @Produces
+                @PersistenceUnit
+                @ConversationScoped
+                EntityManagerFactory producerField;
+            </programlisting>
             <para>
-               If you are using EJB3 and mark your class or method
-               <literal>@TransactionAttribute(REQUIRES_NEW)</literal> then the
-               transaction and persistence context shouldn't be propagated to method
-               calls on this object.  However as the Seam-managed persistence
-               context is propagated to any component within the conversation, it
-               will be propagated to methods marked <literal>REQUIRES_NEW</literal>.
-               Therefore, if you mark a method <literal>REQUIRES_NEW</literal> then
-               you should access the entity manager using @PersistenceContext.
+                This is just an ordinary resource producer field as defined by the CDI
+                specification, however the presence of the
+                <literal>@ExtensionManaged</literal>
+                annotation tells seam to create a seam managed persistence context from
+                this<literal>EntityManagerFactory</literal>. This managed
+                persistence context can be injected normally, and has the same scope and
+                qualifiers that are specified on the resource producer field.
             </para>
-         </warning>
 
-      </section>
+            <para>
+                This will work even in a SE environment where
+                <code>@PersistenceUnit</code>
+                injection is not normally supported. This is because the seam persistence
+                extensions will bootstrap the
+                <code>EntityManagerFactory</code>
+                for you.
+            </para>
 
-      <section>
-         <title>Seam-managed persistence contexts and atomic conversations</title>
-         <para>
-            Persistence contexts scoped to the conversation allows you to program optimistic
-            transactions that span multiple requests to the server without the need to use the
-            <code>merge()</code> operation , without the need to re-load
-            data at the beginning of each request, and without the need to wrestle with the
-            <code>LazyInitializationException</code> or
-            <code>NonUniqueObjectException</code>.
-         </para>
+            <para>
+                Now we can have our
+                <literal>EntityManager</literal>
+                injected using:
+            </para>
 
-         <para>
-            As with any optimistic transaction management, transaction isolation and consistency
-            can be achieved via use of optimistic locking. Fortunately, both Hibernate and EJB
-            3.1 make it very easy to use optimistic locking, by providing the
-            <literal>@Version</literal> annotation.
-         </para>
+            <programlisting role="JAVA"><![CDATA[@Inject EntityManager entityManager;]]></programlisting>
 
-         <para>
-            By default, the persistence context is flushed (synchronized with the database)
-            at the end of each transaction. This is sometimes the desired behavior. But very
-            often, we would prefer that all changes are held in memory and only written to
-            the database when the conversation ends successfully. This allows for truly
-            atomic conversations. Unfortunately there is currently no simple, usable and
-            portable way to implement atomic conversations using EJB 3.1 persistence.
-            However, Hibernate provides this feature as a vendor extension to the
-            <literal>FlushModeType</literal>s defined by the specification, and it is
-            our expectation that other vendors will soon provide a similar extension.
-         </para>
-      </section>
+            <note>
+                <para>
+                    The more eagle eyed among you may have noticed that the resource producer
+                    field appears to be conversation scoped, which the CDI specification does
+                    not require containers to support. This is actually not the case, as the
+                    @ConversationScoped annotation is removed by the seam persistence portable
+                    extension. It only specifies the scope of the created SMPC, not the
+                    EntityManagerFactory.
+                </para>
+            </note>
 
-      <section>
-         <title>Using EL in EJB-QL/HQL</title>
-         <para>
-             Seam proxies the <literal>EntityManager</literal> or <literal>Session</literal>
-             object whenever you use a Seam-managed persistence context. This
-             lets you use EL expressions in your query strings, safely and efficiently. For
-             example, this:
-         </para>
+            <warning>
+                <para>
+                    If you are using EJB3 and mark your class or method
+                    <literal>@TransactionAttribute(REQUIRES_NEW)</literal>
+                    then the
+                    transaction and persistence context shouldn't be propagated to method
+                    calls on this object. However as the Seam-managed persistence
+                    context is propagated to any component within the conversation, it
+                    will be propagated to methods marked<literal>REQUIRES_NEW</literal>.
+                    Therefore, if you mark a method
+                    <literal>REQUIRES_NEW</literal>
+                    then
+                    you should access the entity manager using @PersistenceContext.
+                </para>
+            </warning>
 
-         <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=#{user.username}")
+        </section>
+
+        <section>
+            <title>Seam-managed persistence contexts and atomic conversations</title>
+            <para>
+                Persistence contexts scoped to the conversation allows you to program optimistic
+                transactions that span multiple requests to the server without the need to use the
+                <code>merge()</code>
+                operation , without the need to re-load
+                data at the beginning of each request, and without the need to wrestle with the
+                <code>LazyInitializationException</code>
+                or
+                <code>NonUniqueObjectException</code>.
+            </para>
+
+            <para>
+                As with any optimistic transaction management, transaction isolation and consistency
+                can be achieved via use of optimistic locking. Fortunately, both Hibernate and EJB
+                3.1 make it very easy to use optimistic locking, by providing the
+                <literal>@Version</literal>
+                annotation.
+            </para>
+
+            <para>
+                By default, the persistence context is flushed (synchronized with the database)
+                at the end of each transaction. This is sometimes the desired behavior. But very
+                often, we would prefer that all changes are held in memory and only written to
+                the database when the conversation ends successfully. This allows for truly
+                atomic conversations. Unfortunately there is currently no simple, usable and
+                portable way to implement atomic conversations using EJB 3.1 persistence.
+                However, Hibernate provides this feature as a vendor extension to the
+                <literal>FlushModeType</literal>s defined by the specification, and it is
+                our expectation that other vendors will soon provide a similar extension.
+            </para>
+        </section>
+
+        <section>
+            <title>Using EL in EJB-QL/HQL</title>
+            <para>
+                Seam proxies the
+                <literal>EntityManager</literal>
+                or
+                <literal>Session</literal>
+                object whenever you use a Seam-managed persistence context. This
+                lets you use EL expressions in your query strings, safely and efficiently. For
+                example, this:
+            </para>
+
+            <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=#{user.username}")
    .getSingleResult();]]></programlisting>
 
-         <para>is equivalent to:</para>
+            <para>is equivalent to:</para>
 
-         <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=:username")
+            <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=:username")
    .setParameter("username", user.getUsername())
    .getSingleResult();]]></programlisting>
 
-         <para>
-            Of course, you should never, ever write it like this:
-         </para>
+            <para>
+                Of course, you should never, ever write it like this:
+            </para>
 
-         <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=" + user.getUsername()) //BAD!
+            <programlisting role="JAVA"><![CDATA[User user = em.createQuery("from User where username=" + user.getUsername()) //BAD!
    .getSingleResult();]]></programlisting>
 
-         <para>
-            (It is inefficient and vulnerable to SQL injection attacks.)
-         </para>
+            <para>
+                (It is inefficient and vulnerable to SQL injection attacks.)
+            </para>
 
-         <warning>
-            <para>This only works with seam managed persistence contexts, not persistence contexts that are injected with
-            <code>@PersistenceContext</code>.</para>
-         </warning>
-      </section>
+            <warning>
+                <para>This only works with seam managed persistence contexts, not persistence contexts that are injected
+                    with
+                    <code>@PersistenceContext</code>.
+                </para>
+            </warning>
+        </section>
 
-      <section>
-         <title>Setting up the EntityManager</title>
+        <section>
+            <title>Setting up the EntityManager</title>
 
-         <para>
-           Sometimes you may want to perform some additional setup on the <code>EntityManager</code> after
-           it has been created. For example, if you are using Hibernate you may want to set a filter. Seam
-           persistence fires a <code>SeamManagedPersistenceContextCreated</code> event when a Seam managed
-           persistence context is created. You can observe this event and perform any setup you require in
-           an observer method. For example:
-         </para>
+            <para>
+                Sometimes you may want to perform some additional setup on the
+                <code>EntityManager</code>
+                after
+                it has been created. For example, if you are using Hibernate you may want to set a filter. Seam
+                persistence fires a
+                <code>SeamManagedPersistenceContextCreated</code>
+                event when a Seam managed
+                persistence context is created. You can observe this event and perform any setup you require in
+                an observer method. For example:
+            </para>
 
-         <programlisting role="JAVA">public void setupEntityManager(@Observes SeamManagedPersistenceContextCreated event) {
-   Session session = (Session)event.getEntityManager().getDelegate();
-   session.enableFilter("myfilter");
-}</programlisting>
+            <programlisting role="JAVA">public void setupEntityManager(@Observes SeamManagedPersistenceContextCreated
+                event) {
+                Session session = (Session)event.getEntityManager().getDelegate();
+                session.enableFilter("myfilter");
+                }
+            </programlisting>
 
-      </section>
+        </section>
 
-   </section>
+    </section>
 
 </chapter>

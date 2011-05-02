@@ -27,18 +27,16 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JBossASHibernateSearchTest extends HibernateSearchTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JBossASTestUtils.createTestArchive();
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.HIBERNATE_SEARCH));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
-      war.addClasses(getTestClasses());
-      war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
-      return war;
-   }
+public class JBossASHibernateSearchTest extends HibernateSearchTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JBossASTestUtils.createTestArchive();
+        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.HIBERNATE_SEARCH));
+        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
+        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
+        war.addClasses(getTestClasses());
+        war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
+        return war;
+    }
 
 }

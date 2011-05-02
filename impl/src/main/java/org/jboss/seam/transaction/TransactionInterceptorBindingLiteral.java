@@ -18,7 +18,6 @@ package org.jboss.seam.transaction;
 
 import javax.enterprise.util.AnnotationLiteral;
 
-class TransactionInterceptorBindingLiteral extends AnnotationLiteral<TransactionalInterceptorBinding>
-{
-   static TransactionInterceptorBindingLiteral INSTANCE = new TransactionInterceptorBindingLiteral();
+class TransactionInterceptorBindingLiteral extends AnnotationLiteral<TransactionalInterceptorBinding> {
+    static TransactionInterceptorBindingLiteral INSTANCE = new TransactionInterceptorBindingLiteral();
 }

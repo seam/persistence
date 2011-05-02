@@ -28,24 +28,21 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests the @Transactional interceptor
- *
+ * <p/>
  * TODO: refactor the tests to share a common superclass
  *
  * @author stuart
- *
  */
 @RunWith(Arquillian.class)
-public class TransactionInterceptorStereotypeTest extends TransactionInterceptorStereotypeTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
+public class TransactionInterceptorStereotypeTest extends TransactionInterceptorStereotypeTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
 
-      WebArchive war = JBossASTestUtils.createTestArchive(false);
-      war.addClasses(getTestClasses());
-      war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-      war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
-      return war;
-   }
+        WebArchive war = JBossASTestUtils.createTestArchive(false);
+        war.addClasses(getTestClasses());
+        war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
+        war.addWebResource(new ByteArrayAsset(("<beans><interceptors><class>" + TransactionInterceptor.class.getName() + "</class></interceptors></beans>").getBytes()), "beans.xml");
+        return war;
+    }
 
 }

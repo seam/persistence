@@ -23,33 +23,27 @@ import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- *
  * @author Stuart Douglas
- *
  */
-public class JBossASTestUtils
-{
-   /**
-    * Creates a test archive with an empty beans.xml
-    *
-    * @return
-    */
-   public static WebArchive createTestArchive()
-   {
-      return createTestArchive(true);
-   }
+public class JBossASTestUtils {
+    /**
+     * Creates a test archive with an empty beans.xml
+     *
+     * @return
+     */
+    public static WebArchive createTestArchive() {
+        return createTestArchive(true);
+    }
 
-   public static WebArchive createTestArchive(boolean includeEmptyBeansXml)
-   {
-      WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-      war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
-      if (includeEmptyBeansXml)
-      {
-         war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
-      }
-      return war;
-   }
+    public static WebArchive createTestArchive(boolean includeEmptyBeansXml) {
+        WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
+        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
+        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
+        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
+        if (includeEmptyBeansXml) {
+            war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+        }
+        return war;
+    }
 
 }

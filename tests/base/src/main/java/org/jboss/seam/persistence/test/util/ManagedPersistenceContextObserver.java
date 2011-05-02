@@ -24,18 +24,15 @@ import javax.persistence.FlushModeType;
 import org.jboss.seam.persistence.SeamManagedPersistenceContextCreated;
 
 @ApplicationScoped
-public class ManagedPersistenceContextObserver
-{
-   private boolean observerRun = false;
+public class ManagedPersistenceContextObserver {
+    private boolean observerRun = false;
 
-   public void observe(@Observes @Default SeamManagedPersistenceContextCreated event)
-   {
-      observerRun = true;
-      event.getEntityManager().setFlushMode(FlushModeType.COMMIT);
-   }
-   
-   public boolean isObserverRun()
-   {
-      return observerRun;
-   }
+    public void observe(@Observes @Default SeamManagedPersistenceContextCreated event) {
+        observerRun = true;
+        event.getEntityManager().setFlushMode(FlushModeType.COMMIT);
+    }
+
+    public boolean isObserverRun() {
+        return observerRun;
+    }
 }

@@ -31,28 +31,25 @@ import org.jboss.weld.context.bound.MutableBoundRequest;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedHibernateSessionFlushModeTest extends ManagedHibernateSessionFlushModeTestBase
-{
-   @Inject
-   @Bound
-   private BoundConversationContext context;
+public class ManagedHibernateSessionFlushModeTest extends ManagedHibernateSessionFlushModeTestBase {
+    @Inject
+    @Bound
+    private BoundConversationContext context;
 
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JettyTestUtils.createHibernateTestArchive();
-      war.addWebResource("WEB-INF/hibernate-beans.xml", "beans.xml");
-      war.addWebResource("META-INF/hibernate-std.cfg.xml", "classes/hibernate.cfg.xml");
-      war.addClasses(getTestClasses());
-      return war;
-   }
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JettyTestUtils.createHibernateTestArchive();
+        war.addWebResource("WEB-INF/hibernate-beans.xml", "beans.xml");
+        war.addWebResource("META-INF/hibernate-std.cfg.xml", "classes/hibernate.cfg.xml");
+        war.addClasses(getTestClasses());
+        return war;
+    }
 
-   @Override
-   public void testChangedTouchedSessionFlushMode()
-   {
-      context.associate(new MutableBoundRequest(new HashMap<String, Object>(), new HashMap<String, Object>()));
-      context.activate();
-      super.testChangedTouchedSessionFlushMode();
-      context.deactivate();
-   }
+    @Override
+    public void testChangedTouchedSessionFlushMode() {
+        context.associate(new MutableBoundRequest(new HashMap<String, Object>(), new HashMap<String, Object>()));
+        context.activate();
+        super.testChangedTouchedSessionFlushMode();
+        context.deactivate();
+    }
 }

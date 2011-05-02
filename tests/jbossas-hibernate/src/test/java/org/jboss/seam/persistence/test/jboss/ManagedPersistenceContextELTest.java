@@ -25,15 +25,13 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedPersistenceContextELTest extends ManagedPersistenceContextELTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JBossASTestUtils.createTestArchive();
-      war.addClasses(getTestClasses());
-      war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-      return war;
-   }
+public class ManagedPersistenceContextELTest extends ManagedPersistenceContextELTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JBossASTestUtils.createTestArchive();
+        war.addClasses(getTestClasses());
+        war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
+        return war;
+    }
 
 }

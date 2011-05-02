@@ -40,65 +40,53 @@ import org.junit.Test;
 
 /**
  * Tests the @TransactionAttribute interceptor for non ee beans.
- *
+ * <p/>
  * TODO: refactor the tests to share a common superclass
  *
  * @author stuart
- *
  */
-public class TransactionAttributeInterceptorTestBase
-{
+public class TransactionAttributeInterceptorTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { TransactionAttributeInterceptorTestBase.class, TransactionAttributeManagedBean.class, HelloService.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{TransactionAttributeInterceptorTestBase.class, TransactionAttributeManagedBean.class, HelloService.class, Hotel.class, EntityManagerProvider.class, DontRollBackException.class};
+    }
 
-   @Inject
-   TransactionAttributeManagedBean bean;
+    @Inject
+    TransactionAttributeManagedBean bean;
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @PersistenceContext
-   EntityManager em;
+    @PersistenceContext
+    EntityManager em;
 
-   @Test
-   public void testTransactionInterceptor() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      bean.addHotel();
-      assertHotels(1);
-      try
-      {
-         bean.failToAddHotel();
-      }
-      catch (Exception e)
-      {
-      }
-      assertHotels(1);
-      try
-      {
-         bean.addHotelWithApplicationException();
-      }
-      catch (DontRollBackException e)
-      {
-      }
-      assertHotels(2);
-   }
+    @Test
+    public void testTransactionInterceptor() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        bean.addHotel();
+        assertHotels(1);
+        try {
+            bean.failToAddHotel();
+        } catch (Exception e) {
+        }
+        assertHotels(1);
+        try {
+            bean.addHotelWithApplicationException();
+        } catch (DontRollBackException e) {
+        }
+        assertHotels(2);
+    }
 
-   @Test(expected = TransactionRequiredException.class)
-   public void testTransactionInterceptorMethodOverrides()
-   {
-      bean.tryAndAddHotelWithNoTransaction();
-   }
+    @Test(expected = TransactionRequiredException.class)
+    public void testTransactionInterceptorMethodOverrides() {
+        bean.tryAndAddHotelWithNoTransaction();
+    }
 
-   public void assertHotels(int count) throws NotSupportedException, SystemException
-   {
-      transaction.begin();
-      em.joinTransaction();
-      List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
-      Assert.assertTrue("Wrong number of hotels: " + hotels.size(), hotels.size() == count);
-      transaction.rollback();
-   }
+    public void assertHotels(int count) throws NotSupportedException, SystemException {
+        transaction.begin();
+        em.joinTransaction();
+        List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
+        Assert.assertTrue("Wrong number of hotels: " + hotels.size(), hotels.size() == count);
+        transaction.rollback();
+    }
 }

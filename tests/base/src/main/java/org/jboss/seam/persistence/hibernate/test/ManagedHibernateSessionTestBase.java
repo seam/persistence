@@ -35,40 +35,37 @@ import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Test;
 
-public class ManagedHibernateSessionTestBase
-{
+public class ManagedHibernateSessionTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { ManagedHibernateSessionTestBase.class, Hotel.class, ManagedHibernateSessionProvider.class, HelloService.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{ManagedHibernateSessionTestBase.class, Hotel.class, ManagedHibernateSessionProvider.class, HelloService.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @Inject
-   Session session;
+    @Inject
+    Session session;
 
-   @Test
-   public void testManagedHibernateSession() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      transaction.begin();
-      Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      session.persist(h);
-      session.flush();
-      transaction.commit();
+    @Test
+    public void testManagedHibernateSession() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        transaction.begin();
+        Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        session.persist(h);
+        session.flush();
+        transaction.commit();
 
-      transaction.begin();
-      h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      session.persist(h);
-      session.flush();
-      transaction.rollback();
+        transaction.begin();
+        h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        session.persist(h);
+        session.flush();
+        transaction.rollback();
 
-      transaction.begin();
-      List<Hotel> hotels = session.createQuery("select h from Hotel h").list();
-      Assert.assertEquals(1, hotels.size());
-      transaction.rollback();
-   }
+        transaction.begin();
+        List<Hotel> hotels = session.createQuery("select h from Hotel h").list();
+        Assert.assertEquals(1, hotels.size());
+        transaction.rollback();
+    }
 
 }

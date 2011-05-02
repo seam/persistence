@@ -29,49 +29,39 @@ import org.jboss.seam.solder.reflection.Reflections;
  * The portable extension for Seam Managed Hibernate Sessions. If hibernate is
  * found on the classpath then the real work is done by
  * {@link HibernateManagedSessionExtensionImpl}
- * 
+ *
  * @author Stuart Douglas
- * 
  */
-public class HibernateManagedSessionExtension implements Extension
-{
-   private static final Logger log = Logger.getLogger(HibernateManagedSessionExtension.class);
+public class HibernateManagedSessionExtension implements Extension {
+    private static final Logger log = Logger.getLogger(HibernateManagedSessionExtension.class);
 
-   private final boolean enabled;
+    private final boolean enabled;
 
-   private HibernateExtension delegate;
+    private HibernateExtension delegate;
 
-   public HibernateManagedSessionExtension()
-   {
-      boolean en = true;
-      try
-      {
-         // ensure hibernate is on the CP
-         Reflections.classForName("org.hibernate.Session", getClass().getClassLoader());
-         delegate = new HibernateManagedSessionExtensionImpl();
-      }
-      catch (ClassNotFoundException e)
-      {
-         log.debug("Hibernate not found on the classpath, Managed Hibernate Sessions are disabled");
-         en = false;
-      }
-      enabled = en;
+    public HibernateManagedSessionExtension() {
+        boolean en = true;
+        try {
+            // ensure hibernate is on the CP
+            Reflections.classForName("org.hibernate.Session", getClass().getClassLoader());
+            delegate = new HibernateManagedSessionExtensionImpl();
+        } catch (ClassNotFoundException e) {
+            log.debug("Hibernate not found on the classpath, Managed Hibernate Sessions are disabled");
+            en = false;
+        }
+        enabled = en;
 
-   }
+    }
 
-   public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> event, BeanManager manager)
-   {
-      if (enabled)
-      {
-         delegate.processAnnotatedType(event, manager);
-      }
-   }
+    public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> event, BeanManager manager) {
+        if (enabled) {
+            delegate.processAnnotatedType(event, manager);
+        }
+    }
 
-   public void afterBeanDiscovery(@Observes AfterBeanDiscovery event)
-   {
-      if (enabled)
-      {
-         delegate.afterBeanDiscovery(event);
-      }
-   }
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event) {
+        if (enabled) {
+            delegate.afterBeanDiscovery(event);
+        }
+    }
 }

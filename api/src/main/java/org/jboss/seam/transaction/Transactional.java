@@ -24,26 +24,24 @@ import java.lang.annotation.Target;
 
 /**
  * Demarcates transaction boundaries
- *
+ * <p/>
  * Note that is you are using seam managed transactions seam will automatically
  * manage your transactions for you, rendering this unnecessary
- *
+ * <p/>
  * Note that this annotation is not actually an intercepter binding. It is
  * replaced by an intercepter binding at runtime by a portable extension in the
  * ProcessAnnotatedType phase
- *
  *
  * @author Dan Allen
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.METHOD, ElementType.TYPE })
-public @interface Transactional
-{
-   /**
-    * The transaction propagation type.
-    *
-    * @return REQUIRED by default
-    */
-   TransactionPropagation value() default TransactionPropagation.REQUIRED;
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Transactional {
+    /**
+     * The transaction propagation type.
+     *
+     * @return REQUIRED by default
+     */
+    TransactionPropagation value() default TransactionPropagation.REQUIRED;
 }

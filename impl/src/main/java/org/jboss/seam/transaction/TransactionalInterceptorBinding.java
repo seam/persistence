@@ -29,12 +29,10 @@ import javax.interceptor.InterceptorBinding;
  * apply it themselves
  *
  * @author Stuart Douglas
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @InterceptorBinding
-@Target( { ElementType.TYPE, ElementType.METHOD })
-@interface TransactionalInterceptorBinding
-{
+@Target({ElementType.TYPE, ElementType.METHOD})
+        @interface TransactionalInterceptorBinding {
 
 }

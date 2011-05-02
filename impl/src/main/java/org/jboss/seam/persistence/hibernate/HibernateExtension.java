@@ -20,10 +20,9 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
-interface HibernateExtension
-{
-   public abstract <T> void processAnnotatedType(ProcessAnnotatedType<T> event, BeanManager manager);
+interface HibernateExtension {
+    public abstract <T> void processAnnotatedType(ProcessAnnotatedType<T> event, BeanManager manager);
 
-   public abstract void afterBeanDiscovery(AfterBeanDiscovery event);
+    public abstract void afterBeanDiscovery(AfterBeanDiscovery event);
 
 }

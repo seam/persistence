@@ -24,15 +24,13 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedHibernateSessionSearchTest extends HibernateSearchTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JettyTestUtils.createHibernateTestArchive();
-      war.addWebResource("WEB-INF/hibernate-beans.xml", "beans.xml");
-      war.addWebResource("META-INF/hibernate-search.cfg.xml", "classes/hibernate.cfg.xml");
-      war.addClasses(getTestClasses());
-      return war;
-   }
+public class ManagedHibernateSessionSearchTest extends HibernateSearchTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JettyTestUtils.createHibernateTestArchive();
+        war.addWebResource("WEB-INF/hibernate-beans.xml", "beans.xml");
+        war.addWebResource("META-INF/hibernate-search.cfg.xml", "classes/hibernate.cfg.xml");
+        war.addClasses(getTestClasses());
+        return war;
+    }
 }

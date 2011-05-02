@@ -23,15 +23,13 @@ import org.jboss.seam.solder.core.ExtensionManaged;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 
-public class ManagedHibernateSessionProvider
-{
-   @RequestScoped
-   @Produces
-   @ExtensionManaged
-   public SessionFactory createSessionFactory()
-   {
-      Configuration config = new Configuration();
-      config.configure();
-      return config.buildSessionFactory();
-   }
+public class ManagedHibernateSessionProvider {
+    @RequestScoped
+    @Produces
+    @ExtensionManaged
+    public SessionFactory createSessionFactory() {
+        Configuration config = new Configuration();
+        config.configure();
+        return config.buildSessionFactory();
+    }
 }

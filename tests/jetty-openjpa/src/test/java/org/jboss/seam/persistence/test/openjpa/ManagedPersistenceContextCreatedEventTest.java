@@ -25,16 +25,14 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ManagedPersistenceContextCreatedEventTest extends ManagedPersistenceContextCreatedEventTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JettyTestUtils.createTestArchive();
-      war.addWebResource("WEB-INF/beans.xml", "beans.xml");
-      war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
-      war.addClasses(getTestClasses());
-      return war;
-   }
+public class ManagedPersistenceContextCreatedEventTest extends ManagedPersistenceContextCreatedEventTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JettyTestUtils.createTestArchive();
+        war.addWebResource("WEB-INF/beans.xml", "beans.xml");
+        war.addWebResource("META-INF/persistence-std.xml", "classes/META-INF/persistence.xml");
+        war.addClasses(getTestClasses());
+        return war;
+    }
 
 }

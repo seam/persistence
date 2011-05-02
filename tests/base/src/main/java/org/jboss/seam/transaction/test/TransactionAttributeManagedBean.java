@@ -25,45 +25,40 @@ import org.jboss.seam.persistence.test.util.DontRollBackException;
 import org.jboss.seam.persistence.test.util.Hotel;
 
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class TransactionAttributeManagedBean
-{
+public class TransactionAttributeManagedBean {
 
-   @Inject
-   EntityManager entityManager;
+    @Inject
+    EntityManager entityManager;
 
-   public void addHotel()
-   {
-      entityManager.joinTransaction();
-      Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      entityManager.persist(h);
-      entityManager.flush();
-   }
+    public void addHotel() {
+        entityManager.joinTransaction();
+        Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        entityManager.persist(h);
+        entityManager.flush();
+    }
 
-   public void failToAddHotel()
-   {
-      entityManager.joinTransaction();
-      Hotel h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      entityManager.persist(h);
-      entityManager.flush();
-      throw new RuntimeException("Roll back transaction");
-   }
+    public void failToAddHotel() {
+        entityManager.joinTransaction();
+        Hotel h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        entityManager.persist(h);
+        entityManager.flush();
+        throw new RuntimeException("Roll back transaction");
+    }
 
-   public void addHotelWithApplicationException() throws DontRollBackException
-   {
-      entityManager.joinTransaction();
-      Hotel h = new Hotel("test3", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      entityManager.persist(h);
-      entityManager.flush();
-      throw new DontRollBackException();
-   }
+    public void addHotelWithApplicationException() throws DontRollBackException {
+        entityManager.joinTransaction();
+        Hotel h = new Hotel("test3", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        entityManager.persist(h);
+        entityManager.flush();
+        throw new DontRollBackException();
+    }
 
-   @TransactionAttribute(TransactionAttributeType.NEVER)
-   public void tryAndAddHotelWithNoTransaction()
-   {
-      entityManager.joinTransaction();
-      Hotel h = new Hotel("test3", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      entityManager.persist(h);
-      entityManager.flush();
-   }
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void tryAndAddHotelWithNoTransaction() {
+        entityManager.joinTransaction();
+        Hotel h = new Hotel("test3", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        entityManager.persist(h);
+        entityManager.flush();
+    }
 
 }

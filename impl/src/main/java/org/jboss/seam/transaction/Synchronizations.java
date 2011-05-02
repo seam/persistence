@@ -22,17 +22,15 @@ import javax.transaction.Synchronization;
  * Interface for registering transaction synchronizations
  *
  * @author Gavin King
- *
  */
-public interface Synchronizations
-{
-   public void afterTransactionBegin();
+public interface Synchronizations {
+    public void afterTransactionBegin();
 
-   public void afterTransactionCompletion(boolean success);
+    public void afterTransactionCompletion(boolean success);
 
-   public void beforeTransactionCommit();
+    public void beforeTransactionCommit();
 
-   public void registerSynchronization(Synchronization sync);
+    public void registerSynchronization(Synchronization sync);
 
-   public boolean isAwareOfContainerTransactions();
+    public boolean isAwareOfContainerTransactions();
 }

@@ -26,68 +26,51 @@ import org.jboss.logging.Logger;
  *
  * @author Gavin King
  */
-public abstract class Work<T>
-{
-   private static final Logger log = Logger.getLogger(Work.class);
+public abstract class Work<T> {
+    private static final Logger log = Logger.getLogger(Work.class);
 
-   protected abstract T work() throws Exception;
+    protected abstract T work() throws Exception;
 
-   protected boolean isNewTransactionRequired(boolean transactionActive)
-   {
-      return !transactionActive;
-   }
+    protected boolean isNewTransactionRequired(boolean transactionActive) {
+        return !transactionActive;
+    }
 
-   public final T workInTransaction(org.jboss.seam.transaction.SeamTransaction transaction) throws Exception
-   {
-      boolean transactionActive = transaction.isActiveOrMarkedRollback() || transaction.isRolledBack();
-      // TODO: temp workaround, what should we really do in this case??
-      boolean newTransactionRequired = isNewTransactionRequired(transactionActive);
+    public final T workInTransaction(org.jboss.seam.transaction.SeamTransaction transaction) throws Exception {
+        boolean transactionActive = transaction.isActiveOrMarkedRollback() || transaction.isRolledBack();
+        // TODO: temp workaround, what should we really do in this case??
+        boolean newTransactionRequired = isNewTransactionRequired(transactionActive);
 
-      try
-      {
-         if (newTransactionRequired)
-         {
-            log.debug("beginning transaction");
-            transaction.begin();
-         }
-
-         T result = work();
-         if (newTransactionRequired)
-         {
-            if (transaction.isMarkedRollback())
-            {
-               log.debug("rolling back transaction");
-               transaction.rollback();
+        try {
+            if (newTransactionRequired) {
+                log.debug("beginning transaction");
+                transaction.begin();
             }
-            else
-            {
-               log.debug("committing transaction");
-               transaction.commit();
+
+            T result = work();
+            if (newTransactionRequired) {
+                if (transaction.isMarkedRollback()) {
+                    log.debug("rolling back transaction");
+                    transaction.rollback();
+                } else {
+                    log.debug("committing transaction");
+                    transaction.commit();
+                }
             }
-         }
-         return result;
-      }
-      catch (Exception e)
-      {
-         if (newTransactionRequired && transaction.getStatus() != Status.STATUS_NO_TRANSACTION)
-         {
-            if (ExceptionUtil.exceptionCausesRollback(e))
-            {
-               log.debug("rolling back transaction");
-               transaction.rollback();
+            return result;
+        } catch (Exception e) {
+            if (newTransactionRequired && transaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
+                if (ExceptionUtil.exceptionCausesRollback(e)) {
+                    log.debug("rolling back transaction");
+                    transaction.rollback();
+                } else {
+                    log.debug("committing transaction after ApplicationException(rollback=false):" + e.getMessage());
+                    transaction.commit();
+                }
+            } else if (transaction.getStatus() != Status.STATUS_NO_TRANSACTION && ExceptionUtil.exceptionCausesRollback(e)) {
+                transaction.setRollbackOnly();
             }
-            else
-            {
-               log.debug("committing transaction after ApplicationException(rollback=false):" + e.getMessage());
-               transaction.commit();
-            }
-         }
-         else if (transaction.getStatus() != Status.STATUS_NO_TRANSACTION && ExceptionUtil.exceptionCausesRollback(e))
-         {
-            transaction.setRollbackOnly();
-         }
-         throw e;
-      }
-   }
+            throw e;
+        }
+    }
 
 }

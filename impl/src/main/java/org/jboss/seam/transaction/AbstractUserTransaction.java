@@ -30,73 +30,59 @@ import javax.transaction.SystemException;
  * Base implementation of UserTransaction
  *
  * @author Gavin King
- *
  */
-public abstract class AbstractUserTransaction implements SeamTransaction
-{
+public abstract class AbstractUserTransaction implements SeamTransaction {
 
-   private Synchronizations synchronizations;
+    private Synchronizations synchronizations;
 
-   public boolean isActive() throws SystemException
-   {
-      return getStatus() == STATUS_ACTIVE;
-   }
+    public boolean isActive() throws SystemException {
+        return getStatus() == STATUS_ACTIVE;
+    }
 
-   public boolean isActiveOrMarkedRollback() throws SystemException
-   {
-      int status = getStatus();
-      return status == STATUS_ACTIVE || status == STATUS_MARKED_ROLLBACK;
-   }
+    public boolean isActiveOrMarkedRollback() throws SystemException {
+        int status = getStatus();
+        return status == STATUS_ACTIVE || status == STATUS_MARKED_ROLLBACK;
+    }
 
-   public boolean isRolledBackOrMarkedRollback() throws SystemException
-   {
-      int status = getStatus();
-      return status == STATUS_ROLLEDBACK || status == STATUS_MARKED_ROLLBACK;
-   }
+    public boolean isRolledBackOrMarkedRollback() throws SystemException {
+        int status = getStatus();
+        return status == STATUS_ROLLEDBACK || status == STATUS_MARKED_ROLLBACK;
+    }
 
-   public boolean isMarkedRollback() throws SystemException
-   {
-      return getStatus() == STATUS_MARKED_ROLLBACK;
-   }
+    public boolean isMarkedRollback() throws SystemException {
+        return getStatus() == STATUS_MARKED_ROLLBACK;
+    }
 
-   public boolean isNoTransaction() throws SystemException
-   {
-      return getStatus() == STATUS_NO_TRANSACTION;
-   }
+    public boolean isNoTransaction() throws SystemException {
+        return getStatus() == STATUS_NO_TRANSACTION;
+    }
 
-   public boolean isRolledBack() throws SystemException
-   {
-      return getStatus() == STATUS_ROLLEDBACK;
-   }
+    public boolean isRolledBack() throws SystemException {
+        return getStatus() == STATUS_ROLLEDBACK;
+    }
 
-   public boolean isCommitted() throws SystemException
-   {
-      return getStatus() == STATUS_COMMITTED;
-   }
+    public boolean isCommitted() throws SystemException {
+        return getStatus() == STATUS_COMMITTED;
+    }
 
-   public boolean isConversationContextRequired()
-   {
-      return false;
-   }
+    public boolean isConversationContextRequired() {
+        return false;
+    }
 
-   public abstract void registerSynchronization(Synchronization sync);
+    public abstract void registerSynchronization(Synchronization sync);
 
-   public void enlist(EntityManager entityManager) throws SystemException
-   {
-      if (isActiveOrMarkedRollback())
-      {
-         entityManager.joinTransaction();
-      }
-   }
+    public void enlist(EntityManager entityManager) throws SystemException {
+        if (isActiveOrMarkedRollback()) {
+            entityManager.joinTransaction();
+        }
+    }
 
-   public Synchronizations getSynchronizations()
-   {
-      return synchronizations;
-   }
+    public Synchronizations getSynchronizations() {
+        return synchronizations;
+    }
 
-   protected void setSynchronizations(Synchronizations synchronizations)
-   {
-      this.synchronizations = synchronizations;
-   }
+    protected void setSynchronizations(Synchronizations synchronizations) {
+        this.synchronizations = synchronizations;
+    }
 
 }

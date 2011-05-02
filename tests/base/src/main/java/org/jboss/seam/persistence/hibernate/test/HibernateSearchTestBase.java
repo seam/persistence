@@ -37,45 +37,42 @@ import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class HibernateSearchTestBase
-{
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { IndexedHotel.class, ManagedHibernateSessionProvider.class, HelloService.class, HibernateSearchTestBase.class };
-   }
+public class HibernateSearchTestBase {
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{IndexedHotel.class, ManagedHibernateSessionProvider.class, HelloService.class, HibernateSearchTestBase.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @Inject
-   FullTextSession session;
+    @Inject
+    FullTextSession session;
 
-   @Test
-   public void testSearchingForHotel() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException, ParseException
-   {
-      transaction.begin();
-      IndexedHotel h = new IndexedHotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      session.persist(h);
-      session.flush();
-      transaction.commit();
+    @Test
+    public void testSearchingForHotel() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException, ParseException {
+        transaction.begin();
+        IndexedHotel h = new IndexedHotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        session.persist(h);
+        session.flush();
+        transaction.commit();
 
-      transaction.begin();
-      h = new IndexedHotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
-      session.persist(h);
-      session.flush();
-      transaction.commit();
+        transaction.begin();
+        h = new IndexedHotel("Other Hotel", "Real St ", "Wollongong", "NSW", "2518", "Australia");
+        session.persist(h);
+        session.flush();
+        transaction.commit();
 
-      transaction.begin();
-      String[] fields = new String[] { "name" };
-      MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_30, fields, new StandardAnalyzer(Version.LUCENE_30));
-      org.apache.lucene.search.Query query = parser.parse("Other");
+        transaction.begin();
+        String[] fields = new String[]{"name"};
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_30, fields, new StandardAnalyzer(Version.LUCENE_30));
+        org.apache.lucene.search.Query query = parser.parse("Other");
 
-      // wrap Lucene query in a javax.persistence.Query
-      FullTextQuery persistenceQuery = session.createFullTextQuery(query, IndexedHotel.class);
-      IndexedHotel hotel = (IndexedHotel) persistenceQuery.uniqueResult();
-      Assert.assertTrue(hotel.getName().equals("Other Hotel"));
-      transaction.commit();
+        // wrap Lucene query in a javax.persistence.Query
+        FullTextQuery persistenceQuery = session.createFullTextQuery(query, IndexedHotel.class);
+        IndexedHotel hotel = (IndexedHotel) persistenceQuery.uniqueResult();
+        Assert.assertTrue(hotel.getName().equals("Other Hotel"));
+        transaction.commit();
 
-   }
+    }
 }

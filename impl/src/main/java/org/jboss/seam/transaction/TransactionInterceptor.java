@@ -40,180 +40,131 @@ import org.jboss.seam.persistence.util.EjbApi;
  */
 @TransactionalInterceptorBinding
 @Interceptor
-public class TransactionInterceptor implements Serializable
-{
-   private static final long serialVersionUID = -4364203056333738988L;
+public class TransactionInterceptor implements Serializable {
+    private static final long serialVersionUID = -4364203056333738988L;
 
-   transient private Map<AnnotatedElement, TransactionMetadata> transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
+    transient private Map<AnnotatedElement, TransactionMetadata> transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
 
-   @Inject
-   @DefaultTransaction
-   private Instance<SeamTransaction> transaction;
+    @Inject
+    @DefaultTransaction
+    private Instance<SeamTransaction> transaction;
 
-   @Inject
-   private TransactionExtension transactionExtension;
+    @Inject
+    private TransactionExtension transactionExtension;
 
-   private class TransactionMetadata
-   {
-      private final boolean annotationPresent;
-      private final TransactionPropagation propType;
+    private class TransactionMetadata {
+        private final boolean annotationPresent;
+        private final TransactionPropagation propType;
 
-      public TransactionMetadata(Annotation annotation)
-      {
-         if (annotation == null)
-         {
-            annotationPresent = false;
-            propType = null;
-         }
-         else if (annotation.annotationType() == Transactional.class)
-         {
-            annotationPresent = true;
-            propType = ((Transactional) annotation).value();
-         }
-         else if (annotation.annotationType() == EjbApi.TRANSACTION_ATTRIBUTE)
-         {
-            annotationPresent = true;
-            try
-            {
-               Object value = annotation.getClass().getMethod("value").invoke(annotation);
+        public TransactionMetadata(Annotation annotation) {
+            if (annotation == null) {
+                annotationPresent = false;
+                propType = null;
+            } else if (annotation.annotationType() == Transactional.class) {
+                annotationPresent = true;
+                propType = ((Transactional) annotation).value();
+            } else if (annotation.annotationType() == EjbApi.TRANSACTION_ATTRIBUTE) {
+                annotationPresent = true;
+                try {
+                    Object value = annotation.getClass().getMethod("value").invoke(annotation);
 
-               if (value == EjbApi.REQUIRED)
-               {
-                  propType = TransactionPropagation.REQUIRED;
-               }
-               else if (value == EjbApi.MANDATORY)
-               {
-                  propType = TransactionPropagation.MANDATORY;
-               }
-               else if (value == EjbApi.NEVER)
-               {
-                  propType = TransactionPropagation.NEVER;
-               }
-               else if (value == EjbApi.SUPPORTS)
-               {
-                  propType = TransactionPropagation.SUPPORTS;
-               }
-               else if (value == EjbApi.NOT_SUPPORTED)
-               {
-                  throw new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not allowed on managed beans that are not EJB's.");
-               }
-               else if (value == EjbApi.REQUIRES_NEW)
-               {
-                  throw new RuntimeException("TransactionAttributeType.REQUIRES_NEW is not allowed on managed beans that are not EJB's.");
-               }
-               else
-               {
-                  throw new RuntimeException("Unkown TransactionAttributeType: " + value);
-               }
+                    if (value == EjbApi.REQUIRED) {
+                        propType = TransactionPropagation.REQUIRED;
+                    } else if (value == EjbApi.MANDATORY) {
+                        propType = TransactionPropagation.MANDATORY;
+                    } else if (value == EjbApi.NEVER) {
+                        propType = TransactionPropagation.NEVER;
+                    } else if (value == EjbApi.SUPPORTS) {
+                        propType = TransactionPropagation.SUPPORTS;
+                    } else if (value == EjbApi.NOT_SUPPORTED) {
+                        throw new RuntimeException("TransactionAttributeType.NOT_SUPPORTED is not allowed on managed beans that are not EJB's.");
+                    } else if (value == EjbApi.REQUIRES_NEW) {
+                        throw new RuntimeException("TransactionAttributeType.REQUIRES_NEW is not allowed on managed beans that are not EJB's.");
+                    } else {
+                        throw new RuntimeException("Unkown TransactionAttributeType: " + value);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                annotationPresent = false;
+                propType = null;
             }
-            catch (Exception e)
-            {
-               throw new RuntimeException(e);
+        }
+
+        public boolean isAnnotationPresent() {
+            return annotationPresent;
+        }
+
+        public boolean isNewTransactionRequired(boolean transactionActive) {
+            return propType != null && propType.isNewTransactionRequired(transactionActive);
+        }
+    }
+
+    private TransactionMetadata lookupTransactionMetadata(Method element) {
+        if (transactionMetadata == null) {
+            transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
+        }
+
+        TransactionMetadata metadata = transactionMetadata.get(element);
+
+        if (metadata == null) {
+            synchronized (this) {
+                if (element.isAnnotationPresent(Transactional.class)) {
+                    metadata = new TransactionMetadata(element.getAnnotation(Transactional.class));
+                } else if (element.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE)) {
+                    metadata = new TransactionMetadata(element.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE));
+                } else {
+                    metadata = new TransactionMetadata(null);
+                }
+                transactionMetadata.put(element, metadata);
             }
-         }
-         else
-         {
-            annotationPresent = false;
-            propType = null;
-         }
-      }
+        }
+        return metadata;
+    }
 
-      public boolean isAnnotationPresent()
-      {
-         return annotationPresent;
-      }
+    private TransactionMetadata lookupTransactionMetadata(Class<?> element) {
+        if (transactionMetadata == null) {
+            transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
+        }
 
-      public boolean isNewTransactionRequired(boolean transactionActive)
-      {
-         return propType != null && propType.isNewTransactionRequired(transactionActive);
-      }
-   }
+        TransactionMetadata metadata = transactionMetadata.get(element);
 
-   private TransactionMetadata lookupTransactionMetadata(Method element)
-   {
-      if (transactionMetadata == null)
-      {
-         transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
-      }
-
-      TransactionMetadata metadata = transactionMetadata.get(element);
-
-      if (metadata == null)
-      {
-         synchronized (this)
-         {
-            if (element.isAnnotationPresent(Transactional.class))
-            {
-               metadata = new TransactionMetadata(element.getAnnotation(Transactional.class));
+        if (metadata == null) {
+            synchronized (this) {
+                // we need access to cached stereotype information, so we load it
+                // from the transaction extension
+                metadata = new TransactionMetadata(transactionExtension.getClassLevelTransactionAnnotation(element));
+                transactionMetadata.put((AnnotatedElement) element, metadata);
             }
-            else if (element.isAnnotationPresent(EjbApi.TRANSACTION_ATTRIBUTE))
-            {
-               metadata = new TransactionMetadata(element.getAnnotation(EjbApi.TRANSACTION_ATTRIBUTE));
+        }
+        return metadata;
+    }
+
+    @AroundInvoke
+    public Object aroundInvoke(final InvocationContext invocation) throws Exception {
+        return new Work() {
+
+            @Override
+            protected Object work() throws Exception {
+                return invocation.proceed();
             }
-            else
-            {
-               metadata = new TransactionMetadata(null);
+
+            @Override
+            protected boolean isNewTransactionRequired(boolean transactionActive) {
+                return isNewTransactionRequired(invocation.getMethod(), invocation.getMethod().getDeclaringClass(), transactionActive);
             }
-            transactionMetadata.put(element, metadata);
-         }
-      }
-      return metadata;
-   }
 
-   private TransactionMetadata lookupTransactionMetadata(Class<?> element)
-   {
-      if (transactionMetadata == null)
-      {
-         transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
-      }
-
-      TransactionMetadata metadata = transactionMetadata.get(element);
-
-      if (metadata == null)
-      {
-         synchronized (this)
-         {
-            // we need access to cached stereotype information, so we load it
-            // from the transaction extension
-            metadata = new TransactionMetadata(transactionExtension.getClassLevelTransactionAnnotation(element));
-            transactionMetadata.put((AnnotatedElement) element, metadata);
-         }
-      }
-      return metadata;
-   }
-
-   @AroundInvoke
-   public Object aroundInvoke(final InvocationContext invocation) throws Exception
-   {
-      return new Work()
-      {
-
-         @Override
-         protected Object work() throws Exception
-         {
-            return invocation.proceed();
-         }
-
-         @Override
-         protected boolean isNewTransactionRequired(boolean transactionActive)
-         {
-            return isNewTransactionRequired(invocation.getMethod(), invocation.getMethod().getDeclaringClass(), transactionActive);
-         }
-
-         private boolean isNewTransactionRequired(Method method, Class<?> beanClass, boolean transactionActive)
-         {
-            TransactionMetadata metadata = lookupTransactionMetadata(method);
-            if (metadata.isAnnotationPresent())
-            {
-               return metadata.isNewTransactionRequired(transactionActive);
+            private boolean isNewTransactionRequired(Method method, Class<?> beanClass, boolean transactionActive) {
+                TransactionMetadata metadata = lookupTransactionMetadata(method);
+                if (metadata.isAnnotationPresent()) {
+                    return metadata.isNewTransactionRequired(transactionActive);
+                } else {
+                    metadata = lookupTransactionMetadata(beanClass);
+                    return metadata.isNewTransactionRequired(transactionActive);
+                }
             }
-            else
-            {
-               metadata = lookupTransactionMetadata(beanClass);
-               return metadata.isNewTransactionRequired(transactionActive);
-            }
-         }
 
-      }.workInTransaction(transaction.get());
-   }
+        }.workInTransaction(transaction.get());
+    }
 }

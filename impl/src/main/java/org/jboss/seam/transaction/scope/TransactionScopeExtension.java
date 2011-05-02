@@ -27,12 +27,9 @@ import org.jboss.seam.transaction.TransactionScoped;
  * Extension that registers the context for {@link TransactionScoped} beans
  *
  * @author Stuart Douglas
- *
  */
-public class TransactionScopeExtension implements Extension
-{
-   public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager)
-   {
-      event.addContext(new TransactionScopeContext(manager));
-   }
+public class TransactionScopeExtension implements Extension {
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
+        event.addContext(new TransactionScopeContext(manager));
+    }
 }

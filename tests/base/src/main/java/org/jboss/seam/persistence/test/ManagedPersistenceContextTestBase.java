@@ -35,40 +35,37 @@ import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.junit.Test;
 
-public class ManagedPersistenceContextTestBase
-{
+public class ManagedPersistenceContextTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { ManagedPersistenceContextTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{ManagedPersistenceContextTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @Inject
-   EntityManager em;
+    @Inject
+    EntityManager em;
 
-   @Test
-   public void testManagedPersistenceContext() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      transaction.begin();
-      Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
-      transaction.commit();
+    @Test
+    public void testManagedPersistenceContext() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        transaction.begin();
+        Hotel h = new Hotel("test", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        em.persist(h);
+        em.flush();
+        transaction.commit();
 
-      transaction.begin();
-      h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-      em.persist(h);
-      em.flush();
-      transaction.rollback();
+        transaction.begin();
+        h = new Hotel("test2", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+        em.persist(h);
+        em.flush();
+        transaction.rollback();
 
-      transaction.begin();
-      List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
-      Assert.assertEquals(1, hotels.size());
-      transaction.rollback();
-   }
+        transaction.begin();
+        List<Hotel> hotels = em.createQuery("select h from Hotel h").getResultList();
+        Assert.assertEquals(1, hotels.size());
+        transaction.rollback();
+    }
 
 }

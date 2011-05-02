@@ -38,159 +38,133 @@ import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
  * Context for the {@link TransactionScoped} scope
  *
  * @author stuart
- *
  */
-public class TransactionScopeContext implements Context, Synchronization
-{
+public class TransactionScopeContext implements Context, Synchronization {
 
-   private SeamTransaction userTransaction;
+    private SeamTransaction userTransaction;
 
-   private final BeanManager beanManager;
+    private final BeanManager beanManager;
 
-   private final ContextualIdentifierStore identifierStore = new ContextualIdentifierStore();
+    private final ContextualIdentifierStore identifierStore = new ContextualIdentifierStore();
 
-   private final ThreadLocal<TransactionScopeData> contextData = new ThreadLocal<TransactionScopeData>()
-   {
-      protected TransactionScopeData initialValue()
-      {
-         return new TransactionScopeData();
-      };
-   };
+    private final ThreadLocal<TransactionScopeData> contextData = new ThreadLocal<TransactionScopeData>() {
+        protected TransactionScopeData initialValue() {
+            return new TransactionScopeData();
+        }
 
-   public TransactionScopeContext(BeanManager beanManager)
-   {
-      this.beanManager = beanManager;
+        ;
+    };
 
-   }
+    public TransactionScopeContext(BeanManager beanManager) {
+        this.beanManager = beanManager;
 
-   /**
-    * we need to resolve the transaction bean lazily, after startup has
-    * completed
-    */
-   private void lazyInitialization()
-   {
-      if (userTransaction == null)
-      {
-         synchronized (this)
-         {
-            if (userTransaction == null)
-            {
-               Bean<SeamTransaction> bean = (Bean) beanManager.resolve(beanManager.getBeans(SeamTransaction.class, DefaultTransactionLiteral.INSTANCE));
-               if (bean == null)
-               {
-                  throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
-               }
-               CreationalContext<SeamTransaction> ctx = beanManager.createCreationalContext(bean);
-               userTransaction = (SeamTransaction) beanManager.getReference(bean, SeamTransaction.class, ctx);
+    }
+
+    /**
+     * we need to resolve the transaction bean lazily, after startup has
+     * completed
+     */
+    private void lazyInitialization() {
+        if (userTransaction == null) {
+            synchronized (this) {
+                if (userTransaction == null) {
+                    Bean<SeamTransaction> bean = (Bean) beanManager.resolve(beanManager.getBeans(SeamTransaction.class, DefaultTransactionLiteral.INSTANCE));
+                    if (bean == null) {
+                        throw new RuntimeException("Could not find SeamTransaction bean with qualifier " + DefaultTransaction.class.getName());
+                    }
+                    CreationalContext<SeamTransaction> ctx = beanManager.createCreationalContext(bean);
+                    userTransaction = (SeamTransaction) beanManager.getReference(bean, SeamTransaction.class, ctx);
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
-   /**
-    * registers a syncronization so that the beans can be destroyed when the
-    * transaction ends
-    */
-   private void registerSyncronization()
-   {
-      TransactionScopeData data = contextData.get();
-      if (!data.isSyncronisationRegistered())
-      {
-         data.setSyncronisationRegistered(true);
-         userTransaction.registerSynchronization(this);
-      }
-   }
+    /**
+     * registers a syncronization so that the beans can be destroyed when the
+     * transaction ends
+     */
+    private void registerSyncronization() {
+        TransactionScopeData data = contextData.get();
+        if (!data.isSyncronisationRegistered()) {
+            data.setSyncronisationRegistered(true);
+            userTransaction.registerSynchronization(this);
+        }
+    }
 
-   public <T> T get(Contextual<T> contextual)
-   {
-      lazyInitialization();
-      registerSyncronization();
-      String id = identifierStore.getId(contextual);
-      Map<String, Object> map = contextData.get().getInstanceStore();
-      return (T) map.get(id);
-   }
+    public <T> T get(Contextual<T> contextual) {
+        lazyInitialization();
+        registerSyncronization();
+        String id = identifierStore.getId(contextual);
+        Map<String, Object> map = contextData.get().getInstanceStore();
+        return (T) map.get(id);
+    }
 
-   public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext)
-   {
-      lazyInitialization();
-      registerSyncronization();
-      String id = identifierStore.getId(contextual);
-      TransactionScopeData data = contextData.get();
-      T instance = (T) data.getInstanceStore().get(id);
-      if (instance == null)
-      {
-         instance = contextual.create(creationalContext);
-         data.getCreationalContexts().put(id, creationalContext);
-         data.getInstanceStore().put(id, instance);
-      }
-      return instance;
-   }
+    public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext) {
+        lazyInitialization();
+        registerSyncronization();
+        String id = identifierStore.getId(contextual);
+        TransactionScopeData data = contextData.get();
+        T instance = (T) data.getInstanceStore().get(id);
+        if (instance == null) {
+            instance = contextual.create(creationalContext);
+            data.getCreationalContexts().put(id, creationalContext);
+            data.getInstanceStore().put(id, instance);
+        }
+        return instance;
+    }
 
-   public Class<? extends Annotation> getScope()
-   {
-      return TransactionScoped.class;
-   }
+    public Class<? extends Annotation> getScope() {
+        return TransactionScoped.class;
+    }
 
-   public boolean isActive()
-   {
-      lazyInitialization();
-      try
-      {
-         return userTransaction.isActive();
-      }
-      catch (SystemException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
+    public boolean isActive() {
+        lazyInitialization();
+        try {
+            return userTransaction.isActive();
+        } catch (SystemException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-   /**
-    * the transaction is done, destory the beans
-    */
-   public void afterCompletion(int status)
-   {
-      TransactionScopeData data = contextData.get();
-      for (Entry<String, Object> e : data.getInstanceStore().entrySet())
-      {
-         Contextual contextual = identifierStore.getContextual(e.getKey());
-         CreationalContext<?> ctx = data.getCreationalContexts().get(e.getKey());
-         contextual.destroy(e.getValue(), ctx);
-         ctx.release();
-      }
-      contextData.remove();
-   }
+    /**
+     * the transaction is done, destory the beans
+     */
+    public void afterCompletion(int status) {
+        TransactionScopeData data = contextData.get();
+        for (Entry<String, Object> e : data.getInstanceStore().entrySet()) {
+            Contextual contextual = identifierStore.getContextual(e.getKey());
+            CreationalContext<?> ctx = data.getCreationalContexts().get(e.getKey());
+            contextual.destroy(e.getValue(), ctx);
+            ctx.release();
+        }
+        contextData.remove();
+    }
 
-   public void beforeCompletion()
-   {
+    public void beforeCompletion() {
 
-   }
+    }
 
-   private class TransactionScopeData
-   {
-      private final Map<String, Object> instanceStore = new HashMap<String, Object>();
-      private final Map<String, CreationalContext<?>> creationalContexts = new HashMap<String, CreationalContext<?>>();
-      private boolean syncronisationRegistered;
+    private class TransactionScopeData {
+        private final Map<String, Object> instanceStore = new HashMap<String, Object>();
+        private final Map<String, CreationalContext<?>> creationalContexts = new HashMap<String, CreationalContext<?>>();
+        private boolean syncronisationRegistered;
 
-      public boolean isSyncronisationRegistered()
-      {
-         return syncronisationRegistered;
-      }
+        public boolean isSyncronisationRegistered() {
+            return syncronisationRegistered;
+        }
 
-      public void setSyncronisationRegistered(boolean syncronisationRegistered)
-      {
-         this.syncronisationRegistered = syncronisationRegistered;
-      }
+        public void setSyncronisationRegistered(boolean syncronisationRegistered) {
+            this.syncronisationRegistered = syncronisationRegistered;
+        }
 
-      public Map<String, Object> getInstanceStore()
-      {
-         return instanceStore;
-      }
+        public Map<String, Object> getInstanceStore() {
+            return instanceStore;
+        }
 
-      public Map<String, CreationalContext<?>> getCreationalContexts()
-      {
-         return creationalContexts;
-      }
+        public Map<String, CreationalContext<?>> getCreationalContexts() {
+            return creationalContexts;
+        }
 
-   }
+    }
 
 }

@@ -1,125 +1,126 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-   <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-   <parent>
-      <groupId>org.jboss.seam.persistence</groupId>
-      <artifactId>seam-persistence-parent</artifactId>
-      <version>3.0.1-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-   </parent>
+    <parent>
+        <groupId>org.jboss.seam.persistence</groupId>
+        <artifactId>seam-persistence-parent</artifactId>
+        <version>3.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-   <artifactId>seam-persistence-impl</artifactId>
-   <packaging>jar</packaging>
+    <artifactId>seam-persistence-impl</artifactId>
+    <packaging>jar</packaging>
 
-   <name>Seam Persistence Implementation</name>
-   <!-- url required for JAR Manifest -->
-   <url>${project.parent.url}</url>
+    <name>Seam Persistence Implementation</name>
+    <!-- url required for JAR Manifest -->
+    <url>${project.parent.url}</url>
 
-   <prerequisites>
-      <maven>3.0</maven>
-   </prerequisites>
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
 
-   <dependencies>
+    <dependencies>
 
-      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.spec.javax.ejb</groupId>
-         <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-         <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.seam.persistence</groupId>
-         <artifactId>seam-persistence-api</artifactId>
-      </dependency>
+        <dependency>
+            <groupId>org.jboss.seam.persistence</groupId>
+            <artifactId>seam-persistence-api</artifactId>
+        </dependency>
 
-      <dependency>
-         <groupId>org.jboss.seam.solder</groupId>
-         <artifactId>seam-solder</artifactId>
-      </dependency>
+        <dependency>
+            <groupId>org.jboss.seam.solder</groupId>
+            <artifactId>seam-solder</artifactId>
+        </dependency>
 
-      <dependency>
-         <groupId>org.hibernate</groupId>
-         <artifactId>hibernate-core</artifactId>
-         <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-      <dependency>
-         <groupId>org.hibernate</groupId>
-         <artifactId>hibernate-search</artifactId>
-         <version>3.2.1.Final</version>
-         <optional>true</optional>
-         <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search</artifactId>
+            <version>3.2.1.Final</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
 
-   </dependencies>
+    </dependencies>
 
-   <profiles>
-      <profile>
-         <id>code-coverage</id>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>emma-maven-plugin</artifactId>
-                  <executions>
-                     <execution>
-                        <id>instrumentation</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                           <goal>instrument</goal>
-                        </goals>
-                        <configuration>
-                           <verbose>true</verbose>
-                        </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-antrun-plugin</artifactId>
-                  <executions>
-                     <execution>
-                        <id>complete classpath for tests</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                           <goal>run</goal>
-                        </goals>
-                        <configuration>
-                           <tasks>
-                              <delete dir="${project.build.directory}/classes" />
-                              <mkdir dir="${project.build.directory}/classes" />
-                              <copy todir="${project.build.directory}/classes" overwrite="true">
-                                 <fileset dir="${project.build.directory}/generated-classes/emma/classes">
-                                    <include name="**/*" />
-                                 </fileset>
-                              </copy>
-                           </tasks>
-                        </configuration>
-                     </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-   </profiles>
+    <profiles>
+        <profile>
+            <id>code-coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>emma-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>instrumentation</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>instrument</goal>
+                                </goals>
+                                <configuration>
+                                    <verbose>true</verbose>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>complete classpath for tests</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <delete dir="${project.build.directory}/classes"/>
+                                        <mkdir dir="${project.build.directory}/classes"/>
+                                        <copy todir="${project.build.directory}/classes" overwrite="true">
+                                            <fileset dir="${project.build.directory}/generated-classes/emma/classes">
+                                                <include name="**/*"/>
+                                            </fileset>
+                                        </copy>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
-   <build>
-      <plugins>
-         <!-- tests run in seperate modules -->
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-               <skip>true</skip>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
+    <build>
+        <plugins>
+            <!-- tests run in seperate modules -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -18,20 +18,17 @@ package org.jboss.seam.persistence;
 
 /**
  * provides a means of configuring the default flush mode
- * 
+ * <p/>
  * TODO: This needs more thought, especially with regard to how it works in with
  * {@link PersistenceContexts}
- * 
+ *
  * @author Stuart Douglas
- * 
  */
-public interface FlushModeManager
-{
-   /**
-    * 
-    * @return the default flush mode for all seam managed persistence contexts
-    */
-   public FlushModeType getFlushModeType();
+public interface FlushModeManager {
+    /**
+     * @return the default flush mode for all seam managed persistence contexts
+     */
+    public FlushModeType getFlushModeType();
 
-   public void setFlushModeType(FlushModeType flushModeType);
+    public void setFlushModeType(FlushModeType flushModeType);
 }

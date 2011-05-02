@@ -32,56 +32,45 @@ import org.jboss.seam.solder.core.Veto;
  *
  * @author Mike Youngstrom
  * @author Gavin King
- *
  */
 @Veto
-public class NoTransaction extends AbstractUserTransaction
-{
+public class NoTransaction extends AbstractUserTransaction {
 
-   public NoTransaction()
-   {
-   }
+    public NoTransaction() {
+    }
 
-   public void begin() throws NotSupportedException, SystemException
-   {
-      throw new UnsupportedOperationException("no transaction");
-   }
+    public void begin() throws NotSupportedException, SystemException {
+        throw new UnsupportedOperationException("no transaction");
+    }
 
-   public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException
-   {
-      throw new UnsupportedOperationException("no transaction");
-   }
+    public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
+        throw new UnsupportedOperationException("no transaction");
+    }
 
-   public int getStatus() throws SystemException
-   {
-      return Status.STATUS_NO_TRANSACTION;
-   }
+    public int getStatus() throws SystemException {
+        return Status.STATUS_NO_TRANSACTION;
+    }
 
-   public void rollback() throws IllegalStateException, SecurityException, SystemException
-   {
-      throw new UnsupportedOperationException("no transaction");
-   }
+    public void rollback() throws IllegalStateException, SecurityException, SystemException {
+        throw new UnsupportedOperationException("no transaction");
+    }
 
-   public void setRollbackOnly() throws IllegalStateException, SystemException
-   {
-      throw new UnsupportedOperationException("no transaction");
-   }
+    public void setRollbackOnly() throws IllegalStateException, SystemException {
+        throw new UnsupportedOperationException("no transaction");
+    }
 
-   public void setTransactionTimeout(int timeout) throws SystemException
-   {
-      throw new UnsupportedOperationException("no transaction");
-   }
+    public void setTransactionTimeout(int timeout) throws SystemException {
+        throw new UnsupportedOperationException("no transaction");
+    }
 
-   @Override
-   public void registerSynchronization(Synchronization sync)
-   {
-      throw new UnsupportedOperationException("no transaction");
-   }
+    @Override
+    public void registerSynchronization(Synchronization sync) {
+        throw new UnsupportedOperationException("no transaction");
+    }
 
-   @Override
-   public void enlist(EntityManager entityManager) throws SystemException
-   {
-      // no-op
-   }
+    @Override
+    public void enlist(EntityManager entityManager) throws SystemException {
+        // no-op
+    }
 
 }

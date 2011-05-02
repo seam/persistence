@@ -31,56 +31,42 @@ import org.jboss.logging.Logger;
  * directly with JTA.
  *
  * @author Gavin King
- *
  */
-class SynchronizationRegistry
-{
+class SynchronizationRegistry {
 
-   private final BeanManager beanManager;
+    private final BeanManager beanManager;
 
-   public SynchronizationRegistry(BeanManager beanManager)
-   {
-      this.beanManager = beanManager;
-   }
+    public SynchronizationRegistry(BeanManager beanManager) {
+        this.beanManager = beanManager;
+    }
 
-   private static final Logger log = Logger.getLogger(SynchronizationRegistry.class);
+    private static final Logger log = Logger.getLogger(SynchronizationRegistry.class);
 
-   private List<Synchronization> synchronizations = new ArrayList<Synchronization>();
+    private List<Synchronization> synchronizations = new ArrayList<Synchronization>();
 
-   void registerSynchronization(Synchronization sync)
-   {
-      synchronizations.add(sync);
-   }
+    void registerSynchronization(Synchronization sync) {
+        synchronizations.add(sync);
+    }
 
-   void afterTransactionCompletion(boolean success)
-   {
-      for (Synchronization sync : synchronizations)
-      {
-         try
-         {
-            sync.afterCompletion(success ? Status.STATUS_COMMITTED : Status.STATUS_ROLLEDBACK);
-         }
-         catch (Exception e)
-         {
-            log.error("Exception processing transaction Synchronization after completion", e);
-         }
-      }
-      synchronizations.clear();
-   }
+    void afterTransactionCompletion(boolean success) {
+        for (Synchronization sync : synchronizations) {
+            try {
+                sync.afterCompletion(success ? Status.STATUS_COMMITTED : Status.STATUS_ROLLEDBACK);
+            } catch (Exception e) {
+                log.error("Exception processing transaction Synchronization after completion", e);
+            }
+        }
+        synchronizations.clear();
+    }
 
-   void beforeTransactionCompletion()
-   {
-      for (Synchronization sync : synchronizations)
-      {
-         try
-         {
-            sync.beforeCompletion();
-         }
-         catch (Exception e)
-         {
-            log.error("Exception processing transaction Synchronization before completion", e);
-         }
-      }
-   }
+    void beforeTransactionCompletion() {
+        for (Synchronization sync : synchronizations) {
+            try {
+                sync.beforeCompletion();
+            } catch (Exception e) {
+                log.error("Exception processing transaction Synchronization before completion", e);
+            }
+        }
+    }
 
 }

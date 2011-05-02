@@ -16,10 +16,8 @@
  */
 package org.jboss.seam.persistence.test.util;
 
-public class HelloService
-{
-   public String sayHello()
-   {
-      return "Hello";
-   }
+public class HelloService {
+    public String sayHello() {
+        return "Hello";
+    }
 }

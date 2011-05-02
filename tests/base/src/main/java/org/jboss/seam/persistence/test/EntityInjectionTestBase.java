@@ -37,52 +37,45 @@ import org.junit.Test;
  * Tests that injection is working for JPA entities
  *
  * @author Stuart Douglas
- *
  */
 
-public class EntityInjectionTestBase
-{
+public class EntityInjectionTestBase {
 
-   public static Class<?>[] getTestClasses()
-   {
-      return new Class[] { HibernateSearchTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class, EntityInjectionTestBase.class };
-   }
+    public static Class<?>[] getTestClasses() {
+        return new Class[]{HibernateSearchTestBase.class, Hotel.class, ManagedPersistenceContextProvider.class, HelloService.class, EntityInjectionTestBase.class};
+    }
 
-   @Inject
-   @DefaultTransaction
-   SeamTransaction transaction;
+    @Inject
+    @DefaultTransaction
+    SeamTransaction transaction;
 
-   @Inject
-   EntityManagerFactory emf;
+    @Inject
+    EntityManagerFactory emf;
 
-   @Test
-   public void testInjectionIntoEntity() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException
-   {
-      EntityManager em = null;
-      try
-      {
-         em = emf.createEntityManager();
-         transaction.begin();
-         em.joinTransaction();
-         Hotel h = new Hotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
-         em.persist(h);
-         em.flush();
-         transaction.commit();
-         em.close();
-         transaction.begin();
-         em = emf.createEntityManager();
-         em.joinTransaction();
+    @Test
+    public void testInjectionIntoEntity() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            transaction.begin();
+            em.joinTransaction();
+            Hotel h = new Hotel("Hilton", "Fake St", "Wollongong", "NSW", "2518", "Australia");
+            em.persist(h);
+            em.flush();
+            transaction.commit();
+            em.close();
+            transaction.begin();
+            em = emf.createEntityManager();
+            em.joinTransaction();
 
-         h = (Hotel) em.createQuery("select h from Hotel h where h.name='Hilton'").getSingleResult();
-         Assert.assertTrue(h.isInitalizerCalled());
-         Assert.assertEquals(h.sayHello(), "Hello");
-      }
-      finally
-      {
-         em.close();
-         transaction.rollback();
-      }
+            h = (Hotel) em.createQuery("select h from Hotel h where h.name='Hilton'").getSingleResult();
+            Assert.assertTrue(h.isInitalizerCalled());
+            Assert.assertEquals(h.sayHello(), "Hello");
+        } finally {
+            em.close();
+            transaction.rollback();
+        }
 
-   }
+    }
 
 }

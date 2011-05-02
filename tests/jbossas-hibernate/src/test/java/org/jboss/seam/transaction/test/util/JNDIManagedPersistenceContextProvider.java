@@ -23,11 +23,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManagerFactory;
 
-public class JNDIManagedPersistenceContextProvider
-{
-   @Resource(mappedName = "java:EntityManagerFactory")
-   @RequestScoped
-   @Produces
-   @ExtensionManaged
-   EntityManagerFactory emf;
+public class JNDIManagedPersistenceContextProvider {
+    @Resource(mappedName = "java:EntityManagerFactory")
+    @RequestScoped
+    @Produces
+    @ExtensionManaged
+    EntityManagerFactory emf;
 }

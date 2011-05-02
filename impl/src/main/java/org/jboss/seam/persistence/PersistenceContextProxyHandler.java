@@ -31,59 +31,48 @@ import org.jboss.seam.solder.el.Expressions;
 /**
  * Proxy handler for a {@link EntityManager} proxy that allows the use of EL in
  * queries.
- * 
+ *
  * @author Stuart Douglas
- * 
  */
-public class PersistenceContextProxyHandler implements Serializable
-{
-   private static final long serialVersionUID = -6539267789786229774L;
+public class PersistenceContextProxyHandler implements Serializable {
+    private static final long serialVersionUID = -6539267789786229774L;
 
-   private final EntityManager delegate;
+    private final EntityManager delegate;
 
-   private final Instance<Expressions> expressionsInstance;
+    private final Instance<Expressions> expressionsInstance;
 
-   static final Logger log = Logger.getLogger(PersistenceContextProxyHandler.class);
+    static final Logger log = Logger.getLogger(PersistenceContextProxyHandler.class);
 
-   public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager)
-   {
-      this.delegate = delegate;
-      expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
-   }
+    public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager) {
+        this.delegate = delegate;
+        expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
+    }
 
-   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-   {
-      if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class))
-      {
-         return handleCreateQueryWithString(method, args);
-      }
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class)) {
+            return handleCreateQueryWithString(method, args);
+        }
 
-      return method.invoke(delegate, args);
-   }
+        return method.invoke(delegate, args);
+    }
 
-   protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable
-   {
-      if (args[0] == null)
-      {
-         return method.invoke(delegate, args);
-      }
-      String ejbql = (String) args[0];
-      if (ejbql.indexOf('#') > 0)
-      {
-         Expressions expressions = expressionsInstance.get();
-         QueryParser qp = new QueryParser(expressions, ejbql);
-         Object[] newArgs = args.clone();
-         newArgs[0] = qp.getEjbql();
-         Query query = (Query) method.invoke(delegate, newArgs);
-         for (int i = 0; i < qp.getParameterValues().size(); i++)
-         {
-            query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
-         }
-         return query;
-      }
-      else
-      {
-         return method.invoke(delegate, args);
-      }
-   }
+    protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable {
+        if (args[0] == null) {
+            return method.invoke(delegate, args);
+        }
+        String ejbql = (String) args[0];
+        if (ejbql.indexOf('#') > 0) {
+            Expressions expressions = expressionsInstance.get();
+            QueryParser qp = new QueryParser(expressions, ejbql);
+            Object[] newArgs = args.clone();
+            newArgs[0] = qp.getEjbql();
+            Query query = (Query) method.invoke(delegate, newArgs);
+            for (int i = 0; i < qp.getParameterValues().size(); i++) {
+                query.setParameter(QueryParser.getParameterName(i), qp.getParameterValues().get(i));
+            }
+            return query;
+        } else {
+            return method.invoke(delegate, args);
+        }
+    }
 }

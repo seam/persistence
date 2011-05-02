@@ -28,14 +28,12 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JNDIManagedPersistenceContextTest extends ManagedPersistenceContextTestBase
-{
-   @Deployment
-   public static Archive<?> createTestArchive()
-   {
-      WebArchive war = JBossASTestUtils.createTestArchive();
-      war.addClasses(new Class[] { ManagedPersistenceContextTestBase.class, Hotel.class, JNDIManagedPersistenceContextProvider.class, HelloService.class });
-      war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-      return war;
-   }
+public class JNDIManagedPersistenceContextTest extends ManagedPersistenceContextTestBase {
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        WebArchive war = JBossASTestUtils.createTestArchive();
+        war.addClasses(new Class[]{ManagedPersistenceContextTestBase.class, Hotel.class, JNDIManagedPersistenceContextProvider.class, HelloService.class});
+        war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
+        return war;
+    }
 }

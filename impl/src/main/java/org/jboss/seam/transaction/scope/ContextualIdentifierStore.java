@@ -27,50 +27,40 @@ import javax.enterprise.inject.spi.PassivationCapable;
  * {@link PassivationCapable} then the id used, otherwise one is generated
  *
  * @author Stuart Douglas
- *
  */
-public class ContextualIdentifierStore
-{
-   private final Map<Contextual<?>, String> identifiers = new ConcurrentHashMap<Contextual<?>, String>();
+public class ContextualIdentifierStore {
+    private final Map<Contextual<?>, String> identifiers = new ConcurrentHashMap<Contextual<?>, String>();
 
-   private final Map<String, Contextual<?>> contextualForIdentifier = new ConcurrentHashMap<String, Contextual<?>>();
+    private final Map<String, Contextual<?>> contextualForIdentifier = new ConcurrentHashMap<String, Contextual<?>>();
 
-   private int count = 0;
+    private int count = 0;
 
-   private final String PREFIX = "CID-";
+    private final String PREFIX = "CID-";
 
-   public Contextual<?> getContextual(String id)
-   {
-      return contextualForIdentifier.get(id);
-   }
+    public Contextual<?> getContextual(String id) {
+        return contextualForIdentifier.get(id);
+    }
 
-   public String getId(Contextual<?> contextual)
-   {
-      if (identifiers.containsKey(contextual))
-      {
-         return identifiers.get(contextual);
-      }
-      if (contextual instanceof PassivationCapable)
-      {
-         PassivationCapable p = (PassivationCapable) contextual;
-         String id = p.getId();
-         contextualForIdentifier.put(id, contextual);
-         return id;
-      }
-      else
-      {
-         synchronized (this)
-         {
-            // check again inside the syncronized block
-            if (identifiers.containsKey(contextual))
-            {
-               return identifiers.get(contextual);
-            }
-            String id = PREFIX + getClass().getName() + "-" + (count++);
-            identifiers.put(contextual, id);
+    public String getId(Contextual<?> contextual) {
+        if (identifiers.containsKey(contextual)) {
+            return identifiers.get(contextual);
+        }
+        if (contextual instanceof PassivationCapable) {
+            PassivationCapable p = (PassivationCapable) contextual;
+            String id = p.getId();
             contextualForIdentifier.put(id, contextual);
             return id;
-         }
-      }
-   }
+        } else {
+            synchronized (this) {
+                // check again inside the syncronized block
+                if (identifiers.containsKey(contextual)) {
+                    return identifiers.get(contextual);
+                }
+                String id = PREFIX + getClass().getName() + "-" + (count++);
+                identifiers.put(contextual, id);
+                contextualForIdentifier.put(id, contextual);
+                return id;
+            }
+        }
+    }
 }
