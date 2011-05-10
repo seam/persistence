@@ -29,7 +29,6 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
 import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;

@@ -31,9 +31,9 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
 import org.jboss.logging.Logger;
+import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
-import org.jboss.seam.persistence.util.InstanceResolver;
 
 /**
  * Proxy handler for the seam managed persistence context. This handler makes

@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
-
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.persistence.FlushModeManager;

@@ -26,7 +26,6 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
 import junit.framework.Assert;
-
 import org.jboss.seam.persistence.test.util.HelloService;
 import org.jboss.seam.persistence.test.util.Hotel;
 import org.jboss.seam.transaction.DefaultTransaction;

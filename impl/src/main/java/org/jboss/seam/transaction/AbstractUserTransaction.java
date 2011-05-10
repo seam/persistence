@@ -16,15 +16,15 @@
  */
 package org.jboss.seam.transaction;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+
 import static javax.transaction.Status.STATUS_ACTIVE;
 import static javax.transaction.Status.STATUS_COMMITTED;
 import static javax.transaction.Status.STATUS_MARKED_ROLLBACK;
 import static javax.transaction.Status.STATUS_NO_TRANSACTION;
 import static javax.transaction.Status.STATUS_ROLLEDBACK;
-
-import javax.persistence.EntityManager;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
 
 /**
  * Base implementation of UserTransaction

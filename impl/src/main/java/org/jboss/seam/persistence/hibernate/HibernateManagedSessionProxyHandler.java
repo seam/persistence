@@ -41,11 +41,11 @@ import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.persistence.QueryParser;
-import org.jboss.seam.transaction.SeamTransaction;
-import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
 import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.seam.transaction.SeamTransaction;
+import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 
 /**
  * Proxy handler for the seam managed Hibernate session. This handler makes sure

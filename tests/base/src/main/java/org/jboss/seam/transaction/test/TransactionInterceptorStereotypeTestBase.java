@@ -29,7 +29,6 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
 import junit.framework.Assert;
-
 import org.jboss.seam.persistence.test.util.DontRollBackException;
 import org.jboss.seam.persistence.test.util.EntityManagerProvider;
 import org.jboss.seam.persistence.test.util.HelloService;

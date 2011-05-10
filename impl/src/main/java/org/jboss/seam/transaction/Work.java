@@ -18,8 +18,8 @@ package org.jboss.seam.transaction;
 
 import javax.transaction.Status;
 
-import org.jboss.seam.persistence.util.ExceptionUtil;
 import org.jboss.logging.Logger;
+import org.jboss.seam.persistence.util.ExceptionUtil;
 
 /**
  * Performs work in a JTA transaction.
