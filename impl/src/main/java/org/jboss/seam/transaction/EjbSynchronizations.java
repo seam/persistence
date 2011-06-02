@@ -35,9 +35,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
+import org.jboss.logging.Logger;
 import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Receives JTA transaction completion notifications from the EJB container, and passes them on to the registered
@@ -45,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * Synchronizations for the container transaction.
  * 
  * @author Gavin King
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 @Stateful
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 @DefaultBean(Synchronizations.class)
 public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSynchronization
 {
-   private static final Logger log = LoggerFactory.getLogger(EjbSynchronizations.class);
+   private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
 
    @Inject
    private BeanManager beanManager;
