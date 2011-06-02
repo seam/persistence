@@ -51,123 +51,99 @@ import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 @ApplicationScoped
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @DefaultBean(Synchronizations.class)
-public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSynchronization
-{
-   private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
+public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSynchronization {
+    private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
 
-   @Inject
-   private BeanManager beanManager;
+    @Inject
+    private BeanManager beanManager;
 
-   // maintain two lists to work around a bug in JBoss EJB3 where a new
-   // SessionSynchronization
-   // gets registered each time the bean is called
-   private final ThreadLocal<LinkedList<SynchronizationRegistry>> synchronizations = new ThreadLocal<LinkedList<SynchronizationRegistry>>();
-   private final ThreadLocal<LinkedList<SynchronizationRegistry>> committing = new ThreadLocal<LinkedList<SynchronizationRegistry>>();
+    // maintain two lists to work around a bug in JBoss EJB3 where a new
+    // SessionSynchronization
+    // gets registered each time the bean is called
+    private final ThreadLocal<LinkedList<SynchronizationRegistry>> synchronizations = new ThreadLocal<LinkedList<SynchronizationRegistry>>();
+    private final ThreadLocal<LinkedList<SynchronizationRegistry>> committing = new ThreadLocal<LinkedList<SynchronizationRegistry>>();
 
-   @Override
-   public void afterBegin()
-   {
-      log.debug("afterBegin");
-      getSynchronizations().addLast(new SynchronizationRegistry(beanManager));
-   }
+    @Override
+    public void afterBegin() {
+        log.debug("afterBegin");
+        getSynchronizations().addLast(new SynchronizationRegistry(beanManager));
+    }
 
-   protected LinkedList<SynchronizationRegistry> getSynchronizations()
-   {
-      LinkedList<SynchronizationRegistry> value = synchronizations.get();
-      if (value == null)
-      {
-         value = new LinkedList<SynchronizationRegistry>();
-         synchronizations.set(value);
-      }
-      return value;
-   }
+    protected LinkedList<SynchronizationRegistry> getSynchronizations() {
+        LinkedList<SynchronizationRegistry> value = synchronizations.get();
+        if (value == null) {
+            value = new LinkedList<SynchronizationRegistry>();
+            synchronizations.set(value);
+        }
+        return value;
+    }
 
-   protected LinkedList<SynchronizationRegistry> getCommitting()
-   {
-      LinkedList<SynchronizationRegistry> value = committing.get();
-      if (value == null)
-      {
-         value = new LinkedList<SynchronizationRegistry>();
-         committing.set(value);
-      }
-      return value;
-   }
+    protected LinkedList<SynchronizationRegistry> getCommitting() {
+        LinkedList<SynchronizationRegistry> value = committing.get();
+        if (value == null) {
+            value = new LinkedList<SynchronizationRegistry>();
+            committing.set(value);
+        }
+        return value;
+    }
 
-   @Override
-   public void beforeCompletion() throws EJBException, RemoteException
-   {
-      log.debug("beforeCompletion");
-      SynchronizationRegistry sync = getSynchronizations().removeLast();
-      sync.beforeTransactionCompletion();
-      getCommitting().addLast(sync);
-   }
+    @Override
+    public void beforeCompletion() throws EJBException, RemoteException {
+        log.debug("beforeCompletion");
+        SynchronizationRegistry sync = getSynchronizations().removeLast();
+        sync.beforeTransactionCompletion();
+        getCommitting().addLast(sync);
+    }
 
-   @Override
-   public void afterCompletion(boolean success) throws EJBException, RemoteException
-   {
-      log.debug("afterCompletion");
-      if (getCommitting().isEmpty())
-      {
-         if (success)
-         {
-            throw new IllegalStateException("beforeCompletion was never called");
-         }
-         else
-         {
-            log.debug("afterCompletion");
-            if (getCommitting().isEmpty())
-            {
-               if (success)
-               {
-                  throw new IllegalStateException("beforeCompletion was never called");
-               }
-               else
-               {
-                  getSynchronizations().removeLast().afterTransactionCompletion(false);
-               }
+    @Override
+    public void afterCompletion(boolean success) throws EJBException, RemoteException {
+        log.debug("afterCompletion");
+        if (getCommitting().isEmpty()) {
+            if (success) {
+                throw new IllegalStateException("beforeCompletion was never called");
+            } else {
+                log.debug("afterCompletion");
+                if (getCommitting().isEmpty()) {
+                    if (success) {
+                        throw new IllegalStateException("beforeCompletion was never called");
+                    } else {
+                        getSynchronizations().removeLast().afterTransactionCompletion(false);
+                    }
+                } else {
+                    getCommitting().removeFirst().afterTransactionCompletion(success);
+                }
             }
-            else
-            {
-               getCommitting().removeFirst().afterTransactionCompletion(success);
-            }
-         }
-      }
-   }
+        }
+    }
 
-   @Override
-   public boolean isAwareOfContainerTransactions()
-   {
-      return true;
-   }
+    @Override
+    public boolean isAwareOfContainerTransactions() {
+        return true;
+    }
 
-   @Override
-   public void afterTransactionBegin()
-   {
-      // noop, let JTA notify us
-   }
+    @Override
+    public void afterTransactionBegin() {
+        // noop, let JTA notify us
+    }
 
-   @Override
-   public void afterTransactionCompletion(boolean success)
-   {
-      // noop, let JTA notify us
-   }
+    @Override
+    public void afterTransactionCompletion(boolean success) {
+        // noop, let JTA notify us
+    }
 
-   @Override
-   public void beforeTransactionCommit()
-   {
-      // noop, let JTA notify us
-   }
+    @Override
+    public void beforeTransactionCommit() {
+        // noop, let JTA notify us
+    }
 
-   @Override
-   public void registerSynchronization(Synchronization sync)
-   {
-      getSynchronizations().getLast().registerSynchronization(sync);
-   }
+    @Override
+    public void registerSynchronization(Synchronization sync) {
+        getSynchronizations().getLast().registerSynchronization(sync);
+    }
 
-   @Override
-   @Remove
-   public void destroy()
-   {
-   }
+    @Override
+    @Remove
+    public void destroy() {
+    }
 
 }
