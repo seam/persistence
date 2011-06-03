@@ -60,8 +60,18 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
     // maintain two lists to work around a bug in JBoss EJB3 where a new
     // SessionSynchronization
     // gets registered each time the bean is called
-    private final ThreadLocal<LinkedList<SynchronizationRegistry>> synchronizations = new ThreadLocal<LinkedList<SynchronizationRegistry>>();
-    private final ThreadLocal<LinkedList<SynchronizationRegistry>> committing = new ThreadLocal<LinkedList<SynchronizationRegistry>>();
+    private final ThreadLocal<LinkedList<SynchronizationRegistry>> synchronizations = new ThreadLocal<LinkedList<SynchronizationRegistry>>() {
+        @Override
+        protected LinkedList<SynchronizationRegistry> initialValue() {
+            return new LinkedList<SynchronizationRegistry>();
+        };
+    };
+    private final ThreadLocal<LinkedList<SynchronizationRegistry>> committing = new ThreadLocal<LinkedList<SynchronizationRegistry>>() {
+        @Override
+        protected LinkedList<SynchronizationRegistry> initialValue() {
+            return new LinkedList<SynchronizationRegistry>();
+        };
+    };
 
     @Override
     public void afterBegin() {
@@ -70,21 +80,11 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
     }
 
     protected LinkedList<SynchronizationRegistry> getSynchronizations() {
-        LinkedList<SynchronizationRegistry> value = synchronizations.get();
-        if (value == null) {
-            value = new LinkedList<SynchronizationRegistry>();
-            synchronizations.set(value);
-        }
-        return value;
+        return synchronizations.get();
     }
 
     protected LinkedList<SynchronizationRegistry> getCommitting() {
-        LinkedList<SynchronizationRegistry> value = committing.get();
-        if (value == null) {
-            value = new LinkedList<SynchronizationRegistry>();
-            committing.set(value);
-        }
-        return value;
+        return committing.get();
     }
 
     @Override
@@ -138,6 +138,9 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
 
     @Override
     public void registerSynchronization(Synchronization sync) {
+        if (getSynchronizations().isEmpty()) {
+            getSynchronizations().addLast(new SynchronizationRegistry(beanManager));
+        }
         getSynchronizations().getLast().registerSynchronization(sync);
     }
 
