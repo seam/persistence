@@ -30,6 +30,7 @@ import javax.ejb.SessionSynchronization;
 import javax.ejb.Stateful;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.transaction.Synchronization;
 
 import org.jboss.logging.Logger;
 
@@ -49,15 +50,12 @@ public class EjbSynchronizationsDelegate implements LocalEjbSynchronizations, Se
     private final LinkedList<SynchronizationRegistry> synchronizations = new LinkedList<SynchronizationRegistry>();
     private final LinkedList<SynchronizationRegistry> committing = new LinkedList<SynchronizationRegistry>();
 
-    public SynchronizationRegistry getRegistry() {
-        return synchronizations.getLast();
-    }
-
     private EjbSynchronizations syncro;
 
     @Inject
     private BeanManager manager;
 
+    @Override
     public void setController(EjbSynchronizations syncro) {
         this.syncro = syncro;
     }
@@ -101,5 +99,10 @@ public class EjbSynchronizationsDelegate implements LocalEjbSynchronizations, Se
             }
         }
         syncro.cleanup();
+    }
+
+    @Override
+    public void registerSynchronization(Synchronization sync) {
+        synchronizations.getLast().registerSynchronization(sync);
     }
 }

@@ -17,6 +17,7 @@
 package org.jboss.seam.transaction;
 
 import javax.ejb.Local;
+import javax.transaction.Synchronization;
 
 /**
  * Local interface for EjbTransaction
@@ -29,5 +30,5 @@ public interface LocalEjbSynchronizations {
 
     public void setController(EjbSynchronizations ejbSynchronizations);
 
-    public SynchronizationRegistry getRegistry();
+    public void registerSynchronization(Synchronization sync);
 }

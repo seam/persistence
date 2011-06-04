@@ -87,7 +87,7 @@ public class EjbSynchronizations implements Synchronizations {
         log.debug("Registering synchronization");
         LocalEjbSynchronizations threadDelegate = getThreadDelegate();
         threadDelegate.setController(this);
-        threadDelegate.getRegistry().registerSynchronization(sync);
+        threadDelegate.registerSynchronization(sync);
     }
 
     public void cleanup() {
