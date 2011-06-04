@@ -20,10 +20,14 @@ import javax.ejb.Local;
 
 /**
  * Local interface for EjbTransaction
- *
+ * 
  * @author Gavin King
  */
 @Local
-public interface LocalEjbSynchronizations extends Synchronizations {
+public interface LocalEjbSynchronizations {
     public void destroy();
+
+    public void setController(EjbSynchronizations ejbSynchronizations);
+
+    public SynchronizationRegistry getRegistry();
 }

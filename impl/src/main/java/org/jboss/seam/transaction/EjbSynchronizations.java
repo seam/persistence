@@ -21,17 +21,8 @@
  */
 package org.jboss.seam.transaction;
 
-import java.rmi.RemoteException;
-import java.util.LinkedList;
-
-import javax.ejb.EJBException;
-import javax.ejb.Remove;
-import javax.ejb.SessionSynchronization;
-import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
@@ -44,76 +35,31 @@ import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
  * Synchronizations for the container transaction.
  * 
  * @author Gavin King
+ * @author Stuart Douglass
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@Stateful
 @ApplicationScoped
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @DefaultBean(Synchronizations.class)
-public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSynchronization {
-    private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
+public class EjbSynchronizations implements Synchronizations {
+    private static final Logger log = Logger.getLogger(EjbSynchronizations.class);
 
     @Inject
-    private BeanManager beanManager;
+    private Instance<LocalEjbSynchronizations> instance;
 
-    // maintain two lists to work around a bug in JBoss EJB3 where a new
-    // SessionSynchronization
-    // gets registered each time the bean is called
-    private final ThreadLocal<LinkedList<SynchronizationRegistry>> synchronizations = new ThreadLocal<LinkedList<SynchronizationRegistry>>() {
-        @Override
-        protected LinkedList<SynchronizationRegistry> initialValue() {
-            return new LinkedList<SynchronizationRegistry>();
-        };
-    };
-    private final ThreadLocal<LinkedList<SynchronizationRegistry>> committing = new ThreadLocal<LinkedList<SynchronizationRegistry>>() {
-        @Override
-        protected LinkedList<SynchronizationRegistry> initialValue() {
-            return new LinkedList<SynchronizationRegistry>();
-        };
-    };
+    private final ThreadLocal<LocalEjbSynchronizations> delegate = new ThreadLocal<LocalEjbSynchronizations>();
 
-    @Override
-    public void afterBegin() {
-        log.debug("afterBegin");
-        getSynchronizations().addLast(new SynchronizationRegistry(beanManager));
-    }
-
-    protected LinkedList<SynchronizationRegistry> getSynchronizations() {
-        return synchronizations.get();
-    }
-
-    protected LinkedList<SynchronizationRegistry> getCommitting() {
-        return committing.get();
-    }
-
-    @Override
-    public void beforeCompletion() throws EJBException, RemoteException {
-        log.debug("beforeCompletion");
-        SynchronizationRegistry sync = getSynchronizations().removeLast();
-        sync.beforeTransactionCompletion();
-        getCommitting().addLast(sync);
-    }
-
-    @Override
-    public void afterCompletion(boolean success) throws EJBException, RemoteException {
-        log.debug("afterCompletion");
-        if (getCommitting().isEmpty()) {
-            if (success) {
-                throw new IllegalStateException("beforeCompletion was never called");
-            } else {
-                log.debug("afterCompletion");
-                if (getCommitting().isEmpty()) {
-                    if (success) {
-                        throw new IllegalStateException("beforeCompletion was never called");
-                    } else {
-                        getSynchronizations().removeLast().afterTransactionCompletion(false);
-                    }
-                } else {
-                    getCommitting().removeFirst().afterTransactionCompletion(success);
-                }
-            }
+    private LocalEjbSynchronizations getThreadDelegate() {
+        if (delegate.get() == null) {
+            log.debug("Instantiating new EjbSynchronizationsDelegate");
+            delegate.set(instance.get());
         }
+        return delegate.get();
+    }
+
+    private void removeThreadDelegate() {
+        log.debug("Removing EjbSynchronizationsDelegate");
+        delegate.remove();
     }
 
     @Override
@@ -138,15 +84,14 @@ public class EjbSynchronizations implements LocalEjbSynchronizations, SessionSyn
 
     @Override
     public void registerSynchronization(Synchronization sync) {
-        if (getSynchronizations().isEmpty()) {
-            getSynchronizations().addLast(new SynchronizationRegistry(beanManager));
-        }
-        getSynchronizations().getLast().registerSynchronization(sync);
+        log.debug("Registering synchronization");
+        LocalEjbSynchronizations threadDelegate = getThreadDelegate();
+        threadDelegate.setController(this);
+        threadDelegate.getRegistry().registerSynchronization(sync);
     }
 
-    @Override
-    @Remove
-    public void destroy() {
+    public void cleanup() {
+        removeThreadDelegate();
     }
 
 }
