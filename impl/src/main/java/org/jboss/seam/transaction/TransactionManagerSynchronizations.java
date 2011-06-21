@@ -16,6 +16,9 @@
  */
 package org.jboss.seam.transaction;
 
+import org.jboss.logging.Logger;
+import org.jboss.seam.solder.core.Veto;
+
 import javax.ejb.Remove;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.BeanManager;
@@ -27,9 +30,6 @@ import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.jboss.logging.Logger;
-import org.jboss.seam.solder.core.Veto;
-
 /**
  * Synchronizations implementation that registers synchronizations with a JTA {@link TransactionManager}
  */
@@ -38,7 +38,7 @@ import org.jboss.seam.solder.core.Veto;
 public class TransactionManagerSynchronizations implements Synchronization, Synchronizations {
     private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
 
-    private final String[] JNDI_LOCATIONS = { "java:/TransactionManager", "java:appserver/TransactionManager",
+    private final String[] JNDI_LOCATIONS = { "java:jboss/TransactionManager", "java:/TransactionManager", "java:appserver/TransactionManager",
             "java:comp/TransactionManager", "java:pm/TransactionManager" };
 
     /**
