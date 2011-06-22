@@ -16,13 +16,8 @@
  */
 package org.jboss.seam.transaction;
 
-import org.jboss.logging.Logger;
-import org.jboss.seam.solder.core.Veto;
-
 import javax.ejb.Remove;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.Status;
@@ -30,101 +25,124 @@ import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
+import org.jboss.logging.Logger;
+import org.jboss.seam.solder.core.Veto;
+
 /**
  * Synchronizations implementation that registers synchronizations with a JTA {@link TransactionManager}
  */
 @Veto
 @ApplicationScoped
-public class TransactionManagerSynchronizations implements Synchronization, Synchronizations {
-    private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
+public class TransactionManagerSynchronizations implements Synchronization, Synchronizations
+{
+   private static final Logger log = Logger.getLogger(TransactionManagerSynchronizations.class);
 
-    private final String[] JNDI_LOCATIONS = { "java:jboss/TransactionManager", "java:/TransactionManager", "java:appserver/TransactionManager",
+   private final String[] JNDI_LOCATIONS = { "java:jboss/TransactionManager", "java:/TransactionManager",
+            "java:appserver/TransactionManager",
             "java:comp/TransactionManager", "java:pm/TransactionManager" };
 
-    /**
-     * The location that the TM was found under JNDI. This is static, as it will not change between deployed apps on the same
-     * JVM
-     */
-    private static volatile String foundJndiLocation;
+   /**
+    * The location that the TM was found under JNDI. This is static, as it will not change between deployed apps on the
+    * same JVM
+    */
+   private static volatile String foundJndiLocation;
 
-    @Inject
-    private BeanManager beanManager;
+   protected ThreadLocalStack<SynchronizationRegistry> synchronizations = new ThreadLocalStack<SynchronizationRegistry>();
 
-    protected ThreadLocalStack<SynchronizationRegistry> synchronizations = new ThreadLocalStack<SynchronizationRegistry>();
+   protected ThreadLocalStack<Transaction> transactions = new ThreadLocalStack<Transaction>();
 
-    protected ThreadLocalStack<Transaction> transactions = new ThreadLocalStack<Transaction>();
+   @Override
+   public void beforeCompletion()
+   {
+      log.debug("beforeCompletion");
+      SynchronizationRegistry sync = synchronizations.peek();
+      sync.beforeTransactionCompletion();
+   }
 
-    @Override
-    public void beforeCompletion() {
-        log.debug("beforeCompletion");
-        SynchronizationRegistry sync = synchronizations.peek();
-        sync.beforeTransactionCompletion();
-    }
+   @Override
+   public void afterCompletion(final int status)
+   {
+      transactions.pop();
+      log.debug("afterCompletion");
+      synchronizations.pop().afterTransactionCompletion((Status.STATUS_COMMITTED & status) == 0);
+   }
 
-    @Override
-    public void afterCompletion(int status) {
-        transactions.pop();
-        log.debug("afterCompletion");
-        synchronizations.pop().afterTransactionCompletion((Status.STATUS_COMMITTED & status) == 0);
-    }
+   @Override
+   public boolean isAwareOfContainerTransactions()
+   {
+      return true;
+   }
 
-    @Override
-    public boolean isAwareOfContainerTransactions() {
-        return true;
-    }
+   @Override
+   public void registerSynchronization(final Synchronization sync)
+   {
+      try
+      {
+         TransactionManager manager = getTransactionManager();
+         Transaction transaction = manager.getTransaction();
+         if (transactions.isEmpty() || transactions.peek().equals(transaction))
+         {
+            transactions.push(transaction);
+            synchronizations.push(new SynchronizationRegistry());
+            transaction.registerSynchronization(this);
+         }
+         synchronizations.peek().registerSynchronization(sync);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
-    @Override
-    public void registerSynchronization(Synchronization sync) {
-        try {
-            TransactionManager manager = getTransactionManager();
-            Transaction transaction = manager.getTransaction();
-            if (transactions.isEmpty() || transactions.peek().equals(transaction)) {
-                transactions.push(transaction);
-                synchronizations.push(new SynchronizationRegistry(beanManager));
-                transaction.registerSynchronization(this);
-            }
-            synchronizations.peek().registerSynchronization(sync);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+   @Remove
+   public void destroy()
+   {
+   }
 
-    @Remove
-    public void destroy() {
-    }
+   public TransactionManager getTransactionManager()
+   {
+      if (foundJndiLocation != null)
+      {
+         try
+         {
+            return (TransactionManager) new InitialContext().lookup(foundJndiLocation);
+         }
+         catch (NamingException e)
+         {
+            log.trace("Could not find transaction manager under" + foundJndiLocation);
+         }
+      }
+      for (String location : JNDI_LOCATIONS)
+      {
+         try
+         {
+            TransactionManager manager = (TransactionManager) new InitialContext().lookup(location);
+            foundJndiLocation = location;
+            return manager;
+         }
+         catch (NamingException e)
+         {
+            log.trace("Could not find transaction manager under" + location);
+         }
+      }
+      throw new RuntimeException("Could not find TransactionManager in JNDI");
+   }
 
-    public TransactionManager getTransactionManager() {
-        if (foundJndiLocation != null) {
-            try {
-                return (TransactionManager) new InitialContext().lookup(foundJndiLocation);
-            } catch (NamingException e) {
-                log.trace("Could not find transaction manager under" + foundJndiLocation);
-            }
-        }
-        for (String location : JNDI_LOCATIONS) {
-            try {
-                TransactionManager manager = (TransactionManager) new InitialContext().lookup(location);
-                foundJndiLocation = location;
-                return manager;
-            } catch (NamingException e) {
-                log.trace("Could not find transaction manager under" + location);
-            }
-        }
-        throw new RuntimeException("Could not find TransactionManager in JNDI");
-    }
+   @Override
+   public void afterTransactionBegin()
+   {
 
-    @Override
-    public void afterTransactionBegin() {
+   }
 
-    }
+   @Override
+   public void afterTransactionCompletion(final boolean success)
+   {
 
-    @Override
-    public void afterTransactionCompletion(boolean success) {
+   }
 
-    }
+   @Override
+   public void beforeTransactionCommit()
+   {
 
-    @Override
-    public void beforeTransactionCommit() {
-
-    }
+   }
 }

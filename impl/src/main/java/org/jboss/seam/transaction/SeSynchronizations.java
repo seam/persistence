@@ -17,54 +17,61 @@
 package org.jboss.seam.transaction;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
 import org.jboss.seam.solder.core.Veto;
 
 /**
- * This implementation does not have access to the JTA TransactionManager, so it
- * is not fully aware of container managed transaction lifecycle, and is not
- * able to register Synchronizations with a container managed transaction.
- *
+ * This implementation does not have access to the JTA TransactionManager, so it is not fully aware of container managed
+ * transaction lifecycle, and is not able to register Synchronizations with a container managed transaction.
+ * 
  * @author Gavin King
  * @author Stuart Douglas
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @ApplicationScoped
 @Veto
-public class SeSynchronizations implements Synchronizations {
-    protected ThreadLocalStack<SynchronizationRegistry> synchronizations = new ThreadLocalStack<SynchronizationRegistry>();
+public class SeSynchronizations implements Synchronizations
+{
+   protected ThreadLocalStack<SynchronizationRegistry> synchronizations = new ThreadLocalStack<SynchronizationRegistry>();
 
-    @Inject
-    private BeanManager beanManager;
+   public void afterTransactionBegin()
+   {
+      synchronizations.push(new SynchronizationRegistry());
+   }
 
-    public void afterTransactionBegin() {
-        synchronizations.push(new SynchronizationRegistry(beanManager));
-    }
+   public void afterTransactionCompletion(final boolean success)
+   {
+      if (!synchronizations.isEmpty())
+      {
+         synchronizations.pop().afterTransactionCompletion(success);
+      }
+   }
 
-    public void afterTransactionCompletion(boolean success) {
-        if (!synchronizations.isEmpty()) {
-            synchronizations.pop().afterTransactionCompletion(success);
-        }
-    }
+   public void beforeTransactionCommit()
+   {
+      if (!synchronizations.isEmpty())
+      {
+         synchronizations.peek().beforeTransactionCompletion();
+      }
+   }
 
-    public void beforeTransactionCommit() {
-        if (!synchronizations.isEmpty()) {
-            synchronizations.peek().beforeTransactionCompletion();
-        }
-    }
+   public void registerSynchronization(final Synchronization sync)
+   {
+      if (synchronizations.isEmpty())
+      {
+         throw new IllegalStateException(
+                  "Transaction begin not detected, try installing transaction:ejb-transaction in components.xml");
+      }
+      else
+      {
+         synchronizations.peek().registerSynchronization(sync);
+      }
+   }
 
-    public void registerSynchronization(Synchronization sync) {
-        if (synchronizations.isEmpty()) {
-            throw new IllegalStateException("Transaction begin not detected, try installing transaction:ejb-transaction in components.xml");
-        } else {
-            synchronizations.peek().registerSynchronization(sync);
-        }
-    }
-
-    public boolean isAwareOfContainerTransactions() {
-        return false;
-    }
+   public boolean isAwareOfContainerTransactions()
+   {
+      return false;
+   }
 
 }

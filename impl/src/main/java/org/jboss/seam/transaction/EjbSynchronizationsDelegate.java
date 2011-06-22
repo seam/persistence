@@ -28,8 +28,6 @@ import javax.ejb.EJBException;
 import javax.ejb.Remove;
 import javax.ejb.SessionSynchronization;
 import javax.ejb.Stateful;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
 import org.jboss.logging.Logger;
@@ -39,70 +37,84 @@ import org.jboss.logging.Logger;
  * @author Stuart Douglass
  */
 @Stateful
-public class EjbSynchronizationsDelegate implements LocalEjbSynchronizations, SessionSynchronization {
+public class EjbSynchronizationsDelegate implements LocalEjbSynchronizations, SessionSynchronization
+{
 
-    private static final Logger log = Logger.getLogger(EjbSynchronizationsDelegate.class);
+   private static final Logger log = Logger.getLogger(EjbSynchronizationsDelegate.class);
 
-    /*
-     * Maintain two lists to work around a bug in JBoss EJB3 where a new SessionSynchronization gets registered each time the
-     * bean is called
-     */
-    private final LinkedList<SynchronizationRegistry> synchronizations = new LinkedList<SynchronizationRegistry>();
-    private final LinkedList<SynchronizationRegistry> committing = new LinkedList<SynchronizationRegistry>();
+   /*
+    * Maintain two lists to work around a bug in JBoss EJB3 where a new SessionSynchronization gets registered each time
+    * the bean is called
+    */
+   private final LinkedList<SynchronizationRegistry> synchronizations = new LinkedList<SynchronizationRegistry>();
+   private final LinkedList<SynchronizationRegistry> committing = new LinkedList<SynchronizationRegistry>();
 
-    private EjbSynchronizations syncro;
+   private EjbSynchronizations syncro;
 
-    @Inject
-    private BeanManager manager;
+   @Override
+   public void setController(final EjbSynchronizations syncro)
+   {
+      this.syncro = syncro;
+   }
 
-    @Override
-    public void setController(EjbSynchronizations syncro) {
-        this.syncro = syncro;
-    }
+   @Override
+   @Remove
+   public void destroy()
+   {
+      log.debug("Called destroy() - @Removing EjbSynchronizationsDelegate from EJB Session");
+   }
 
-    @Override
-    @Remove
-    public void destroy() {
-        log.debug("Called destroy() - @Removing EjbSynchronizationsDelegate from EJB Session");
-    }
+   @Override
+   public void afterBegin()
+   {
+      log.debug("EjbSynchronizationsDelegate afterBegin()");
+      synchronizations.addLast(new SynchronizationRegistry());
+   }
 
-    @Override
-    public void afterBegin() {
-        log.debug("EjbSynchronizationsDelegate afterBegin()");
-        synchronizations.addLast(new SynchronizationRegistry(manager));
-    }
+   @Override
+   public void beforeCompletion() throws EJBException, RemoteException
+   {
+      log.debug("EjbSynchronizationsDelegate beforeCompletion()");
+      SynchronizationRegistry sync = synchronizations.removeLast();
+      sync.beforeTransactionCompletion();
+      committing.addLast(sync);
+   }
 
-    @Override
-    public void beforeCompletion() throws EJBException, RemoteException {
-        log.debug("EjbSynchronizationsDelegate beforeCompletion()");
-        SynchronizationRegistry sync = synchronizations.removeLast();
-        sync.beforeTransactionCompletion();
-        committing.addLast(sync);
-    }
-
-    @Override
-    public void afterCompletion(boolean success) throws EJBException, RemoteException {
-        log.debug("EjbSynchronizationsDelegate afterCompletion()");
-        if (committing.isEmpty()) {
-            if (success) {
-                throw new IllegalStateException("beforeCompletion was never called");
-            } else {
-                if (committing.isEmpty()) {
-                    if (success) {
-                        throw new IllegalStateException("beforeCompletion was never called");
-                    } else {
-                        synchronizations.removeLast().afterTransactionCompletion(false);
-                    }
-                } else {
-                    committing.removeFirst().afterTransactionCompletion(success);
-                }
+   @Override
+   public void afterCompletion(final boolean success) throws EJBException, RemoteException
+   {
+      log.debug("EjbSynchronizationsDelegate afterCompletion()");
+      if (committing.isEmpty())
+      {
+         if (success)
+         {
+            throw new IllegalStateException("beforeCompletion was never called");
+         }
+         else
+         {
+            if (committing.isEmpty())
+            {
+               if (success)
+               {
+                  throw new IllegalStateException("beforeCompletion was never called");
+               }
+               else
+               {
+                  synchronizations.removeLast().afterTransactionCompletion(false);
+               }
             }
-        }
-        syncro.cleanup();
-    }
+            else
+            {
+               committing.removeFirst().afterTransactionCompletion(success);
+            }
+         }
+      }
+      syncro.cleanup();
+   }
 
-    @Override
-    public void registerSynchronization(Synchronization sync) {
-        synchronizations.getLast().registerSynchronization(sync);
-    }
+   @Override
+   public void registerSynchronization(final Synchronization sync)
+   {
+      synchronizations.getLast().registerSynchronization(sync);
+   }
 }
