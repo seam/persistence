@@ -22,11 +22,12 @@
 package org.jboss.seam.transaction;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.transaction.Synchronization;
 
 import org.jboss.logging.Logger;
+import org.jboss.seam.persistence.util.BeanManagerUtils;
 import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 
 /**
@@ -45,14 +46,14 @@ public class EjbSynchronizations implements Synchronizations {
     private static final Logger log = Logger.getLogger(EjbSynchronizations.class);
 
     @Inject
-    private Instance<LocalEjbSynchronizations> instance;
+    private BeanManager manager;
 
     private final ThreadLocal<LocalEjbSynchronizations> delegate = new ThreadLocal<LocalEjbSynchronizations>();
 
     private LocalEjbSynchronizations getThreadDelegate() {
         if (delegate.get() == null) {
             log.debug("Instantiating new EjbSynchronizationsDelegate");
-            delegate.set(instance.get());
+            delegate.set(BeanManagerUtils.getContextualInstance(manager, LocalEjbSynchronizations.class));
         }
         return delegate.get();
     }

@@ -29,9 +29,8 @@ import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
 
 /**
- * Proxy handler for a {@link EntityManager} proxy that allows the use of EL in
- * queries.
- *
+ * Proxy handler for a {@link EntityManager} proxy that allows the use of EL in queries.
+ * 
  * @author Stuart Douglas
  */
 public class PersistenceContextProxyHandler implements Serializable {
@@ -49,7 +48,8 @@ public class PersistenceContextProxyHandler implements Serializable {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0 && method.getParameterTypes()[0].equals(String.class)) {
+        if ("createQuery".equals(method.getName()) && method.getParameterTypes().length > 0
+                && method.getParameterTypes()[0].equals(String.class)) {
             return handleCreateQueryWithString(method, args);
         }
 
