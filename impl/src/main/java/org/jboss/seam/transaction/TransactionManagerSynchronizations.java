@@ -16,7 +16,9 @@
  */
 package org.jboss.seam.transaction;
 
-import javax.ejb.Remove;
+import org.jboss.logging.Logger;
+import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -24,9 +26,6 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-
-import org.jboss.logging.Logger;
-import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
 
 /**
  * Synchronizations implementation that registers synchronizations with a JTA {@link TransactionManager}
@@ -82,10 +81,6 @@ public class TransactionManagerSynchronizations implements Synchronization, Sync
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Remove
-    public void destroy() {
     }
 
     public TransactionManager getTransactionManager() {
