@@ -16,8 +16,11 @@
  */
 package org.jboss.seam.transaction;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Instance;
+import org.jboss.logging.Logger;
+import org.jboss.seam.persistence.DefaultPersistenceProvider;
+import org.jboss.seam.solder.core.Veto;
+
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.HeuristicMixedException;
@@ -28,10 +31,6 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
-import org.jboss.logging.Logger;
-import org.jboss.seam.persistence.DefaultPersistenceProvider;
-import org.jboss.seam.solder.core.Veto;
-
 /**
  * Support for the JPA EntityTransaction API.
  * <p/>
@@ -40,7 +39,7 @@ import org.jboss.seam.solder.core.Veto;
  *
  * @author Gavin King
  */
-@RequestScoped
+@ApplicationScoped
 @DefaultTransaction
 @Veto
 public class EntityTransaction extends AbstractUserTransaction {
