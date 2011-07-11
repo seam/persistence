@@ -50,7 +50,7 @@ public class EntityTransaction extends AbstractUserTransaction {
     private EntityManager entityManager;
 
     @Inject
-    private Instance<DefaultPersistenceProvider> persistenceProvider;
+    private DefaultPersistenceProvider persistenceProvider;
 
     @Inject
     public void init(Synchronizations sync) {
@@ -132,7 +132,7 @@ public class EntityTransaction extends AbstractUserTransaction {
         // try to register the synchronization directly with the
         // persistence provider, but if this fails, just hold
         // on to it myself
-        if (!persistenceProvider.get().registerSynchronization(sync, entityManager)) {
+        if (!persistenceProvider.registerSynchronization(sync, entityManager)) {
             getSynchronizations().registerSynchronization(sync);
         }
     }

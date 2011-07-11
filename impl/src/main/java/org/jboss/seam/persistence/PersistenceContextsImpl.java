@@ -16,19 +16,17 @@
  */
 package org.jboss.seam.persistence;
 
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-
-import org.jboss.logging.Logger;
 
 /**
  * Maintains the set of persistence contexts that have been touched in a
@@ -36,6 +34,7 @@ import org.jboss.logging.Logger;
  * during the render phase.
  *
  * @author Gavin King
+ * @author Stuart Douglas
  */
 @ConversationScoped
 public class PersistenceContextsImpl implements Serializable, PersistenceContexts {
@@ -46,7 +45,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
     /**
      * persistences contexts are referenced by their qualifiers
      */
-    private Set<PersistenceContextDefintition> set = new HashSet<PersistenceContextDefintition>();
+    private final Set<PersistenceContextDefintition> set = new HashSet<PersistenceContextDefintition>();
 
     private FlushModeType flushMode;
 
@@ -55,14 +54,8 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
     private FlushModeType realFlushMode;
 
     @Inject
-    BeanManager beanManager;
-
-    @Inject
     @Any
-    Instance<ManagedPersistenceContext> persistenceContexts;
-
-    @Inject
-    Instance<DefaultPersistenceProvider> persistenceProvider;
+    private Instance<ManagedPersistenceContext> persistenceContexts;
 
     @Inject
     public void create(FlushModeManager manager) {

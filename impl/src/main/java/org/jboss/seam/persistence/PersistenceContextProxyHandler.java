@@ -16,21 +16,19 @@
  */
 package org.jboss.seam.persistence;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.jboss.logging.Logger;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
 
+import javax.enterprise.inject.spi.BeanManager;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+
 /**
  * Proxy handler for a {@link EntityManager} proxy that allows the use of EL in queries.
- * 
+ *
  * @author Stuart Douglas
  */
 public class PersistenceContextProxyHandler implements Serializable {
@@ -38,13 +36,15 @@ public class PersistenceContextProxyHandler implements Serializable {
 
     private final EntityManager delegate;
 
-    private final Instance<Expressions> expressionsInstance;
+    private transient Expressions expressions;
 
-    static final Logger log = Logger.getLogger(PersistenceContextProxyHandler.class);
+    private final BeanManager beanManager;
+
+    private static final Logger log = Logger.getLogger(PersistenceContextProxyHandler.class);
 
     public PersistenceContextProxyHandler(EntityManager delegate, BeanManager beanManager) {
         this.delegate = delegate;
-        expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
+        this.beanManager = beanManager;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -62,7 +62,7 @@ public class PersistenceContextProxyHandler implements Serializable {
         }
         String ejbql = (String) args[0];
         if (ejbql.indexOf('#') > 0) {
-            Expressions expressions = expressionsInstance.get();
+            Expressions expressions = getExpressions();
             QueryParser qp = new QueryParser(expressions, ejbql);
             Object[] newArgs = args.clone();
             newArgs[0] = qp.getEjbql();
@@ -74,5 +74,12 @@ public class PersistenceContextProxyHandler implements Serializable {
         } else {
             return method.invoke(delegate, args);
         }
+    }
+
+    private Expressions getExpressions() {
+        if(expressions == null) {
+            expressions = InstanceResolver.getInstance(Expressions.class, beanManager).get();
+        }
+        return expressions;
     }
 }

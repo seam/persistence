@@ -16,15 +16,15 @@
  */
 package org.jboss.seam.persistence;
 
+import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
+import javax.transaction.Synchronization;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.OptimisticLockException;
-import javax.transaction.Synchronization;
 
 /**
  * Abstraction layer for persistence providers (JPA implementations). This class
@@ -38,7 +38,7 @@ import javax.transaction.Synchronization;
  * @author Pete Muir
  * @author Stuart Douglas
  */
-public class DefaultPersistenceProvider implements SeamPersistenceProvider {
+public class DefaultPersistenceProvider implements SeamPersistenceProvider, Serializable {
     public enum Feature {
         /**
          * Identifies whether this JPA provider supports using a wildcard as the

@@ -16,22 +16,6 @@
  */
 package org.jboss.seam.persistence.hibernate;
 
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.persistence.EntityManager;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -41,11 +25,27 @@ import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
 import org.jboss.seam.persistence.QueryParser;
+import org.jboss.seam.persistence.util.BeanManagerUtils;
 import org.jboss.seam.persistence.util.InstanceResolver;
 import org.jboss.seam.solder.el.Expressions;
 import org.jboss.seam.solder.literal.DefaultLiteral;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
+
+import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.persistence.EntityManager;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Proxy handler for the seam managed Hibernate session. This handler makes sure
@@ -58,10 +58,6 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
     private static final long serialVersionUID = -6539267789786229774L;
 
     private final Session delegate;
-
-    private final Instance<SeamTransaction> userTransactionInstance;
-
-    private transient boolean synchronizationRegistered;
 
     private PersistenceContexts persistenceContexts;
 
@@ -79,11 +75,13 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
 
     private final Instance<Expressions> expressionsInstance;
 
+    private transient SeamTransaction seamTransaction;
+    private transient boolean synchronizationRegistered;
+
     public HibernateManagedSessionProxyHandler(Session delegate, BeanManager beanManager, Set<Annotation> qualifiers, HibernatePersistenceProvider provider, BeanManager manager) {
         this.qualifiers = qualifiers;
         this.provider = provider;
         this.delegate = delegate;
-        this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
         this.expressionsInstance = InstanceResolver.getInstance(Expressions.class, beanManager);
         this.manager = manager;
     }
@@ -139,7 +137,7 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
     }
 
     private void joinTransaction() throws SystemException {
-        SeamTransaction transaction = userTransactionInstance.get();
+        SeamTransaction transaction = getTransaction();
         if (transaction.isActive()) {
             delegate.isOpen();
             try {
@@ -152,7 +150,7 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
     }
 
     private void closeAfterTransaction() throws SystemException {
-        SeamTransaction transaction = userTransactionInstance.get();
+        SeamTransaction transaction = getTransaction();
         if (transaction.isActive()) {
             closeOnTransactionCommit = true;
         } else {
@@ -212,6 +210,14 @@ public class HibernateManagedSessionProxyHandler implements InvocationHandler, S
             persistenceContexts = (PersistenceContexts) manager.getReference(bean, PersistenceContexts.class, ctx);
         }
         return persistenceContexts;
+    }
+
+
+    private SeamTransaction getTransaction() {
+        if(seamTransaction == null) {
+            seamTransaction = BeanManagerUtils.getContextualInstance(manager, SeamTransaction.class, DefaultTransactionLiteral.INSTANCE);
+        }
+        return seamTransaction;
     }
 
 }

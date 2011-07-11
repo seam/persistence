@@ -16,24 +16,22 @@
  */
 package org.jboss.seam.persistence;
 
+import org.jboss.logging.Logger;
+import org.jboss.seam.persistence.util.BeanManagerUtils;
+import org.jboss.seam.transaction.SeamTransaction;
+import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
+
+import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.persistence.EntityManager;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
-
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.persistence.EntityManager;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-
-import org.jboss.logging.Logger;
-import org.jboss.seam.persistence.util.InstanceResolver;
-import org.jboss.seam.transaction.SeamTransaction;
-import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
 
 /**
  * Proxy handler for the seam managed persistence context. This handler makes
@@ -48,19 +46,21 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
     private final EntityManager delegate;
 
-    private final Instance<SeamTransaction> userTransactionInstance;
-
-    private transient boolean synchronizationRegistered;
-
     private final PersistenceContexts persistenceContexts;
 
     private final Set<Annotation> qualifiers;
 
     private final SeamPersistenceProvider provider;
 
+    private final BeanManager beanManager;
+
     private boolean persistenceContextsTouched = false;
 
     private boolean closeOnTransactionCommit = false;
+
+    private transient SeamTransaction seamTransaction;
+
+    private transient boolean synchronizationRegistered;
 
     static final Logger log = Logger.getLogger(ManagedPersistenceContextProxyHandler.class);
 
@@ -69,8 +69,8 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
         this.qualifiers = qualifiers;
         this.provider = provider;
         this.delegate = delegate;
-        this.userTransactionInstance = InstanceResolver.getInstance(SeamTransaction.class, beanManager, DefaultTransactionLiteral.INSTANCE);
         this.persistenceContexts = persistenceContexts;
+        this.beanManager = beanManager;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -109,7 +109,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
     }
 
     private void joinTransaction() throws SystemException {
-        SeamTransaction transaction = userTransactionInstance.get();
+        SeamTransaction transaction = getTransaction();
         if (transaction.isActive()) {
             synchronizationRegistered = true;
             transaction.enlist(delegate);
@@ -126,7 +126,7 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
     }
 
     private void closeAfterTransaction() throws SystemException {
-        SeamTransaction transaction = userTransactionInstance.get();
+        SeamTransaction transaction = getTransaction();
         if (transaction.isActive()) {
             closeOnTransactionCommit = true;
         } else {
@@ -166,4 +166,11 @@ public class ManagedPersistenceContextProxyHandler extends PersistenceContextPro
 
     }
 
+
+    private SeamTransaction getTransaction() {
+        if(seamTransaction == null) {
+            seamTransaction = BeanManagerUtils.getContextualInstance(beanManager, SeamTransaction.class, DefaultTransactionLiteral.INSTANCE);
+        }
+        return seamTransaction;
+    }
 }

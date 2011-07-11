@@ -16,20 +16,21 @@
  */
 package org.jboss.seam.transaction;
 
+import org.jboss.seam.persistence.util.BeanManagerUtils;
+import org.jboss.seam.persistence.util.EjbApi;
+import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;
+
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-
-import org.jboss.seam.persistence.util.EjbApi;
 
 /**
  * Implements transaction propagation rules for Seam JavaBean components.
@@ -45,12 +46,13 @@ public class TransactionInterceptor implements Serializable {
 
     transient private Map<AnnotatedElement, TransactionMetadata> transactionMetadata = new HashMap<AnnotatedElement, TransactionMetadata>();
 
-    @Inject
-    @DefaultTransaction
-    private Instance<SeamTransaction> transaction;
+    private transient SeamTransaction seamTransaction;
 
     @Inject
     private TransactionExtension transactionExtension;
+
+    @Inject
+    private BeanManager beanManager;
 
     private class TransactionMetadata {
         private final boolean annotationPresent;
@@ -165,6 +167,13 @@ public class TransactionInterceptor implements Serializable {
                 }
             }
 
-        }.workInTransaction(transaction.get());
+        }.workInTransaction(getTransaction());
+    }
+
+    private SeamTransaction getTransaction() {
+        if(seamTransaction == null) {
+            seamTransaction = BeanManagerUtils.getContextualInstance(beanManager, SeamTransaction.class, DefaultTransactionLiteral.INSTANCE);
+        }
+        return seamTransaction;
     }
 }
