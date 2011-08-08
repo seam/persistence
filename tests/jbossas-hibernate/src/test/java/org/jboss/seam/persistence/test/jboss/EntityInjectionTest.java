@@ -19,7 +19,7 @@ package org.jboss.seam.persistence.test.jboss;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.EntityInjectionTestBase;
-import org.jboss.seam.transaction.test.util.JBossASTestUtils;
+import org.jboss.seam.persistence.test.util.JBossASTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;

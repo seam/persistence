@@ -14,24 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.persistence.test.jboss;
+package org.jboss.seam.persistence.test.util;
 
-import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.persistence.test.ManagedPersistenceContextTestBase;
-import org.jboss.seam.persistence.test.util.JBossASTestUtils;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.runner.RunWith;
+import javax.annotation.Resource;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
+import javax.persistence.EntityManagerFactory;
 
-@RunWith(Arquillian.class)
-public class ManagedPersistenceContextTest extends ManagedPersistenceContextTestBase {
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        WebArchive war = JBossASTestUtils.createTestArchive();
-        war.addClasses(getTestClasses());
-        war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
-        return war;
-    }
+import org.jboss.seam.solder.core.ExtensionManaged;
 
+public class JNDIManagedPersistenceContextProvider {
+    @Resource(mappedName = "java:EntityManagerFactory")
+    @RequestScoped
+    @Produces
+    @ExtensionManaged
+    EntityManagerFactory emf;
 }
