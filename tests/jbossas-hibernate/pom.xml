@@ -5,7 +5,7 @@
     <parent>
         <artifactId>seam-persistence-parent</artifactId>
         <groupId>org.jboss.seam.persistence</groupId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -106,10 +106,10 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
+        <!--dependency>
             <groupId>org.jboss.arquillian</groupId>
             <artifactId>arquillian-junit</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
@@ -136,7 +136,7 @@
 
     <profiles>
         <profile>
-            <id>jbossas-managed-6</id>
+            <id>jbossas-managed-7</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -144,7 +144,7 @@
 
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-jbossas-managed-6</artifactId>
+                    <artifactId>arquillian-jbossas-managed-7</artifactId>
                 </dependency>
 
                 <dependency>
@@ -213,11 +213,11 @@
         </profile>
 
         <profile>
-            <id>jbossas-remote-6</id>
+            <id>jbossas-remote-7</id>
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-jbossas-remote-6</artifactId>
+                    <artifactId>arquillian-jbossas-remote-7</artifactId>
                 </dependency>
                 <!-- need for org.jnp.interfaces.NamingContextFactory -->
                 <dependency>
