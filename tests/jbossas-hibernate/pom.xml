@@ -145,6 +145,7 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-jbossas-managed-7</artifactId>
+                    <version>1.0.0.CR1</version>
                 </dependency>
 
                 <dependency>

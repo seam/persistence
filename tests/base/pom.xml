@@ -76,11 +76,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--dependency>
+        <dependency>
             <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-junit</artifactId>
-            <scope>provided</scope>
-        </dependency-->
+            <artifactId>arquillian-bom</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
