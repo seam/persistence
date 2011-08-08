@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>seam-persistence-impl</artifactId>
+    <artifactId>seam-persistence</artifactId>
     <packaging>jar</packaging>
 
     <name>Seam Persistence Implementation</name>

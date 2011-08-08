@@ -29,12 +29,6 @@
 
         <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
-            <artifactId>seam-persistence-impl</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.seam.persistence</groupId>
             <artifactId>seam-persistence</artifactId>
             <optional>true</optional>
         </dependency>
@@ -49,7 +43,7 @@
 
         <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
-            <artifactId>seam-persistence-impl</artifactId>
+            <artifactId>seam-persistence</artifactId>
             <version>${project.version}</version>
             <classifier>sources</classifier>
             <optional>true</optional>

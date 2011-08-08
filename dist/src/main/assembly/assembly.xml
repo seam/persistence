@@ -88,7 +88,7 @@
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
                 <include>org.jboss.seam.persistence:seam-persistence-api:*:sources</include>
-                <include>org.jboss.seam.persistence:seam-persistence-impl:*:sources</include>
+                <include>org.jboss.seam.persistence:seam-persistence:*:sources</include>
             </includes>
             <unpackOptions>
                 <excludes>
