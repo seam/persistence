@@ -312,7 +312,7 @@
                 applied at the class level.
             </para>
             <programlisting role="JAVA">@TransactionAttribute /*Defaults to TransactionAttributeType.REQUIRED */
-                class TransactionaBean
+                class TransactionalBean
                 {
 
                 /* This is a transactional method, when this method is called a transaction
