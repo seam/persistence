@@ -1,13 +1,16 @@
 package org.jboss.seam.examples.booking.ftest;
 
+import static org.jboss.test.selenium.guard.request.RequestTypeGuardFactory.waitXhr;
+import static org.jboss.test.selenium.locator.LocatorFactory.jq;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
+
 import org.jboss.test.selenium.locator.JQueryLocator;
 import org.jboss.test.selenium.locator.option.OptionLocator;
 import org.jboss.test.selenium.locator.option.OptionValueLocator;
 import org.testng.annotations.Test;
-
-import static org.jboss.test.selenium.guard.request.RequestTypeGuardFactory.waitXhr;
-import static org.jboss.test.selenium.locator.LocatorFactory.jq;
-import static org.testng.AssertJUnit.*;
 
 /**
  * This class tests booking functionality of the example.
@@ -65,7 +68,7 @@ public class BookingTest extends AbstractBookingTest {
         for (int pageSize : values) {
             selenium.select(SEARCH_PAGE_SIZE, new OptionValueLocator(String.valueOf(pageSize)));
             waitXhr(selenium).keyUp(SEARCH_QUERY, " ");
-            assertEquals(selenium.getCount(COUNT_HOTEL), pageSize);
+            assertTrue(selenium.getCount(COUNT_HOTEL) <= pageSize);
         }
     }
 
@@ -154,10 +157,15 @@ public class BookingTest extends AbstractBookingTest {
             selenium.waitForPageToLoad();
             selenium.click(MENU_FIND);
             selenium.waitForPageToLoad();
+      
         }
         enterSearchQuery(hotelName);
-        selenium.click(SEARCH_RESULT_TABLE_FIRST_ROW_LINK);
-        selenium.waitForPageToLoad();
+        //ajax request does not change html source
+       selenium.refresh();
+       selenium.waitForPageToLoad();
+       selenium.click(SEARCH_RESULT_TABLE_FIRST_ROW_LINK);
+       selenium.waitForPageToLoad();
+            
         // booking page
         selenium.click(BUTTON_BOOK);
         selenium.waitForPageToLoad();
@@ -173,7 +181,7 @@ public class BookingTest extends AbstractBookingTest {
     }
 
     protected void populateBookingFields(CreditCardType creditCardType) {
-        selenium.select(DETAILS_CARD_TYPE, creditCardType.getLocator());
+    	selenium.select(DETAILS_CARD_TYPE, creditCardType.getLocator());
     }
 
     protected void populateBookingFields(String creditCardNumber, CreditCardType creditCardType) {
