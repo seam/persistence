@@ -33,7 +33,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.logging.Logger;
+import org.jboss.seam.solder.logging.Logger;
 import org.jboss.seam.solder.bean.ContextualLifecycle;
 import org.jboss.seam.solder.literal.DefaultLiteral;
 

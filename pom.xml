@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.seam</groupId>
         <artifactId>seam-parent</artifactId>
-        <version>12-SNAPSHOT</version>
+        <version>12</version>
     </parent>
 
     <artifactId>seam-persistence-parent</artifactId>
@@ -33,7 +32,7 @@
     </modules>
 
     <properties>
-        <seam.version>3.0.0.Final</seam.version>
+        <seam.version>3.1.0.Beta1</seam.version>
         <emma.version>2.0.5312</emma.version>
     </properties>
 
@@ -205,8 +204,7 @@
                                     </goals>
                                     <configuration>
                                         <tasks>
-                                            <copy file="${project.parent.build.directory}/../impl/target/coverage.em"
-                                                  todir="${basedir}"/>
+                                            <copy file="${project.parent.build.directory}/../impl/target/coverage.em" todir="${basedir}" />
                                         </tasks>
                                     </configuration>
                                 </execution>
