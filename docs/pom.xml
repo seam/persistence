@@ -9,9 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.jboss.seam.persistence</groupId>
     <artifactId>seam-persistence-reference-guide</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
     <packaging>jdocbook</packaging>
     <name>Seam Persistence Reference Guide</name>
 
