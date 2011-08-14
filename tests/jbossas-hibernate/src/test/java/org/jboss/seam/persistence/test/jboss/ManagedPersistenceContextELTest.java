@@ -30,7 +30,7 @@ public class ManagedPersistenceContextELTest extends ManagedPersistenceContextEL
     public static Archive<?> createTestArchive() {
         WebArchive war = JBossASTestUtils.createTestArchive();
         war.addClasses(getTestClasses());
-        war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
+        war.addAsWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
         return war;
     }
 

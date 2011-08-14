@@ -36,8 +36,8 @@ public class EntityInjectionTest extends EntityInjectionTestBase {
         WebArchive war = JBossASTestUtils.createTestArchive();
 
         war.addClasses(getTestClasses());
-        war.addWebResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");
-        war.addWebResource("META-INF/orm.xml", "classes/META-INF/orm.xml");
+        war.addAsWebResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");
+        war.addAsWebResource("META-INF/orm.xml", "classes/META-INF/orm.xml");
         return war;
     }
 

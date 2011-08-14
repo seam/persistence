@@ -143,9 +143,10 @@
             <dependencies>
 
                 <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-jbossas-managed-7</artifactId>
-                    <version>1.0.0.CR1</version>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
+                    <version>7.0.0.Final</version>
+                    <scope>test</scope>
                 </dependency>
 
                 <dependency>
@@ -217,8 +218,10 @@
             <id>jbossas-remote-7</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-jbossas-remote-7</artifactId>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-remote</artifactId>
+                    <version>7.0.0.Final</version>
+                    <scope>test</scope>
                 </dependency>
                 <!-- need for org.jnp.interfaces.NamingContextFactory -->
                 <dependency>

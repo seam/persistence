@@ -33,7 +33,7 @@ public class JNDIManagedPersistenceContextTest extends ManagedPersistenceContext
     public static Archive<?> createTestArchive() {
         WebArchive war = JBossASTestUtils.createTestArchive();
         war.addClasses(new Class[]{ManagedPersistenceContextTestBase.class, Hotel.class, JNDIManagedPersistenceContextProvider.class, HelloService.class});
-        war.addWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
+        war.addAsWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
         return war;
     }
 }

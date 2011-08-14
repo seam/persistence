@@ -25,9 +25,11 @@
         <module>api</module>
         <module>impl</module>
         <module>tests/base</module>
-        <module>tests/jetty-hibernate</module>
-        <module>tests/jetty-openjpa</module>
-        <module>tests/jbossas-hibernate</module>
+
+        <!-- disabled until we upgrade to latest arquillian -->
+        <!--module>tests/jetty-hibernate</module-->
+        <!--module>tests/jetty-openjpa</module-->
+        <!--module>tests/jbossas-hibernate</module-->
     </modules>
 
     <properties>
