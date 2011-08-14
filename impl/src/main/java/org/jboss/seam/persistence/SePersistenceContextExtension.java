@@ -42,7 +42,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
-import org.jboss.logging.Logger;
+import org.jboss.seam.solder.logging.Logger;
 import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.seam.solder.literal.AnyLiteral;
 import org.jboss.seam.solder.literal.DefaultLiteral;

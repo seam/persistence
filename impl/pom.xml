@@ -46,7 +46,13 @@
 
         <dependency>
             <groupId>org.jboss.seam.solder</groupId>
+            <artifactId>seam-solder-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam.solder</groupId>
             <artifactId>seam-solder</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
