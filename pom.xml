@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.seam</groupId>
         <artifactId>seam-parent</artifactId>
-        <version>12-SNAPSHOT</version>
+        <version>12</version>
     </parent>
 
     <artifactId>seam-persistence-parent</artifactId>
@@ -33,7 +33,7 @@
     </modules>
 
     <properties>
-        <seam.version>3.0.0.Final</seam.version>
+        <seam.version>3.1.0.Beta1</seam.version>
         <emma.version>2.0.5312</emma.version>
     </properties>
 
