@@ -19,8 +19,6 @@ package org.jboss.seam.persistence;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import org.jboss.seam.transaction.SeamTransaction;
-
 /**
  * Event that is fired when the SMPC is created. This allows you to configure
  * the SMPC before it is used, e.g. by enabling Hibernate filters.

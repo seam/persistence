@@ -1,15 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.seam.persistence</groupId>
         <artifactId>seam-persistence-parent</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>seam-persistence-impl</artifactId>
+    <artifactId>seam-persistence</artifactId>
     <packaging>jar</packaging>
 
     <name>Seam Persistence Implementation</name>
@@ -40,8 +39,19 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.seam.transaction</groupId>
+            <artifactId>seam-transaction-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam.solder</groupId>
+            <artifactId>seam-solder-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.seam.solder</groupId>
             <artifactId>seam-solder</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -93,11 +103,11 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete dir="${project.build.directory}/classes"/>
-                                        <mkdir dir="${project.build.directory}/classes"/>
+                                        <delete dir="${project.build.directory}/classes" />
+                                        <mkdir dir="${project.build.directory}/classes" />
                                         <copy todir="${project.build.directory}/classes" overwrite="true">
                                             <fileset dir="${project.build.directory}/generated-classes/emma/classes">
-                                                <include name="**/*"/>
+                                                <include name="**/*" />
                                             </fileset>
                                         </copy>
                                     </tasks>

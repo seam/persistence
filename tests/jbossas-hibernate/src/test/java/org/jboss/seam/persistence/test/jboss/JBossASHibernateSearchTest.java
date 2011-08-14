@@ -21,7 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.HibernateSearchTestBase;
 import org.jboss.seam.persistence.test.util.ArtifactNames;
 import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
-import org.jboss.seam.transaction.test.util.JBossASTestUtils;
+import org.jboss.seam.persistence.test.util.JBossASTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
@@ -31,11 +31,11 @@ public class JBossASHibernateSearchTest extends HibernateSearchTestBase {
     @Deployment
     public static Archive<?> createTestArchive() {
         WebArchive war = JBossASTestUtils.createTestArchive();
-        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.HIBERNATE_SEARCH));
-        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
-        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
+        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.HIBERNATE_SEARCH));
+        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_ANALYZERS));
+        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.LUCENE_CORE));
         war.addClasses(getTestClasses());
-        war.addWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
+        war.addAsWebResource("META-INF/persistence-search.xml", "classes/META-INF/persistence.xml");
         return war;
     }
 

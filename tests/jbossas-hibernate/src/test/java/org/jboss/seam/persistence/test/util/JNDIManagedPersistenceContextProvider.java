@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.transaction;
+package org.jboss.seam.persistence.test.util;
 
-import javax.transaction.Synchronization;
+import javax.annotation.Resource;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
+import javax.persistence.EntityManagerFactory;
 
-/**
- * Interface for registering transaction synchronizations
- *
- * @author Gavin King
- */
-public interface Synchronizations {
-    public void afterTransactionBegin();
+import org.jboss.seam.solder.core.ExtensionManaged;
 
-    public void afterTransactionCompletion(boolean success);
-
-    public void beforeTransactionCommit();
-
-    public void registerSynchronization(Synchronization sync);
-
-    public boolean isAwareOfContainerTransactions();
+public class JNDIManagedPersistenceContextProvider {
+    @Resource(mappedName = "java:EntityManagerFactory")
+    @RequestScoped
+    @Produces
+    @ExtensionManaged
+    EntityManagerFactory emf;
 }

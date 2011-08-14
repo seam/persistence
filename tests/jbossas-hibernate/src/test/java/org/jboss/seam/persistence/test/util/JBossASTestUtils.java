@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.transaction.test.util;
+package org.jboss.seam.persistence.test.util;
 
 import org.jboss.seam.persistence.test.util.ArtifactNames;
 import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
@@ -37,11 +37,11 @@ public class JBossASTestUtils {
 
     public static WebArchive createTestArchive(boolean includeEmptyBeansXml) {
         WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
-        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-        war.addLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
+        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
+        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
+        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
         if (includeEmptyBeansXml) {
-            war.addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+            war.addAsWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
         }
         return war;
     }
