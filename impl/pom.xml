@@ -15,10 +15,6 @@
     <!-- url required for JAR Manifest -->
     <url>${project.parent.url}</url>
 
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
-
     <dependencies>
 
         <dependency>

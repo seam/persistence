@@ -35,7 +35,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.jboss.seam.solder.logging.Logger;
+import org.jboss.seam.logging.Logger;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.solder.bean.BeanBuilder;

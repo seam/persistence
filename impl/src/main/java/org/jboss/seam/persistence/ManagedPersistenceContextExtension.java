@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.seam.solder.logging.Logger;
+import org.jboss.seam.logging.Logger;
 import org.jboss.seam.persistence.util.EnvironmentUtils;
 import org.jboss.seam.solder.bean.BeanBuilder;
 import org.jboss.seam.solder.bean.Beans;
