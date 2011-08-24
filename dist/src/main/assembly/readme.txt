@@ -14,10 +14,6 @@ Contents of distribution
 
    API Docs and reference guide.
   
- examples/
-
-   Seam Persistence Examples
-  
  lib/
 
    Seam Persistence dependencies

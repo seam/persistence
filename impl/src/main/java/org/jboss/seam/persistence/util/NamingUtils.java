@@ -21,7 +21,7 @@ import java.util.Hashtable;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jboss.seam.solder.logging.Logger;
+import org.jboss.seam.logging.Logger;
 
 /**
  * this has been ported to seam and hacked to make it work

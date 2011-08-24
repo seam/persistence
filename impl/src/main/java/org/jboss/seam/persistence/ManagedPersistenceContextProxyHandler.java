@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.seam.solder.logging.Logger;
+import org.jboss.seam.logging.Logger;
 import org.jboss.seam.persistence.util.BeanManagerUtils;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.literal.DefaultTransactionLiteral;

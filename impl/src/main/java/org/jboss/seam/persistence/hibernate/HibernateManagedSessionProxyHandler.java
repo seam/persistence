@@ -19,7 +19,7 @@ package org.jboss.seam.persistence.hibernate;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.jboss.seam.solder.logging.Logger;
+import org.jboss.seam.logging.Logger;
 import org.jboss.seam.persistence.FlushModeType;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
