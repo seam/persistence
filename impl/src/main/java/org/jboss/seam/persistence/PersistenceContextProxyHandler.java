@@ -16,9 +16,9 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.seam.logging.Logger;
+import org.jboss.solder.logging.Logger;
 import org.jboss.seam.persistence.util.InstanceResolver;
-import org.jboss.seam.solder.el.Expressions;
+import org.jboss.solder.el.Expressions;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;

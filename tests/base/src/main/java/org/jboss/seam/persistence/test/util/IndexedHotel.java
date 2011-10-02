@@ -35,7 +35,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
-import org.jboss.seam.solder.core.Veto;
+import org.jboss.solder.core.Veto;
 
 /**
  * <p>

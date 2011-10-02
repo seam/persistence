@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 
 import javax.enterprise.inject.spi.AnnotatedType;
 
-import org.jboss.seam.solder.reflection.Reflections;
+import org.jboss.solder.reflection.Reflections;
 
 /**
  * Utility class that provides access to some annotations from the Java

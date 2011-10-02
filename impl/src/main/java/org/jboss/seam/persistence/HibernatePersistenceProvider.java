@@ -28,9 +28,9 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.proxy.HibernateProxy;
-import org.jboss.seam.logging.Logger;
-import org.jboss.seam.solder.core.Veto;
-import org.jboss.seam.solder.reflection.Reflections;
+import org.jboss.solder.logging.Logger;
+import org.jboss.solder.core.Veto;
+import org.jboss.solder.reflection.Reflections;
 
 /**
  * Support for non-standardized features of Hibernate, when used as the JPA

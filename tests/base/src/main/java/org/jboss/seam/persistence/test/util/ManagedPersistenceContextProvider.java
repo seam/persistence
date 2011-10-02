@@ -21,7 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-import org.jboss.seam.solder.core.ExtensionManaged;
+import org.jboss.solder.core.ExtensionManaged;
 
 public class ManagedPersistenceContextProvider {
     @PersistenceUnit(unitName = "seamPersistencePu")

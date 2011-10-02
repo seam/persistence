@@ -27,10 +27,10 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 
-import org.jboss.seam.logging.Logger;
-import org.jboss.seam.solder.beanManager.BeanManagerAware;
-import org.jboss.seam.solder.reflection.Reflections;
-import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.solder.logging.Logger;
+import org.jboss.solder.beanManager.BeanManagerAware;
+import org.jboss.solder.reflection.Reflections;
+import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
 
 /**
  * Event listener that enables injection and initalizer methods for JPA entities

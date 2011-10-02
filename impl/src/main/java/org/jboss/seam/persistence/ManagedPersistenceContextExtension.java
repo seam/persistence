@@ -16,19 +16,19 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.seam.logging.Logger;
+import org.jboss.solder.logging.Logger;
 import org.jboss.seam.persistence.util.EnvironmentUtils;
-import org.jboss.seam.solder.bean.BeanBuilder;
-import org.jboss.seam.solder.bean.Beans;
-import org.jboss.seam.solder.bean.ContextualLifecycle;
-import org.jboss.seam.solder.core.ExtensionManaged;
-import org.jboss.seam.solder.literal.AnyLiteral;
-import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
-import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.jboss.seam.solder.reflection.Reflections;
-import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
-import org.jboss.seam.solder.reflection.annotated.Annotateds;
-import org.jboss.seam.solder.util.service.ServiceLoader;
+import org.jboss.solder.bean.BeanBuilder;
+import org.jboss.solder.bean.Beans;
+import org.jboss.solder.bean.ContextualLifecycle;
+import org.jboss.solder.core.ExtensionManaged;
+import org.jboss.solder.literal.AnyLiteral;
+import org.jboss.solder.literal.ApplicationScopedLiteral;
+import org.jboss.solder.literal.DefaultLiteral;
+import org.jboss.solder.reflection.Reflections;
+import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.solder.reflection.annotated.Annotateds;
+import org.jboss.solder.util.service.ServiceLoader;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.Dependent;
@@ -100,7 +100,7 @@ public class ManagedPersistenceContextExtension implements Extension {
 
     /**
      * loops through the fields on an AnnotatedType looking for a @PersistnceUnit
-     * producer field that is annotated {@link org.jboss.seam.solder.core.ExtensionManaged}. Then a corresponding
+     * producer field that is annotated {@link org.jboss.solder.core.ExtensionManaged}. Then a corresponding
      * smpc bean is created and registered. Any scope declaration on the producer
      * are removed as this is not supported by the spec
      * <p/>

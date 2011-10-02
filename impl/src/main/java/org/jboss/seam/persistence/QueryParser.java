@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.jboss.seam.solder.el.Expressions;
+import org.jboss.solder.el.Expressions;
 
 /**
  * Parses hql queries and replaces el with named parameters

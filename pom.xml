@@ -24,15 +24,10 @@
         <module>api</module>
         <module>impl</module>
         <module>tests/base</module>
-
-        <!-- disabled until we upgrade to latest arquillian -->
-        <!--module>tests/jetty-hibernate</module-->
-        <!--module>tests/jetty-openjpa</module-->
-        <!--module>tests/jbossas-hibernate</module-->
     </modules>
 
     <properties>
-        <seam.version>3.1.0.Beta2</seam.version>
+        <seam.version>3.1.0.Beta3</seam.version>
         <emma.version>2.0.5312</emma.version>
     </properties>
 
@@ -87,45 +82,7 @@
                 <module>docs</module>
             </modules>
         </profile>
-        <profile>
-            <id>jboss-public-repository</id>
-            <activation>
-                <property>
-                    <name>jboss-public-repository</name>
-                    <value>!false</value>
-                </property>
-            </activation>
-            <repositories>
-                <repository>
-                    <id>jboss-public-repository-group</id>
-                    <name>JBoss Public Maven Repository Group</name>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
-                    <releases>
-                        <enabled>true</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </snapshots>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>jboss-public-repository-group</id>
-                    <name>JBoss Public Maven Repository Group</name>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
-                    <releases>
-                        <enabled>true</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
+
         <profile>
             <!-- all tests using managed containers -->
             <id>all</id>
@@ -133,6 +90,7 @@
                 <module>tests/jbossas-hibernate</module>
             </modules>
         </profile>
+
         <profile>
             <!-- jboss remote profile-->
             <id>jbossas-remote-6</id>
@@ -140,6 +98,7 @@
                 <module>tests/jbossas-hibernate</module>
             </modules>
         </profile>
+
         <profile>
             <!-- jboss managed profile-->
             <id>jbossas-managed-6</id>
@@ -147,6 +106,7 @@
                 <module>tests/jbossas-hibernate</module>
             </modules>
         </profile>
+
         <profile>
             <id>code-coverage</id>
             <dependencies>
