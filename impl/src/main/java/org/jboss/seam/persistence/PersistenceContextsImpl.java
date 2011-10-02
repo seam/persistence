@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.seam.logging.Logger;
+import org.jboss.solder.logging.Logger;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Any;

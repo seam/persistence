@@ -24,15 +24,10 @@
         <module>api</module>
         <module>impl</module>
         <module>tests/base</module>
-
-        <!-- disabled until we upgrade to latest arquillian -->
-        <!--module>tests/jetty-hibernate</module-->
-        <!--module>tests/jetty-openjpa</module-->
-        <!--module>tests/jbossas-hibernate</module-->
     </modules>
 
     <properties>
-        <seam.version>3.1.0.Beta2</seam.version>
+        <seam.version>3.1.0.Beta3</seam.version>
         <emma.version>2.0.5312</emma.version>
     </properties>
 

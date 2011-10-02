@@ -42,10 +42,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
-import org.jboss.seam.logging.Logger;
+import org.jboss.solder.logging.Logger;
 import org.jboss.seam.persistence.util.EnvironmentUtils;
-import org.jboss.seam.solder.literal.AnyLiteral;
-import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.solder.literal.AnyLiteral;
+import org.jboss.solder.literal.DefaultLiteral;
 
 /**
  * Support for managed persistence contexts in a Java SE environment or Servlet

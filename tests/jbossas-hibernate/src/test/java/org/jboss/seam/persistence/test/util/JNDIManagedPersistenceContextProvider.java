@@ -21,7 +21,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.seam.solder.core.ExtensionManaged;
+import org.jboss.solder.core.ExtensionManaged;
 
 public class JNDIManagedPersistenceContextProvider {
     @Resource(mappedName = "java:EntityManagerFactory")

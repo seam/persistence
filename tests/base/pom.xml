@@ -51,8 +51,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.seam.solder</groupId>
-            <artifactId>seam-solder-api</artifactId>
+            <groupId>org.jboss.solder</groupId>
+            <artifactId>solder-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

@@ -30,7 +30,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.solder.literal.DefaultLiteral;
 
 
 /**

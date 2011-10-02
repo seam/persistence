@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.seam.solder.bean.defaultbean.DefaultBean;
+import org.jboss.solder.bean.defaultbean.DefaultBean;
 
 /**
  * Provides for programmatic configuration of the default flush mode.

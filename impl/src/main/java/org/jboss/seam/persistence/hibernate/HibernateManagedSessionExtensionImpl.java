@@ -35,17 +35,17 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.jboss.seam.logging.Logger;
+import org.jboss.solder.logging.Logger;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
-import org.jboss.seam.solder.bean.BeanBuilder;
-import org.jboss.seam.solder.core.ExtensionManaged;
-import org.jboss.seam.solder.core.Veto;
-import org.jboss.seam.solder.literal.AnyLiteral;
-import org.jboss.seam.solder.literal.ApplicationScopedLiteral;
-import org.jboss.seam.solder.literal.DefaultLiteral;
-import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
-import org.jboss.seam.solder.reflection.annotated.Annotateds;
+import org.jboss.solder.bean.BeanBuilder;
+import org.jboss.solder.core.ExtensionManaged;
+import org.jboss.solder.core.Veto;
+import org.jboss.solder.literal.AnyLiteral;
+import org.jboss.solder.literal.ApplicationScopedLiteral;
+import org.jboss.solder.literal.DefaultLiteral;
+import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.solder.reflection.annotated.Annotateds;
 
 /**
  * This class performs the actual work for the Hibernate managed session. As

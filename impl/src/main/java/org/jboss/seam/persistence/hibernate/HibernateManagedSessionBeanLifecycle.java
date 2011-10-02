@@ -30,12 +30,12 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.jboss.seam.logging.Logger;
+import org.jboss.solder.logging.Logger;
 import org.jboss.seam.persistence.HibernatePersistenceProvider;
 import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.PersistenceContexts;
-import org.jboss.seam.solder.bean.ContextualLifecycle;
-import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.solder.bean.ContextualLifecycle;
+import org.jboss.solder.literal.DefaultLiteral;
 
 /**
  * lifecycle for seam managed hibernate sessions

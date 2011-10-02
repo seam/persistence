@@ -21,7 +21,7 @@ import javax.enterprise.inject.Produces;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.jboss.seam.solder.core.ExtensionManaged;
+import org.jboss.solder.core.ExtensionManaged;
 
 public class ManagedHibernateSessionProvider {
     @RequestScoped

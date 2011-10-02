@@ -33,9 +33,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.seam.logging.Logger;
-import org.jboss.seam.solder.bean.ContextualLifecycle;
-import org.jboss.seam.solder.literal.DefaultLiteral;
+import org.jboss.solder.logging.Logger;
+import org.jboss.solder.bean.ContextualLifecycle;
+import org.jboss.solder.literal.DefaultLiteral;
 
 /**
  * SMPC lifecycle for SMPC's configured via @ExtensionManaged
