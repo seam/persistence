@@ -73,7 +73,7 @@
             actually represent optimistic transactions in the data layer.) This is
             sufficient for many simple applications (such as the Seam booking
             demo) where persistence context propagation is not needed. For more
-            complex applications, with many loosly-interacting components in each
+            complex applications, with many loosely-interacting components in each
             conversation, propagation of the persistence context across components
             becomes an important issue. So Seam extends the persistence context
             management model of EJB 3.0, to provide conversation-scoped extended
@@ -276,7 +276,7 @@
 
             <para>
                 Unlike in Seam 2, transactions will not roll back whenever a non-application exception
-                propagates out of a bean, unless the bean has the transaction intercepter enabled.
+                propagates out of a bean, unless the bean has the transaction interceptor enabled.
             </para>
 
             <para>
