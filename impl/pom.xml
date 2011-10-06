@@ -117,6 +117,7 @@
     </profiles>
 
     <build>
+        <finalName>seam-persistence</finalName>
         <plugins>
             <!-- tests run in seperate modules -->
             <plugin>

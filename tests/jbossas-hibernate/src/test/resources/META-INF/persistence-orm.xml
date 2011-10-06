@@ -8,7 +8,7 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         -->
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <jta-data-source>java:/DefaultDS</jta-data-source>
+        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
         <mapping-file>META-INF/orm.xml</mapping-file>
         <class>org.jboss.seam.persistence.test.util.Hotel</class>
         <exclude-unlisted-classes/>

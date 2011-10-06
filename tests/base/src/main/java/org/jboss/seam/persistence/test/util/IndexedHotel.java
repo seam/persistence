@@ -31,9 +31,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Norms;
 import org.hibernate.search.annotations.Store;
 import org.jboss.solder.core.Veto;
 
@@ -109,7 +111,7 @@ public class IndexedHotel implements Serializable {
 
     @Size(max = 50)
     @NotNull
-    @Field(index = Index.TOKENIZED, store = Store.NO)
+    @Field(index = Index.YES, analyze=Analyze.YES, store = Store.NO)
     public String getName() {
         return name;
     }
