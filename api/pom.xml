@@ -43,6 +43,8 @@
     </dependencies>
 
     <build>
+        <finalName>seam-persistence-api</finalName>
+
         <plugins>
             <!-- no test phase for API module -->
             <plugin>

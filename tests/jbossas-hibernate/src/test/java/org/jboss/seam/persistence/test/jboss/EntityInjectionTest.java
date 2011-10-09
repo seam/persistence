@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence.test.jboss;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.EntityInjectionTestBase;
 import org.jboss.seam.persistence.test.util.JBossASTestUtils;
@@ -31,13 +31,13 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class EntityInjectionTest extends EntityInjectionTestBase {
-    @Deployment
+    @Deployment(name="EntityInjection")
     public static Archive<?> createTestArchive() {
         WebArchive war = JBossASTestUtils.createTestArchive();
 
         war.addClasses(getTestClasses());
-        war.addAsWebResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");
-        war.addAsWebResource("META-INF/orm.xml", "classes/META-INF/orm.xml");
+        war.addAsWebInfResource("META-INF/persistence-orm.xml", "classes/META-INF/persistence.xml");
+        war.addAsWebInfResource("META-INF/orm.xml", "classes/META-INF/orm.xml");
         return war;
     }
 

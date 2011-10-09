@@ -5,7 +5,7 @@
              version="2.0">
     <persistence-unit name="seamPersistencePu">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <jta-data-source>java:/DefaultDS</jta-data-source>
+        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
         <class>org.jboss.seam.persistence.test.util.IndexedHotel</class>
         <exclude-unlisted-classes/>
         <properties>
@@ -15,7 +15,7 @@
             <!-- Only format when you need to debug, because it slows things down -->
             <property name="hibernate.format_sql" value="false"/>
             <property name="hibernate.search.default.directory_provider"
-                      value="org.hibernate.search.store.RAMDirectoryProvider"/>
+                      value="org.hibernate.search.store.impl.RAMDirectoryProvider"/>
 
         </properties>
     </persistence-unit>
