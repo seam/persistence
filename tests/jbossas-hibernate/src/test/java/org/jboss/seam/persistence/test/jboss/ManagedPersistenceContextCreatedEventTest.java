@@ -16,7 +16,7 @@
  */
 package org.jboss.seam.persistence.test.jboss;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.persistence.test.ManagedPersistenceContextCreatedEventTestBase;
 import org.jboss.seam.persistence.test.util.JBossASTestUtils;
@@ -26,11 +26,11 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class ManagedPersistenceContextCreatedEventTest extends ManagedPersistenceContextCreatedEventTestBase {
-    @Deployment
+    @Deployment(name="ManagedPersistenceContextCreatedEvent")
     public static Archive<?> createTestArchive() {
         WebArchive war = JBossASTestUtils.createTestArchive();
         war.addClasses(getTestClasses());
-        war.addAsWebResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
+        war.addAsWebInfResource("META-INF/persistence.xml", "classes/META-INF/persistence.xml");
         return war;
     }
 

@@ -16,11 +16,17 @@
  */
 package org.jboss.seam.persistence.test.util;
 
+import java.io.File;
+
 import org.jboss.seam.persistence.test.util.ArtifactNames;
-import org.jboss.seam.persistence.test.util.MavenArtifactResolver;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
+import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+
 
 /**
  * @author Stuart Douglas
@@ -37,11 +43,29 @@ public class JBossASTestUtils {
 
     public static WebArchive createTestArchive(boolean includeEmptyBeansXml) {
         WebArchive war = ShrinkWrap.createDomain().getArchiveFactory().create(WebArchive.class, "test.war");
-        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_SOLDER));
-        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_API));
-        war.addAsLibraries(MavenArtifactResolver.resolve(ArtifactNames.SEAM_PERSISTENCE_IMPL));
+
+        war.addAsLibraries(
+                DependencyResolvers.use(MavenDependencyResolver.class)
+                .configureFrom("../../settings.xml")
+                .loadReposFromPom("pom.xml")
+                .artifact(ArtifactNames.SOLDER)
+                .artifact(ArtifactNames.SEAM_TRANSACTION)
+                .resolveAs(JavaArchive.class)
+        );
+        
+        war.addAsLibraries(
+                ShrinkWrap.create(
+                    ZipImporter.class, "seam-persistence-api.jar")
+                        .importFrom(new File(ArtifactNames.SEAM_PERSISTENCE_API_JAR))
+                        .as(JavaArchive.class),
+                ShrinkWrap.create(
+                    ZipImporter.class, "seam-persistence.jar")
+                        .importFrom(new File(ArtifactNames.SEAM_PERSISTENCE_IMPL_JAR))
+                        .as(JavaArchive.class)
+             );
+        
         if (includeEmptyBeansXml) {
-            war.addAsWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+            war.addAsWebInfResource(new ByteArrayAsset(new byte[0]), "beans.xml");
         }
         return war;
     }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jboss.seam</groupId>
         <artifactId>seam-parent</artifactId>
-        <version>14</version>
+        <version>15</version>
     </parent>
 
     <artifactId>seam-persistence-parent</artifactId>

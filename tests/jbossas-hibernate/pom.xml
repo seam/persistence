@@ -36,7 +36,6 @@
            <scope>provided</scope>
         </dependency>
         -->
-
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
@@ -84,6 +83,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.seam.transaction</groupId>
+            <artifactId>seam-transaction</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -96,20 +100,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.seam.solder</groupId>
-            <artifactId>seam-solder</artifactId>
+            <groupId>org.jboss.solder</groupId>
+            <artifactId>solder-impl</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search</artifactId>
+            <version>4.0.0.Beta2</version>
             <optional>true</optional>
         </dependency>
-
-        <!--dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-junit</artifactId>
-        </dependency-->
 
         <dependency>
             <groupId>org.jboss.seam.persistence</groupId>
@@ -143,21 +143,10 @@
             <dependencies>
 
                 <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
-                    <version>7.0.0.Final</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.jbossas</groupId>
-                    <artifactId>jboss-server-manager</artifactId>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.jbossas</groupId>
-                    <artifactId>jboss-as-client</artifactId>
+                    <groupId>org.jboss.seam.test</groupId>
+                    <artifactId>jbossas-managed-7</artifactId>
                     <type>pom</type>
+                    <scope>test</scope>
                 </dependency>
 
             </dependencies>
@@ -217,18 +206,14 @@
         <profile>
             <id>jbossas-remote-7</id>
             <dependencies>
+            
                 <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-arquillian-container-remote</artifactId>
-                    <version>7.0.0.Final</version>
+                    <groupId>org.jboss.seam.test</groupId>
+                    <artifactId>jbossas-remote-7</artifactId>
+                    <type>pom</type>
                     <scope>test</scope>
                 </dependency>
-                <!-- need for org.jnp.interfaces.NamingContextFactory -->
-                <dependency>
-                    <groupId>org.jboss.jbossas</groupId>
-                    <artifactId>jboss-as-client</artifactId>
-                    <type>pom</type>
-                </dependency>
+
             </dependencies>
             <build>
                 <testResources>
