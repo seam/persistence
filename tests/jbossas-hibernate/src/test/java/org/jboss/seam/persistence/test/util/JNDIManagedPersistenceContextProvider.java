@@ -24,7 +24,7 @@ import javax.persistence.EntityManagerFactory;
 import org.jboss.solder.core.ExtensionManaged;
 
 public class JNDIManagedPersistenceContextProvider {
-    @Resource(mappedName = "java:EntityManagerFactory")
+    @Resource(mappedName = "java:/EntityManagerFactory")
     @RequestScoped
     @Produces
     @ExtensionManaged

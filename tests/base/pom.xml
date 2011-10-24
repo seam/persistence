@@ -65,6 +65,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search</artifactId>
+            <version>4.0.0.Beta2</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
@@ -76,9 +77,18 @@
         </dependency>
 
         <dependency>
-           <groupId>org.jboss.arquillian</groupId>
-           <artifactId>arquillian-junit</artifactId>
-           <version>1.0.0.Alpha5</version>
+           <groupId>org.jboss.arquillian.junit</groupId>
+           <artifactId>arquillian-junit-container</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
         </dependency>
 
     </dependencies>
