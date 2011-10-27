@@ -37,6 +37,13 @@
         <dependency>
             <groupId>org.jboss.seam.transaction</groupId>
             <artifactId>seam-transaction-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam.transaction</groupId>
+            <artifactId>seam-transaction</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
