@@ -24,7 +24,6 @@ import org.jboss.seam.persistence.test.util.JBossASTestUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.runner.RunWith;
@@ -38,7 +37,7 @@ public class JBossASHibernateSearchTest extends HibernateSearchTestBase {
         war.addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class)
                 .configureFrom("../settings.xml")
-                .loadReposFromPom("pom.xml")
+                .loadMetadataFromPom("pom.xml")
                 .artifact(ArtifactNames.HIBERNATE_SEARCH)
                 .resolveAs(JavaArchive.class)
         );

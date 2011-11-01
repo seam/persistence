@@ -47,7 +47,7 @@ public class JBossASTestUtils {
         war.addAsLibraries(
                 DependencyResolvers.use(MavenDependencyResolver.class)
                 .configureFrom("../settings.xml")
-                .loadReposFromPom("pom.xml")
+                .loadMetadataFromPom("pom.xml")
                 .artifact(ArtifactNames.SOLDER)
                 .artifact(ArtifactNames.SEAM_TRANSACTION)
                 .resolveAs(JavaArchive.class)

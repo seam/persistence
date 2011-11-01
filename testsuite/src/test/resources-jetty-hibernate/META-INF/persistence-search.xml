@@ -11,10 +11,12 @@
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:."/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:target/data/test"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
 
+            <property name="hibernate.search.default.directory_provider" value="filesystem"/> 
+            <property name="hibernate.search.default.indexBase" value="target/indexes"/> 
         </properties>
     </persistence-unit>
 </persistence>

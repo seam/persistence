@@ -8,7 +8,7 @@
         <property name="dialect">org.hibernate.dialect.HSQLDialect</property>
 
         <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="connection.url">jdbc:hsqldb:data/test</property>
+        <property name="connection.url">jdbc:hsqldb:target/data/test</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"></property>
         <property name="connection.shutdown">true</property>
@@ -26,6 +26,9 @@
 
         <!-- disable batching so HSQLDB will propagate errors correctly. -->
         <property name="jdbc.batch_size">0</property>
+
+        <property name="hibernate.search.default.directory_provider">filesystem</property>
+        <property name="hibernate.search.default.indexBase">target/indexes</property>
 
         <mapping class="org.jboss.seam.persistence.test.util.IndexedHotel"/>
 
