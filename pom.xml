@@ -42,6 +42,20 @@
                 <type>pom</type>
             </dependency>
 
+            <!-- TEMPORARY WORKAROUND, remove the hibernate-core and hibernate-search version after 3.1.0.Beta5, 
+                 as these versions would be in parent/Seam BOM -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>4.0.0.CR5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-search</artifactId>
+                <version>4.0.0.CR1</version>
+            </dependency>
+
             <!--
                Need to use dependencyManagement to override
                org.jboss.seam:seam-bom for submodules
