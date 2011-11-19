@@ -164,6 +164,17 @@
                 If you are in a Java EE 6 environment then you are good to go,
                 no additional configuration is required.
             </para>
+            <note>
+            	<para>
+	            	If you are deploying to JBoss AS6 it is important to know that it does not support meta
+	            	data per bean archive and will throw a deployment error if defined twice. Additionally	           	
+	           		some Seam 3 modules such as Security already enable this Interceptor and defining it
+	           		again will result in a deployment error.
+	           	</para>
+	            <para>   		
+	           		This is not an issue with JBoss AS7 or Glassfish.
+	           	</para>
+           	</note>
             <para>
                 If you are not in an EE environment you may need to configure some
                 things with seam-xml. You may need the following entries in your
@@ -312,7 +323,7 @@
                 applied at the class level.
             </para>
             <programlisting role="JAVA">@TransactionAttribute /*Defaults to TransactionAttributeType.REQUIRED */
-                class TransactionaBean
+                class TransactionalBean
                 {
 
                 /* This is a transactional method, when this method is called a transaction
