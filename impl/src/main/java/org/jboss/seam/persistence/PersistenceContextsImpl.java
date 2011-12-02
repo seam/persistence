@@ -16,17 +16,18 @@
  */
 package org.jboss.seam.persistence;
 
-import org.jboss.solder.logging.Logger;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import org.jboss.solder.logging.Logger;
 
 /**
  * Maintains the set of persistence contexts that have been touched in a
@@ -47,11 +48,11 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
      */
     private final Set<PersistenceContextDefintition> set = new HashSet<PersistenceContextDefintition>();
 
-    private FlushModeType flushMode;
+    private FlushModeType currentFlushMode;
 
     // the real flush mode is a backup of the flush mode when doing a temporary
     // switch (such as during render)
-    private FlushModeType realFlushMode;
+    private FlushModeType defaultFlushMode;
 
     @Inject
     @Any
@@ -61,14 +62,16 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
     public void create(FlushModeManager manager) {
         FlushModeType defaultFlushMode = manager.getFlushModeType();
         if (defaultFlushMode != null) {
-            flushMode = defaultFlushMode;
+            currentFlushMode = defaultFlushMode;
         } else {
-            flushMode = FlushModeType.AUTO;
+            currentFlushMode = FlushModeType.AUTO;
         }
+
+        this.defaultFlushMode = currentFlushMode;
     }
 
     public FlushModeType getFlushMode() {
-        return flushMode;
+        return currentFlushMode;
     }
 
     public Set<PersistenceContextDefintition> getTouchedContexts() {
@@ -84,14 +87,14 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
     }
 
     public void changeFlushMode(FlushModeType flushMode) {
-        this.flushMode = flushMode;
+        this.currentFlushMode = flushMode;
         changeFlushModes();
     }
 
     public void restoreFlushMode() {
-        if (realFlushMode != null && realFlushMode != flushMode) {
-            flushMode = realFlushMode;
-            realFlushMode = null;
+        if (defaultFlushMode != null && defaultFlushMode != currentFlushMode) {
+            currentFlushMode = defaultFlushMode;
+//            defaultFlushMode = null;
             changeFlushModes();
         }
     }
@@ -100,7 +103,7 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
         for (ManagedPersistenceContext context : persistenceContexts) {
             if (set.contains(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType()))) {
                 try {
-                    context.changeFlushMode(flushMode);
+                    context.changeFlushMode(currentFlushMode);
                 } catch (UnsupportedOperationException uoe) {
                     // we won't be nasty and throw and exception, but we'll log a
                     // warning to the developer
@@ -114,7 +117,8 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
         for (ManagedPersistenceContext context : persistenceContexts) {
             if (set.contains(new PersistenceContextDefintition(context.getQualifiers(), context.getBeanType()))) {
                 try {
-                    context.changeFlushMode(context.getProvider().getRenderFlushMode());
+                    currentFlushMode = context.getProvider().getRenderFlushMode();
+                    context.changeFlushMode(currentFlushMode);
                 } catch (UnsupportedOperationException uoe) {
                     // we won't be nasty and throw and exception, but we'll log a
                     // warning to the developer
