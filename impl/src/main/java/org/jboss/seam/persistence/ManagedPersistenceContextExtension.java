@@ -73,7 +73,11 @@ public class ManagedPersistenceContextExtension implements Extension {
     private static final Logger log = Logger.getLogger(ManagedPersistenceContextExtension.class);
 
     public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event) {
-        // we manually add Hibernate first.
+        ServiceLoader<SeamPersistenceProvider> providers = ServiceLoader.load(SeamPersistenceProvider.class);
+        for (SeamPersistenceProvider i : providers) {
+            persistenceProviders.add(i);
+        }
+        // we manually add Hibernate now.
         // we do not use the ServiceLoader approach for this, because it will blow
         // up if Hibernate is not on the classpath
         try {
@@ -88,11 +92,6 @@ public class ManagedPersistenceContextExtension implements Extension {
             log.debug("InstantiationException creating HibernatePersistenceProvider: HibernatePersistenceProvider not loaded.");
         } catch (IllegalAccessException e) {
             log.error("IllegalAccessException creating HibernatePersistenceProvider: HibernatePersistenceProvider not loaded.");
-        }
-
-        ServiceLoader<SeamPersistenceProvider> providers = ServiceLoader.load(SeamPersistenceProvider.class);
-        for (SeamPersistenceProvider i : providers) {
-            persistenceProviders.add(i);
         }
         // this is always the last one considered
         persistenceProviders.add(new DefaultPersistenceProvider());
