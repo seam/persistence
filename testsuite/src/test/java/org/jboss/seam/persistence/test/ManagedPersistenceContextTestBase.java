@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -66,5 +67,26 @@ public class ManagedPersistenceContextTestBase {
         Assert.assertEquals(1, hotels.size());
         transaction.rollback();
     }
+    
+    @Test(expected = EntityNotFoundException.class)
+    public void testManagedPersistenceContextException() throws NotSupportedException, SystemException, SecurityException, IllegalStateException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        transaction.begin();
+        Hotel h = new Hotel("test3", "Purkynova", "Brno", "CZ", "63100", "Czech Republic");
+        em.persist(h);
+        em.flush();
+        transaction.commit();
 
+        transaction.begin();
+        int affected = em.createQuery("delete from Hotel h where h.name = :name").setParameter("name", h.getName()).executeUpdate();
+        Assert.assertEquals(1, affected);
+        transaction.commit();
+        
+        try {
+            transaction.begin();
+            em.refresh(h);
+        }
+        finally {
+            transaction.rollback();
+        }
+    }
 }
