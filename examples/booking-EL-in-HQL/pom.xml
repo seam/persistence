@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2010, Red Hat Middleware LLC, and individual contributors
+  by the @authors tag. See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--> 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jboss.seam.persistence</groupId>
+		<artifactId>seam-persistence-parent</artifactId>
+		<version>3.0.1-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+    <groupId>org.jboss.seam.persistence.examples</groupId>
+    <artifactId>booking-EL-in-HQL</artifactId>
+    <packaging>war</packaging>
+    <name>Seam Booking Example</name>
+    <description>The Seam booking example using the simplified Java EE 6 programming model and packaging structure (i.e., web archive)</description>
+    <url>http://seamframework.org/Seam3</url>
+
+    <properties>
+        <webapp.directory>src/main/webapp</webapp.directory>
+        <jboss.home>${env.JBOSS_HOME}</jboss.home>
+        <jboss.domain>default</jboss.domain>
+        <arquillian.version>1.0.0.Alpha5</arquillian.version>
+        <shrinkwrap.version>1.0.0-alpha-12</shrinkwrap.version>
+        <glassfish.version>3.1</glassfish.version>
+        <jpamodelgen.version>1.1.1.Final</jpamodelgen.version>
+        <jboss-as-client.version>6.0.0.Final</jboss-as-client.version>
+        <jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
+        <jboss-server-manager.version>1.0.3.GA</jboss-server-manager.version>
+        <jersey.version>1.5</jersey.version>
+    </properties>
+
+    <dependencies>
+        <!-- Annotation processor for generating typed loggers -->
+        <dependency>
+            <groupId>org.jboss.seam.solder</groupId>
+            <artifactId>seam-solder-tooling</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam.solder</groupId>
+            <artifactId>seam-solder</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${jpamodelgen.version}</version>
+            <scope>provided</scope>
+            <!-- Excluded Hibernate-provided JPA API because it's provided by the Java EE 6 dependencies -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate.javax.persistence</groupId>
+                    <artifactId>hibernate-jpa-2.0-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.jboss.seam.faces</groupId>
+            <artifactId>seam-faces</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.seam.international</groupId>
+            <artifactId>seam-international</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.seam.servlet</groupId>
+            <artifactId>seam-servlet</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.seam.catch</groupId>
+            <artifactId>seam-catch</artifactId>
+        </dependency>
+
+        <dependency>
+           <groupId>org.jboss.seam.config</groupId>
+           <artifactId>seam-config-xml</artifactId>
+        </dependency>
+
+        <dependency>
+           <groupId>org.jboss.seam.security</groupId>
+           <artifactId>seam-security</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.ocpsoft</groupId>
+            <artifactId>ocpsoft-pretty-time</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ocpsoft</groupId>
+            <artifactId>prettyfaces-jsf2</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        
+        <dependency>
+         <groupId>commons-digester</groupId>
+         <artifactId>commons-digester</artifactId>
+         <version>2.1</version>
+        </dependency>
+        
+        <!-- Bean Validation Implementation; provides portable constraints @NotEmpty, @Email and @Url -->
+        <!-- Hibernate Validator is the only JSR-303 implementation at the moment, so we can assume it's provided -->
+        <!-- TODO Move Hibernate Validator to app server specific sections -->
+        <dependency>
+            <groupId>org.hibernate.</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.1.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
+            <artifactId>selenium-java-client-driver</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.test</groupId>
+            <artifactId>richfaces-selenium</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-junit</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>${shrinkwrap.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+           <groupId>org.jboss.weld</groupId>
+           <artifactId>weld-core</artifactId>
+           <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-6.0</artifactId>
+            <version>${jboss-javaee6-spec.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>      
+
+        <!--
+        <dependency>
+            <groupId>org.codehaus.groovy.maven.runtime</groupId>
+            <artifactId>gmaven-runtime-1.6</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+
+    </dependencies>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <finalName>booking-EL-in-HQL</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- activate only when you need to generate the metamodel -->
+                    <!--
+                    <compilerArgument>-proc:none</compilerArgument>
+                    -->
+                </configuration>
+            </plugin>
+
+            <!--
+            <plugin>
+                <groupId>org.codehaus.groovy.maven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <additionalBuildcommands>
+                        <!--
+                            annoyingly creates a bin directory <buildCommand>
+                            <name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
+                            </buildCommand>
+                        -->
+                        <buildCommand>
+                            <name>org.jboss.tools.common.verification.verifybuilder</name>
+                        </buildCommand>
+                    </additionalBuildcommands>
+                    <additionalConfig>
+                        <file>
+                            <name>.settings/org.maven.ide.eclipse.prefs</name>
+                            <content>eclipse.preferences.version=1
+                                fullBuildGoals=process-test-resources
+                                includeModules=false
+                                resolveWorkspaceProjects=true
+                                resourceFilterGoals=process-resources
+                                resources\:testResources
+                                skipCompilerPlugin=true
+                                version=1</content>
+                        </file>
+                    </additionalConfig>
+                    <additionalProjectFacets>
+                        <jst.jsf>2.0</jst.jsf>
+                    </additionalProjectFacets>
+                    <additionalProjectnatures>
+                        <projectnature>org.eclipse.wst.jsdt.core.jsNature</projectnature>
+                        <projectnature>org.jboss.tools.jsf.jsfnature</projectnature>
+                    </additionalProjectnatures>
+                    <workspace>${user.home}/.eclipse/workspace</workspace>
+                    <wtpdefaultserver>JBossAS</wtpdefaultserver>
+                    <wtpversion>2.0</wtpversion>
+                    <!--
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                    -->
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        
+        </plugins>
+    </build>
+    <profiles>
+
+        <profile>
+            <id>distribution</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>    
+    
+        <profile>
+            <id>jboss6</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources-jbossas6</directory>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jboss7</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources-jbossas7</directory>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>glassfish</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources-glassfish</directory>
+                                 </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jbossas-remote-6</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-jbossas-remote-6</artifactId>
+                    <version>${arquillian.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <!--
+                <dependency>
+                    <groupId>org.jboss.spec</groupId>
+                    <artifactId>jboss-javaee-6.0</artifactId>
+                    <version>${jboss-javaee6-spec.version}</version>
+                    <type>pom</type>
+                    <scope>provided</scope>
+                </dependency>
+                -->
+                <!-- need for org.jnp.interfaces.NamingContextFactory -->
+                <dependency>
+                    <groupId>org.jboss.jbossas</groupId>
+                    <artifactId>jboss-as-client</artifactId>
+                    <version>${jboss-as-client.version}</version>
+                    <type>pom</type>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-jbossas</directory>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <testNGArtifactName>none:none</testNGArtifactName>
+                            <excludes>
+                                <exclude>**/ftest/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Arquillian's Embedded GlassFish 3.1 adapter is not working correctly -->
+        <!--
+        <profile>
+            <id>itest-glassfish-embedded</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+                    <version>${arquillian.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.glassfish.extras</groupId>
+                    <artifactId>glassfish-embedded-all</artifactId>
+                    <version>${glassfish.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-glassfish-embedded</directory>
+                    </testResource>
+                </testResources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.4.3</version>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>derby.stream.error.file</name>
+                                    <value>target/derby.log</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        -->
+
+        <profile>
+            <id>glassfish-remote-3.1</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-glassfish-remote-3.1</artifactId>
+                    <version>${arquillian.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-bundle</artifactId>
+                    <version>${jersey.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.jersey.contribs</groupId>
+                    <artifactId>jersey-multipart</artifactId>
+                    <version>${jersey.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <testNGArtifactName>none:none</testNGArtifactName>
+                            <excludes>
+                                <exclude>**/ftest/**</exclude>
+                                <exclude>org/jboss/seam/examples/booking/booking/BookingAgentTest.java</exclude>
+                           </excludes>
+                        </configuration>
+                    </plugin>                    
+                </plugins>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-glassfish-remote</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>ftest</id>
+        </profile>
+        
+    </profiles>
+
+    <scm>
+        <connection>scm:git:git://github.com/seam/examples.git</connection>
+        <developerConnection>scm:git:git@github.com:seam/examples.git</developerConnection>
+        <url>http://github.com/seam</url>
+    </scm>
+
+</project>
