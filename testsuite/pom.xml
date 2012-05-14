@@ -134,6 +134,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search</artifactId>
             <scope>test</scope>
+	     <exclusions>
+            	<exclusion>
+            	  <groupId>org.jboss.logging</groupId>
+  		  <artifactId>jboss-logging</artifactId>
+  		</exclusion>  
+            </exclusions>
         </dependency>
 
         <dependency>
