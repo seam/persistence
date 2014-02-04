@@ -24,6 +24,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -53,7 +54,7 @@ public class PersistenceContextProxyHandler implements Serializable {
             return handleCreateQueryWithString(method, args);
         }
 
-        return method.invoke(delegate, args);
+        return invokeMethod(method, args);
     }
 
     protected Object handleCreateQueryWithString(Method method, Object[] args) throws Throwable {
@@ -72,7 +73,7 @@ public class PersistenceContextProxyHandler implements Serializable {
             }
             return query;
         } else {
-            return method.invoke(delegate, args);
+            return invokeMethod(method, args);
         }
     }
 
@@ -81,5 +82,20 @@ public class PersistenceContextProxyHandler implements Serializable {
             expressions = InstanceResolver.getInstance(Expressions.class, beanManager).get();
         }
         return expressions;
+    }
+
+    /**
+     * Invokes the method on the delegate and unwraps any original Exceptions  
+     */
+    private Object invokeMethod(Method method, Object[] args) throws Throwable {
+        try {
+            return method.invoke(delegate, args);
+        }
+        catch(InvocationTargetException e) {
+            if (e.getCause() != null) {
+                throw e.getCause();
+            }
+            throw e;
+        }
     }
 }
