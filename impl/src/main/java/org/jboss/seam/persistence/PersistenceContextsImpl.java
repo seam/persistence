@@ -132,7 +132,9 @@ public class PersistenceContextsImpl implements Serializable, PersistenceContext
         restoreFlushMode();
     }
 
-    public static class PersistenceContextDefintition {
+    public class PersistenceContextDefintition implements Serializable {
+        
+	    private static final long serialVersionUID = 1L;
         private final Set<Annotation> qualifiers;
         private final Class<?> type;
 
